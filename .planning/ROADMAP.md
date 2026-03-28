@@ -18,7 +18,12 @@
   1. User can log in with a designated role (Teacher, Coordinator, Chef, Secretary).
   2. Coordinator is restricted to their specific bachelor degree scope upon login.
   3. User session persists across browser refreshes and tab closures.
-**Plans**: TBD
+
+**Plans:** 3 plans
+- [ ] 01-foundation-authentication-01.md — Project scaffolding, testing framework, and Drizzle ORM setup.
+- [ ] 01-foundation-authentication-02.md — Better Auth configuration with RBAC and Organization plugins.
+- [ ] 01-foundation-authentication-03.md — Localized Login UI, dashboard shell, and database seeding.
+
 **UI hint**: yes
 
 ### Phase 2: Teacher Data Entry
@@ -70,7 +75,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Authentication | 0/1 | Not started | - |
+| 1. Foundation & Authentication | 0/3 | Not started | - |
 | 2. Teacher Data Entry | 0/1 | Not started | - |
 | 3. Review & Revision Cycle | 0/1 | Not started | - |
 | 4. Administrative Oversight | 0/1 | Not started | - |
