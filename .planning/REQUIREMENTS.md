@@ -69,21 +69,21 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUTH-01 | Phase 1 | Pending |
 | AUTH-02 | Phase 1 | Pending |
 | AUTH-03 | Phase 1 | Pending |
-| FORM-01 | Phase 1 | Pending |
-| FORM-02 | Phase 1 | Pending |
-| FORM-03 | Phase 1 | Pending |
-| FORM-04 | Phase 1 | Pending |
-| DATA-01 | Phase 1 | Pending |
+| FORM-01 | Phase 2 | Pending |
+| FORM-02 | Phase 2 | Pending |
+| FORM-03 | Phase 2 | Pending |
+| FORM-04 | Phase 2 | Pending |
+| DATA-01 | Phase 2 | Pending |
 | DATA-02 | Phase 1 | Pending |
-| WORKFLOW-01 | Phase 2 | Pending |
-| WORKFLOW-02 | Phase 2 | Pending |
-| WORKFLOW-03 | Phase 2 | Pending |
-| WORKFLOW-04 | Phase 2 | Pending |
-| WORKFLOW-05 | Phase 2 | Pending |
-| WORKFLOW-06 | Phase 2 | Pending |
-| EXPORT-01 | Phase 3 | Pending |
-| EXPORT-02 | Phase 3 | Pending |
-| EXPORT-03 | Phase 3 | Pending |
+| WORKFLOW-01 | Phase 3 | Pending |
+| WORKFLOW-02 | Phase 3 | Pending |
+| WORKFLOW-03 | Phase 3 | Pending |
+| WORKFLOW-04 | Phase 4 | Pending |
+| WORKFLOW-05 | Phase 4 | Pending |
+| WORKFLOW-06 | Phase 4 | Pending |
+| EXPORT-01 | Phase 5 | Pending |
+| EXPORT-02 | Phase 5 | Pending |
+| EXPORT-03 | Phase 5 | Pending |
 
 **Coverage:**
 - v1 requirements: 18 total
@@ -92,4 +92,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: March 28, 2026*
-*Last updated: March 28, 2026 after initial definition*
+*Last updated: March 28, 2026 after roadmap creation*
