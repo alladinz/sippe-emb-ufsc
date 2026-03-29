@@ -1,7 +1,8 @@
 ---
 phase: 2
 slug: teacher-data-entry
-status: draft
+status: approved
+reviewed_at: 2026-03-29T14:00:00Z
 shadcn_initialized: false
 preset: none
 created: 2026-03-29
@@ -50,7 +51,9 @@ Exceptions: 44px minimum touch target for mobile-friendly interactive elements.
 | Body | 14px | 400 | 1.5 |
 | Label | 12px | 600 | 1.2 |
 | Heading | 20px | 600 | 1.2 |
-| Display | 28px | 700 | 1.1 |
+| Display | 28px | 600 | 1.1 |
+
+*Note: Font weights limited to 400 (Regular) and 600 (Semi-bold) for visual consistency.*
 
 ---
 
@@ -64,6 +67,15 @@ Exceptions: 44px minimum touch target for mobile-friendly interactive elements.
 | Destructive | #EF4444 | Error states, delete actions |
 
 Accent reserved for: Primary action buttons ("Submeter", "Novo Plano"), active navigation/tab highlights, and successful save indicators.
+
+---
+
+## Primary Focal Points
+
+| Screen | Primary Visual Anchor |
+|--------|-----------------------|
+| Teacher Dashboard | "Novo Plano de Ensino" button (Accent color, top right or center if empty) |
+| Study Plan Form | "Submeter para Revisão" button in the form header (Accent color) |
 
 ---
 
