@@ -35,7 +35,12 @@
   2. Teacher can import course data from a CSV file to pre-fill course codes and names.
   3. Form fields are validated in real-time using Zod, preventing invalid submissions.
   4. Changes are saved automatically in the background without manual intervention.
-**Plans**: TBD
+
+**Plans:** 3 plans
+- [ ] 02-01-PLAN.md — Data model and Teacher Dashboard.
+- [ ] 02-02-PLAN.md — Core multi-tab form and real-time auto-save.
+- [ ] 02-03-PLAN.md — Advanced inputs (Rich Text, Lists) and CSV Import.
+
 **UI hint**: yes
 
 ### Phase 3: Review & Revision Cycle
@@ -76,7 +81,7 @@
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & Authentication | 0/3 | Not started | - |
-| 2. Teacher Data Entry | 0/1 | Not started | - |
+| 2. Teacher Data Entry | 0/3 | Not started | - |
 | 3. Review & Revision Cycle | 0/1 | Not started | - |
 | 4. Administrative Oversight | 0/1 | Not started | - |
 | 5. Export & Archiving | 0/1 | Not started | - |
