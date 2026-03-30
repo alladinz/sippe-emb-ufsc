@@ -2,8 +2,8 @@
 
 ## Phases
 
-- [ ] **Phase 1: Foundation & Authentication** - Establish core infrastructure and role-based access control.
-- [ ] **Phase 2: Teacher Data Entry** - Build the comprehensive Study Plan form with auto-save and CSV import.
+- [x] **Phase 1: Foundation & Authentication** - Establish core infrastructure and role-based access control.
+- [x] **Phase 2: Teacher Data Entry** - Build the comprehensive Study Plan form with auto-save and CSV import.
 - [ ] **Phase 3: Review & Revision Cycle** - Implement the state machine and coordinator review workflow.
 - [ ] **Phase 4: Administrative Oversight** - Provide department-wide visibility and super-approver capabilities for the Chef.
 - [ ] **Phase 5: Export & Archiving** - Finalize with PDF generation and immutable document storage.
@@ -20,9 +20,9 @@
   3. User session persists across browser refreshes and tab closures.
 
 **Plans:** 3 plans
-- [ ] 01-foundation-authentication-01.md — Project scaffolding, testing framework, and Drizzle ORM setup.
-- [ ] 01-foundation-authentication-02.md — Better Auth configuration with RBAC and Organization plugins.
-- [ ] 01-foundation-authentication-03.md — Localized Login UI, dashboard shell, and database seeding.
+- [x] 01-foundation-authentication-01.md — Project scaffolding, testing framework, and Drizzle ORM setup.
+- [x] 01-foundation-authentication-02.md — Better Auth configuration with RBAC and Organization plugins.
+- [x] 01-foundation-authentication-03.md — Localized Login UI, dashboard shell, and database seeding.
 
 **UI hint**: yes
 
@@ -37,9 +37,9 @@
   4. Changes are saved automatically in the background without manual intervention.
 
 **Plans:** 3 plans
-- [ ] 02-01-PLAN.md — Data model and Teacher Dashboard.
-- [ ] 02-02-PLAN.md — Core multi-tab form and real-time auto-save.
-- [ ] 02-03-PLAN.md — Advanced inputs (Rich Text, Lists) and CSV Import.
+- [x] 02-01-PLAN.md — Data model and Teacher Dashboard.
+- [x] 02-02-PLAN.md — Core multi-tab form and real-time auto-save.
+- [x] 02-03-PLAN.md — Advanced inputs (Rich Text, Lists) and CSV Import.
 
 **UI hint**: yes
 
@@ -51,7 +51,12 @@
   1. Coordinator can view a dashboard of plans specifically for their assigned degree.
   2. Rejecting a plan requires mandatory feedback that is visible to the Teacher.
   3. Teacher can edit a rejected plan and re-submit it for another review cycle.
-**Plans**: TBD
+
+**Plans:** 3 plans
+- [ ] 03-01-PLAN.md — Secure State Transitions & Workflow Rules.
+- [ ] 03-02-PLAN.md — Coordinator Dashboard & Claim Workflow.
+- [ ] 03-03-PLAN.md — Form Locking & Feedback Loop.
+
 **UI hint**: yes
 
 ### Phase 4: Administrative Oversight
@@ -80,8 +85,8 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Authentication | 0/3 | Not started | - |
-| 2. Teacher Data Entry | 0/3 | Not started | - |
-| 3. Review & Revision Cycle | 0/1 | Not started | - |
+| 1. Foundation & Authentication | 3/3 | Completed | 2026-03-29 |
+| 2. Teacher Data Entry | 3/3 | Completed | 2026-03-29 |
+| 3. Review & Revision Cycle | 0/3 | In Progress | - |
 | 4. Administrative Oversight | 0/1 | Not started | - |
 | 5. Export & Archiving | 0/1 | Not started | - |
