@@ -35,9 +35,6 @@ import {
     Archive, 
     CheckCircle, 
     Trash2, 
-    Filter,
-    X,
-    Loader2,
     FilterX
 } from "lucide-react";
 import Link from "next/link";
@@ -47,13 +44,23 @@ import { bulkDeletePlansAction } from "../actions";
 import { useRouter, usePathname } from "next/navigation";
 import { confirmDialog, toastError, toastSuccess } from "@/lib/swal";
 
+interface Plan {
+    id: string;
+    status: string;
+    semester: string;
+    updatedAt: string | Date;
+    user: { name: string };
+    organization: { name: string };
+    courses: { name: string; classIdentifier?: string }[];
+}
+
 interface CentralArchiveTableProps {
-    plans: any[];
+    plans: Plan[];
     initialQuery?: string;
 }
 
 export function CentralArchiveTable({ plans, initialQuery = "" }: CentralArchiveTableProps) {
-    const [isPending, startTransition] = useTransition();
+    const [, startTransition] = useTransition();
     const router = useRouter();
     const pathname = usePathname();
     const [showFilters, setShowFilters] = useState(false);
@@ -68,21 +75,20 @@ export function CentralArchiveTable({ plans, initialQuery = "" }: CentralArchive
         if (initialQuery && !search) {
             setSearch(initialQuery);
         }
-    }, [initialQuery]);
+    }, [initialQuery, search, setSearch]);
 
     // Get unique values for filters
     const uniqueDisciplines = useMemo(() => Array.from(new Set(plans.map(p => p.courses?.[0]?.name || "Sem Disciplina"))).sort(), [plans]);
     const uniqueTeachers = useMemo(() => Array.from(new Set(plans.map(p => p.user.name))).sort(), [plans]);
     const uniqueSemesters = useMemo(() => Array.from(new Set(plans.map(p => p.semester))).sort(), [plans]);
-    const uniqueStatuses = ["approved", "archived"];
 
-    const statusLabels: Record<string, { label: string, color: string, icon: any }> = {
+    const statusLabels: Record<string, { label: string, color: string, icon: React.ElementType }> = {
         approved: { label: "Aprovado", color: "bg-green-100 text-green-800", icon: CheckCircle },
         archived: { label: "Arquivado", color: "bg-slate-100 text-slate-800", icon: Archive },
     };
 
     const filteredPlans = useMemo(() => {
-        let result = plans.filter(p => {
+        const result = plans.filter(p => {
             const query = search.toLowerCase();
             const matchesQuery = !query || 
                 p.user.name.toLowerCase().includes(query) || 
@@ -129,8 +135,8 @@ export function CentralArchiveTable({ plans, initialQuery = "" }: CentralArchive
                 clearSelection();
                 toastSuccess("Planos excluídos com sucesso");
                 router.refresh();
-            } catch (error: any) {
-                toastError(error.message || "Erro ao excluir planos");
+            } catch (error: unknown) {
+                toastError(error instanceof Error ? error.message : "Erro ao excluir planos");
             }
         });
     };
@@ -348,63 +354,5 @@ export function CentralArchiveTable({ plans, initialQuery = "" }: CentralArchive
                 onLimitChange={setLimit}
             />
         </TableShell>
-    );
-}
-
-function FilterDropdown({ 
-    options, 
-    selected, 
-    onChange,
-    labelMap = {}
-}: { 
-    options: string[], 
-    selected: string[], 
-    onChange: (val: string[]) => void,
-    labelMap?: Record<string, string>
-}) {
-    const toggle = (val: string) => {
-        if (selected.includes(val)) {
-            onChange(selected.filter(s => s !== val));
-        } else {
-            onChange([...selected, val]);
-        }
-    };
-
-    return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className={cn(
-                    "h-6 w-6 p-0 hover:bg-slate-200",
-                    selected.length > 0 && "text-brand-blue bg-brand-light/20"
-                )}>
-                    <Filter className="w-3 h-3" />
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-56 max-h-80 overflow-y-auto">
-                <DropdownMenuLabel className="text-xs">Filtrar por</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {options.map(opt => (
-                    <DropdownMenuCheckboxItem
-                        key={opt}
-                        checked={selected.includes(opt)}
-                        onCheckedChange={() => toggle(opt)}
-                        className="text-xs"
-                    >
-                        {labelMap[opt] || opt}
-                    </DropdownMenuCheckboxItem>
-                ))}
-                {selected.length > 0 && (
-                    <>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem 
-                            onClick={() => onChange([])}
-                            className="text-xs text-center justify-center font-bold text-brand-blue"
-                        >
-                            Limpar Filtro
-                        </DropdownMenuItem>
-                    </>
-                )}
-            </DropdownMenuContent>
-        </DropdownMenu>
     );
 }

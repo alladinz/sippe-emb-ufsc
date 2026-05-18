@@ -1,10 +1,8 @@
 import { headers } from "next/headers";
-import Link from "next/link";
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/db";
 import { studyPlans, universityCourses, organization, semesters } from "@/db/schema";
 import { eq, desc, asc } from "drizzle-orm";
-import { DeletePlanButton } from "./_components/delete-plan-button";
 import { CreatePlanDialog } from "./_components/create-plan-dialog";
 import { TeacherPlansTable } from "./_components/teacher-plans-table";
 
@@ -36,13 +34,6 @@ export default async function StudyPlansPage() {
   });
 
   const filteredOrgs = allOrganizations.filter(o => o.name !== "Geral");
-
-  const statusLabels: Record<string, { label: string, variant: "default" | "secondary" | "destructive" | "outline" }> = {
-    draft: { label: "Rascunho", variant: "secondary" },
-    submitted: { label: "Enviado", variant: "default" },
-    approved: { label: "Aprovado", variant: "outline" },
-    rejected: { label: "Rejeitado", variant: "destructive" },
-  };
 
   return (
     <div className="space-y-6">

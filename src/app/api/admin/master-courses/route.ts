@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 import { db } from "@/db";
 import { universityCourses, member } from "@/db/schema";
-import { and, eq, or, ilike, sql, desc, asc } from "drizzle-orm";
+import { and, eq, or, ilike, sql, asc } from "drizzle-orm";
 
 export async function GET(request: Request) {
   const session = await auth.api.getSession({
@@ -82,8 +82,9 @@ export async function GET(request: Request) {
         limit,
         totalPages: Math.ceil(total / limit)
     });
-  } catch (error: any) {
-    console.error(error);
-    return new NextResponse(error.message, { status: 500 });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Erro ao buscar cursos";
+    console.error(errorMessage);
+    return new NextResponse(errorMessage, { status: 500 });
   }
 }

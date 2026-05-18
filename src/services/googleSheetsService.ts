@@ -12,6 +12,7 @@ import { google } from 'googleapis';
  * 8. Copy the client_email and private_key values into your .env file
  */
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let auth: any = null;
 
 function getAuth() {
@@ -31,6 +32,7 @@ function getAuth() {
     client_email: clientEmail,
     private_key: privateKey,
   });
+  // @ts-expect-error - typing for fromJSON return can be tricky
   auth.scopes = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
 
   return auth;
@@ -53,14 +55,18 @@ export async function fetchSheetData(): Promise<string[][]> {
       range,
     });
     return response.data.values ?? [];
-  } catch (error: any) {
-    console.error('Error fetching data from Google Sheets:', error.message);
-    if (error.code === 403) {
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('Error fetching data from Google Sheets:', errorMessage);
+    
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const errorCode = (error as any)?.code;
+    if (errorCode === 403) {
       throw new Error('Permissão negada: verifique se a planilha foi compartilhada com o e-mail da conta de serviço.');
     }
-    if (error.code === 404) {
+    if (errorCode === 404) {
       throw new Error('Planilha não encontrada: verifique se o SPREADSHEET_ID está correto.');
     }
-    throw new Error(error.message || 'Erro ao acessar o Google Sheets');
+    throw new Error(errorMessage || 'Erro ao acessar o Google Sheets');
   }
 }

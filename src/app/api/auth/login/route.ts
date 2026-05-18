@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import { db } from '@/db';
 import { user as userTable, refreshTokens, member } from '@/db/schema';
-import { eq, and } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { gerarAccessToken, gerarRefreshToken } from '@/services/jwtService';
 import { z } from 'zod';
 import { validarBody } from '@/middleware/validarBody';

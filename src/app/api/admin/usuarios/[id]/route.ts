@@ -4,7 +4,6 @@ import { headers } from "next/headers";
 import { db } from "@/db";
 import { user, member } from "@/db/schema";
 import { and, eq, or, ne } from "drizzle-orm";
-import { fetchSheetData } from "@/services/googleSheetsService";
 
 export async function PATCH(
   request: Request,
@@ -53,7 +52,8 @@ export async function PATCH(
       .where(eq(user.id, id));
 
     return new NextResponse("OK", { status: 200 });
-  } catch (error: any) {
-    return new NextResponse(error.message, { status: 500 });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Erro ao atualizar usuário";
+    return new NextResponse(errorMessage, { status: 500 });
   }
 }

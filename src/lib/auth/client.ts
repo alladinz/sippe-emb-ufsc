@@ -3,35 +3,35 @@ import { useState, useEffect } from "react";
 
 export const authClient = {
   signIn: {
-    email: async ({ email, password }: any, options?: any) => {
+    email: async ({ email, password }: Record<string, string>, options?: { onSuccess?: (data: unknown) => void, onError?: (err: unknown) => void }) => {
       try {
         const { data } = await api.post('/auth/login', { email, senha: password });
         setAccessToken(data.accessToken);
         options?.onSuccess?.(data);
         return { data };
-      } catch (error: any) {
-        options?.onError?.({ error: error.response?.data || error });
+      } catch (error: unknown) {
+        options?.onError?.({ error: (error as { response?: { data?: unknown } }).response?.data || error });
         throw error;
       }
     }
   },
-  signOut: async (options?: any) => {
+  signOut: async (options?: { fetchOptions?: { onSuccess?: () => void, onError?: (err: unknown) => void } }) => {
     try {
       await api.post('/auth/logout');
       setAccessToken(null);
       options?.fetchOptions?.onSuccess?.();
-    } catch (error: any) {
+    } catch (error: unknown) {
       options?.fetchOptions?.onError?.(error);
       throw error;
     }
   },
-  resetPassword: async ({ newPassword, token }: any, options?: any) => {
+  resetPassword: async ({ newPassword, token }: Record<string, string>, options?: { onSuccess?: (data: unknown) => void, onError?: (err: { error: { message: string } }) => void }) => {
       try {
           const { data } = await api.post('/auth/definir-senha', { token, novaSenha: newPassword });
           options?.onSuccess?.(data);
           return { data };
-      } catch (error: any) {
-          options?.onError?.({ error: error.response?.data || error });
+      } catch (error: unknown) {
+          options?.onError?.({ error: (error as { response?: { data?: unknown } }).response?.data || error });
           throw error;
       }
   }
@@ -39,9 +39,9 @@ export const authClient = {
 
 // Custom hook to replace better-auth useSession
 export function useSession() {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<{ user: { id: string, name: string | null, email: string | null } } | null>(null);
   const [isPending, setIsPending] = useState(true);
-  const [error, setError] = useState<any>(null);
+  const [error, setError] = useState<unknown>(null);
 
   useEffect(() => {
     async function fetchSession() {

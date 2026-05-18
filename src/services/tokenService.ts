@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import { db } from '../db';
 import { user } from '../db/schema';
-import { eq, and } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 
 export function gerarTokenSeguro(): string {
   return crypto.randomBytes(32).toString('hex');

@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { TableContainer, TableShell } from "@/components/table";
-import { Clock, CheckCircle } from "lucide-react";
+import { Clock } from "lucide-react";
 
 export default function CoordinatorLoading() {
   return (

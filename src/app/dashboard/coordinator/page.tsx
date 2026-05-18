@@ -4,10 +4,6 @@ import { auth } from "@/lib/auth/auth";
 import { db } from "@/db";
 import { studyPlans } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
-import { Badge } from "@/components/ui/badge";
-import { Eye, Clock, CheckCircle, XCircle } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { CoordinatorPlansTable } from "./_components/coordinator-plans-table";
 
 export default async function CoordinatorDashboardPage() {
@@ -26,7 +22,8 @@ export default async function CoordinatorDashboardPage() {
       });
       console.log("Active member from API:", activeMember?.id);
   } catch (e) {
-      console.log("getActiveMember threw error (expected if none active):", (e as any)?.status || (e as any)?.message);
+      const error = e as { status?: number; message?: string };
+      console.log("getActiveMember threw error (expected if none active):", error.status || error.message);
   }
 
   // Fallback if not active in session
@@ -75,8 +72,7 @@ export default async function CoordinatorDashboardPage() {
       }
   }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const userRole = (activeMember as any)?.role as string;
+const userRole = (activeMember as { role?: string })?.role;
 
 if (!activeMember || (userRole !== "coordenador" && userRole !== "chefe")) {
     console.log("Access denied for role:", userRole, "in org:", activeMember?.organizationId);
@@ -104,14 +100,6 @@ if (!activeMember || (userRole !== "coordenador" && userRole !== "chefe")) {
   const newSubmissions = allPlans.filter(p => p.status === 'submitted');
   const inReview = allPlans.filter(p => p.status === 'pending_review');
   const finished = allPlans.filter(p => p.status === 'approved' || p.status === 'rejected');
-
-  const statusLabels: Record<string, { label: string, variant: "default" | "secondary" | "destructive" | "outline", icon: any }> = {
-    draft: { label: "Rascunho", variant: "secondary", icon: Clock },
-    submitted: { label: "Nova Submissão", variant: "default", icon: Clock },
-    pending_review: { label: "Em Revisão", variant: "default", icon: Clock },
-    approved: { label: "Aprovado", variant: "outline", icon: CheckCircle },
-    rejected: { label: "Rejeitado", variant: "destructive", icon: XCircle },
-  };
 
   return (
     <div className="space-y-12 pb-10">

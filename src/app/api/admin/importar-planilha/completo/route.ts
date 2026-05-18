@@ -88,8 +88,9 @@ export async function POST() {
         validationReport: { invalid }
     });
 
-  } catch (error: any) {
-    console.error("Error in full sheets import:", error.message);
-    return new NextResponse(error.message || "Erro ao importar dados da planilha", { status: 500 });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Erro ao importar dados da planilha";
+    console.error("Error in full sheets import:", errorMessage);
+    return new NextResponse(errorMessage, { status: 500 });
   }
 }

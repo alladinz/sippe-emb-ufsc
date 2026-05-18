@@ -5,13 +5,9 @@ import { db } from "@/db";
 import { studyPlans, organization, universityCourses, user, member, semesters, courses } from "@/db/schema";
 import { eq, desc, and, ilike, or, inArray, sql } from "drizzle-orm";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   School, 
-  Clock, 
-  CheckCircle, 
-  XCircle, 
   Database, 
   Calendar, 
   Users 
@@ -23,6 +19,7 @@ import { SemesterManagement } from "./_components/semester-management";
 import { UserManagement } from "./_components/user-management";
 import { ImportarPlanilha } from "@/components/ImportarPlanilha";
 import { SearchInput } from "./_components/search-input";
+import { cn } from "@/lib/utils";
 
 interface ChefDashboardPageProps {
     searchParams: Promise<{
@@ -98,7 +95,7 @@ export default async function ChefDashboardPage({ searchParams }: ChefDashboardP
 
   const whereClause = and(
       filterOrgId ? eq(studyPlans.organizationId, filterOrgId) : undefined,
-      params.status ? eq(studyPlans.status, params.status as any) : undefined,
+      params.status ? eq(studyPlans.status, params.status) : undefined,
       searchTerm ? (
           matchingIds && matchingIds.length > 0 
             ? inArray(studyPlans.id, matchingIds) 
@@ -112,7 +109,6 @@ export default async function ChefDashboardPage({ searchParams }: ChefDashboardP
       columns: { id: true }
   });
   const totalPlans = allMatchingPlans.length;
-  const totalPages = Math.ceil(totalPlans / pageSize);
 
   // Fetch paginated plans
   const plans = await db.query.studyPlans.findMany({
@@ -137,24 +133,6 @@ export default async function ChefDashboardPage({ searchParams }: ChefDashboardP
   const allSemesters = await db.query.semesters.findMany({
       orderBy: [desc(semesters.name)]
   });
-
-  const statusLabels: Record<string, { label: string, color: string, icon: any }> = {
-    draft: { label: "Rascunho", color: "bg-slate-100 text-slate-800", icon: Clock },
-    submitted: { label: "Nova Submissão", color: "bg-blue-100 text-blue-800", icon: Clock },
-    pending_review: { label: "Em Revisão", color: "bg-brand-light/20 text-indigo-800", icon: Clock },
-    approved: { label: "Aprovado", color: "bg-green-100 text-green-800", icon: CheckCircle },
-    rejected: { label: "Rejeitado", color: "bg-red-100 text-red-800", icon: XCircle },
-  };
-
-  const getPageLink = (page: number) => {
-      const p = new URLSearchParams();
-      if (params.tab) p.set("tab", params.tab);
-      if (params.course) p.set("course", params.course);
-      if (params.status) p.set("status", params.status);
-      if (params.search) p.set("search", params.search);
-      p.set("page", page.toString());
-      return `/dashboard/chef?${p.toString()}`;
-  };
 
   return (
     <div className="space-y-8">
@@ -307,8 +285,4 @@ export default async function ChefDashboardPage({ searchParams }: ChefDashboardP
       </Tabs>
     </div>
   );
-}
-
-function cn(...classes: any[]) {
-  return classes.filter(Boolean).join(" ");
 }

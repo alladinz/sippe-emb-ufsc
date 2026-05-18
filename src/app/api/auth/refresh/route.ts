@@ -7,6 +7,11 @@ import { verificarRefreshToken, gerarAccessToken } from '@/services/jwtService';
 
 import { withErrorHandler } from '@/lib/errorHandler';
 
+interface RefreshTokenPayload {
+  id: string;
+  type: string;
+}
+
 export const POST = withErrorHandler(async (req: NextRequest) => {
   const refreshToken = req.cookies.get('refreshToken')?.value;
 
@@ -14,7 +19,7 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
     return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
   }
 
-  const payload = verificarRefreshToken(refreshToken) as any;
+  const payload = verificarRefreshToken(refreshToken) as unknown as RefreshTokenPayload;
 
   // Check token exists and is not revoked in DB
   const tokenHash = crypto

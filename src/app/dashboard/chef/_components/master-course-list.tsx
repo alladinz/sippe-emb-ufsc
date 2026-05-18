@@ -15,21 +15,16 @@ import {
     TableToolbar,
     TablePagination,
     TableEmptyState,
-    TableSkeleton,
     TableFilters
 } from "@/components/table";
 import { useTable } from "@/hooks/table/useTable";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { 
     Database, 
     RefreshCcw, 
-    Search, 
     Loader2, 
-    Info,
-    Filter,
     Trash2,
     FilterX
 } from "lucide-react";
@@ -44,10 +39,19 @@ import {
     SelectValue 
 } from "@/components/ui/select";
 import { confirmDialog, toastError, toastSuccess, swalLoading, MySwal } from "@/lib/swal";
-import { cn } from "@/lib/utils";
+
+interface MasterCourse {
+    id: string;
+    code: string;
+    name: string;
+    curriculum?: string | null;
+    phase?: number | null;
+    workloadHours?: number | null;
+    graduation?: string | null;
+}
 
 interface MasterCourseListProps {
-    courses: any[];
+    courses: MasterCourse[];
     teachers: { id: string, name: string | null }[];
     organizations: { id: string, name: string }[];
 }
@@ -62,9 +66,8 @@ export function MasterCourseList({ courses: initialCourses, teachers, organizati
     } = useTable({ id: 'master-course-list', initialLimit: 20 });
 
     // Pagination & Dynamic Data State
-    const [masterCourses, setMasterCourses] = useState<any[]>(initialCourses || []);
+    const [masterCourses, setMasterCourses] = useState<MasterCourse[]>(initialCourses || []);
     const [total, setTotal] = useState(0);
-    const [totalPages, setTotalPages] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
 
     const fetchMasterCourses = useCallback(async () => {
@@ -84,7 +87,6 @@ export function MasterCourseList({ courses: initialCourses, teachers, organizati
 
             setMasterCourses(data.courses);
             setTotal(data.total);
-            setTotalPages(data.totalPages);
         } catch (error) {
             console.error(error);
             toastError("Erro ao carregar base de disciplinas");

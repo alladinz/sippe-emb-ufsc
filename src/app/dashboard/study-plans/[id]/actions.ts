@@ -9,7 +9,6 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { StudyPlanFormValues, isValidTransition, StudyPlanStatus } from "@/lib/schemas/study-plan";
 import { createNotification } from "@/lib/notifications";
-import { member } from "@/db/schema";
 
 export async function saveStudyPlanAction(id: string, data: StudyPlanFormValues) {
   console.log("Saving Study Plan:", id, "Data semester:", data.semester);

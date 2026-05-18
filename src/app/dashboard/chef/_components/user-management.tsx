@@ -15,7 +15,6 @@ import {
     TableToolbar,
     TablePagination,
     TableEmptyState,
-    TableSkeleton,
     TableBulkActions,
     TableFilters
     } from "@/components/table";
@@ -39,11 +38,9 @@ import {
         SelectTrigger, 
         SelectValue 
     } from "@/components/ui/select";
-    import { Badge } from "@/components/ui/badge";
-import { UserPlus, Trash2, Search, Loader2, UserCog, Mail, Check, X, MoreHorizontal, Edit2, FilterX } from "lucide-react";
+import { UserPlus, Trash2, Loader2, UserCog, Mail, Check, X, MoreHorizontal, Edit2, FilterX } from "lucide-react";
 import { addUserAction, deleteUserAccountAction, updateUserAccessAction, bulkDeleteUsersAction } from "../actions";
 import { confirmDialog, toastError, toastSuccess, toastWarning } from "@/lib/swal";
-import { useRouter } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { 
@@ -55,13 +52,27 @@ import {
     DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
 
+interface User {
+    id: string;
+    name: string | null;
+    email: string | null;
+    status: string | null;
+}
+
+interface Member {
+    id: string;
+    userId: string;
+    user: User;
+    role: string;
+    organizationId: string | null;
+}
+
 interface UserManagementProps {
-    members: any[]; // Initial data from server
-    organizations: any[];
+    members: Member[]; // Initial data from server
+    organizations: { id: string, name: string, slug?: string | null }[];
 }
 
 export function UserManagement({ members: initialMembers, organizations }: UserManagementProps) {
-    const router = useRouter();
     const [isPending, startTransition] = useTransition();
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
     const [editingEmailId, setEditingEmailId] = useState<string | null>(null);
@@ -74,9 +85,8 @@ export function UserManagement({ members: initialMembers, organizations }: UserM
         setPage, setLimit, setSearch, setFilters, toggleSelect, toggleSelectAll, clearSelection
     } = useTable({ id: 'user-management', initialLimit: 20 });
 
-    const [members, setMembers] = useState<any[]>(initialMembers);
+    const [members, setMembers] = useState<Member[]>(initialMembers);
     const [total, setTotal] = useState(0);
-    const [totalPages, setTotalPages] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
 
     const fetchUsers = useCallback(async () => {
@@ -91,10 +101,10 @@ export function UserManagement({ members: initialMembers, organizations }: UserM
             if (!res.ok) throw new Error("Failed to fetch");
             const data = await res.json();
             
-            const flattened: any[] = [];
-            data.usuarios.forEach((u: any) => {
+            const flattened: Member[] = [];
+            data.usuarios.forEach((u: { id: string, name: string, email: string, status: string, members: Member[] }) => {
                 if (u.members && u.members.length > 0) {
-                    u.members.forEach((m: any) => {
+                    u.members.forEach((m: Member) => {
                         flattened.push({
                             ...m,
                             user: {
@@ -123,7 +133,6 @@ export function UserManagement({ members: initialMembers, organizations }: UserM
 
             setMembers(flattened);
             setTotal(data.total);
-            setTotalPages(data.totalPages);
         } catch (error) {
             console.error(error);
             toastError("Erro ao carregar usuários");
@@ -167,12 +176,10 @@ export function UserManagement({ members: initialMembers, organizations }: UserM
         return matchesSearch;
     });
 
-    const [globalPendingCount, setGlobalPendingCount] = useState(0);
-    
     useEffect(() => {
         fetch('/api/admin/usuarios?count=true&status=pending_email')
             .then(r => r.json())
-            .then(data => setGlobalPendingCount(data.count))
+            .then(() => { /* globalPendingCount not used in UI yet */ })
             .catch(console.error);
     }, [members]);
 
@@ -195,8 +202,9 @@ export function UserManagement({ members: initialMembers, organizations }: UserM
                 clearSelection();
                 toastSuccess(`${selectedIds.length} usuários excluídos.`);
                 fetchUsers();
-            } catch (error: any) {
-                toastError("Erro ao excluir usuários: " + error.message);
+            } catch (error: unknown) {
+                const message = error instanceof Error ? error.message : "Erro desconhecido";
+                toastError("Erro ao excluir usuários: " + message);
             }
         });
     };
@@ -223,8 +231,9 @@ export function UserManagement({ members: initialMembers, organizations }: UserM
                 setNewOrgId("");
                 toastSuccess("Usuário adicionado com sucesso");
                 fetchUsers();
-            } catch (error: any) {
-                toastError("Erro ao adicionar usuário: " + error.message);
+            } catch (error: unknown) {
+                const message = error instanceof Error ? error.message : "Erro desconhecido";
+                toastError("Erro ao adicionar usuário: " + message);
             }
         });
     };
@@ -245,8 +254,9 @@ export function UserManagement({ members: initialMembers, organizations }: UserM
                 await deleteUserAccountAction(userId);
                 toastSuccess("Usuário excluído com sucesso");
                 fetchUsers();
-            } catch (error: any) {
-                toastError("Erro ao excluir: " + error.message);
+            } catch (error: unknown) {
+                const message = error instanceof Error ? error.message : "Erro desconhecido";
+                toastError("Erro ao excluir: " + message);
             }
         });
     };
@@ -273,8 +283,9 @@ export function UserManagement({ members: initialMembers, organizations }: UserM
             setEditingEmailId(null);
             setTempEmail("");
             fetchUsers();
-        } catch (error: any) {
-            toastError(error.message || "Erro ao atualizar e-mail");
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : "Erro desconhecido";
+            toastError(message || "Erro ao atualizar e-mail");
         }
     };
 
@@ -296,8 +307,9 @@ export function UserManagement({ members: initialMembers, organizations }: UserM
                 await updateUserAccessAction(id, role, orgId);
                 toastSuccess("Acesso atualizado com sucesso");
                 fetchUsers();
-            } catch (error: any) {
-                toastError("Erro ao atualizar acesso: " + error.message);
+            } catch (error: unknown) {
+                const message = error instanceof Error ? error.message : "Erro desconhecido";
+                toastError("Erro ao atualizar acesso: " + message);
             }
         });
     };

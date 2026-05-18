@@ -14,7 +14,6 @@ interface TableToolbarProps {
   onSearchChange?: (value: string) => void;
   onClearSearch?: () => void;
   actions?: React.ReactNode;
-  filters?: React.ReactNode;
   showFilters?: boolean;
   onToggleFilters?: () => void;
   className?: string;
@@ -28,7 +27,6 @@ export function TableToolbar({
   onSearchChange,
   onClearSearch,
   actions,
-  filters,
   showFilters,
   onToggleFilters,
   className,

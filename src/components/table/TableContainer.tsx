@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { Table } from "@/components/ui/table";
 
 interface TableContainerProps extends React.HTMLAttributes<HTMLDivElement> {
   stickyHeader?: boolean;

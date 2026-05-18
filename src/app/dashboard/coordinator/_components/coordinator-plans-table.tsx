@@ -20,8 +20,17 @@ import { Eye, Clock, CheckCircle, XCircle } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
+interface CoordinatorPlan {
+    id: string;
+    status: string;
+    semester: string | null;
+    updatedAt: string | Date;
+    user: { name: string };
+    courses: { name: string; code: string; classIdentifier?: string }[];
+}
+
 interface CoordinatorPlansTableProps {
-    plans: any[];
+    plans: CoordinatorPlan[];
     emptyMessage: string;
     actionLabel: string;
     statusVariant?: "amber" | "blue" | "default";
@@ -35,7 +44,7 @@ export function CoordinatorPlansTable({
 }: CoordinatorPlansTableProps) {
     const { density } = useTable({ id: 'coordinator-plans' });
 
-    const statusLabels: Record<string, { label: string, variant: string, icon: any }> = {
+    const statusLabels: Record<string, { label: string, variant: string, icon: React.ElementType }> = {
         draft: { label: "Rascunho", variant: "bg-slate-100 text-slate-800", icon: Clock },
         submitted: { label: "Nova Submissão", variant: "bg-amber-100 text-amber-800 border-amber-200", icon: Clock },
         pending_review: { label: "Em Revisão", variant: "bg-blue-100 text-blue-800 border-blue-200", icon: Clock },

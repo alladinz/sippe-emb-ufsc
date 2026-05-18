@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/db";
-import { studyPlans, member } from "@/db/schema";
-import { eq, inArray, and, or } from "drizzle-orm";
+import { studyPlans } from "@/db/schema";
+import { eq, inArray } from "drizzle-orm";
 import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";

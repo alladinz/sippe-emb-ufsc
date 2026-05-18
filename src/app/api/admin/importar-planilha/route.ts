@@ -51,12 +51,14 @@ export async function POST() {
     lastImportMap.set(session.user.id, now);
 
     return NextResponse.json(summary);
-  } catch (error: any) {
-    console.error("Error in sheets import:", error.message);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Erro ao importar dados da planilha";
+    console.error("Error in sheets import:", errorMessage);
+    
     // Determine status code based on error message if possible, otherwise 500
     let status = 500;
-    if (error.message.includes("Nenhum semestre ativo")) status = 400;
+    if (errorMessage.includes("Nenhum semestre ativo")) status = 400;
     
-    return new NextResponse(error.message || "Erro ao importar dados da planilha", { status });
+    return new NextResponse(errorMessage, { status });
   }
 }

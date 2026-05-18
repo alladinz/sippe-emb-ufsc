@@ -98,9 +98,10 @@ export async function GET(
                 "Content-Length": pdfBuffer.length.toString(),
             },
         });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("PDF Generation Error:", error);
         if (browser) await browser.close();
-        return new NextResponse(`Erro ao gerar PDF: ${error.message}`, { status: 500 });
+        const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
+        return new NextResponse(`Erro ao gerar PDF: ${errorMessage}`, { status: 500 });
     }
 }

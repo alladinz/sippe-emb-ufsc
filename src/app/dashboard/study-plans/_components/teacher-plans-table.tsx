@@ -18,11 +18,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Edit, Eye } from "lucide-react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 import { DeletePlanButton } from "./delete-plan-button";
 
+interface TeacherPlan {
+    id: string;
+    status: string;
+    semester: string | null;
+    updatedAt: string | Date;
+    courses: { name: string; classIdentifier?: string }[];
+}
+
 interface TeacherPlansTableProps {
-    plans: any[];
+    plans: TeacherPlan[];
 }
 
 export function TeacherPlansTable({ plans }: TeacherPlansTableProps) {

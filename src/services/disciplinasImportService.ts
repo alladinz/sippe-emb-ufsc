@@ -145,13 +145,14 @@ export async function importDisciplinasFromRows(rows: DisciplinaRow[]): Promise<
           });
           summary.inserted++;
         }
-      } catch (err: any) {
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Erro desconhecido ao processar linha";
         summary.errors.push({
           row: rowIndex,
-          message: err.message || "Erro desconhecido ao processar linha",
+          message: errorMessage,
         });
         // We throw to rollback the entire transaction as requested in step 7d
-        throw new Error(`Erro na linha ${rowIndex}: ${err.message}`);
+        throw new Error(`Erro na linha ${rowIndex}: ${errorMessage}`);
       }
       rowIndex++;
     }

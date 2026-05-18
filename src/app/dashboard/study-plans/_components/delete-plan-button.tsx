@@ -32,9 +32,9 @@ export function DeletePlanButton({ id, variant = "icon", shouldRedirect = false,
             try {
                 await deleteStudyPlanAction(id, shouldRedirect);
                 toastSuccess("Rascunho excluído com sucesso");
-            } catch (error: any) {
+            } catch (error) {
                 // Ignore Next.js redirect errors
-                if (error.message === 'NEXT_REDIRECT') return;
+                if (error instanceof Error && error.message === 'NEXT_REDIRECT') return;
                 
                 toastError(error instanceof Error ? error.message : "Erro ao excluir o plano");
             }

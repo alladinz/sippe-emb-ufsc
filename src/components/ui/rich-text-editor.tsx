@@ -77,7 +77,7 @@ export const RichTextEditor = React.forwardRef<HTMLTextAreaElement, RichTextEdit
             const numberMatch = currentLine.match(/^(\s*)(\d+(\.\d+)*)\.?\s(.*)$/);
 
             if (numberMatch) {
-                const [fullLine, whitespace, numbers, lastPart, content] = numberMatch;
+                const [, whitespace, numbers, , content] = numberMatch;
                 const segments = numbers.split(".");
                 
                 let newNumbers = "";

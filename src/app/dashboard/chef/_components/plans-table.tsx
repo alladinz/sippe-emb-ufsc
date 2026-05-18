@@ -11,7 +11,6 @@ import {
 import { 
     TableContainer,
     TableShell,
-    TableToolbar,
     TablePagination,
     TableEmptyState,
 } from "@/components/table";
@@ -23,8 +22,19 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 
+interface Plan {
+    id: string;
+    status: string;
+    semester: string;
+    updatedAt: string | Date;
+    user: { name: string };
+    organization: { name: string };
+    courses: { name: string }[];
+    turma?: { turma: string } | null;
+}
+
 interface PlansTableProps {
-    initialPlans: any[];
+    initialPlans: Plan[];
     total: number;
     pageSize: number;
     currentPage: number;
@@ -36,7 +46,7 @@ export function PlansTable({ initialPlans, total, pageSize, currentPage }: Plans
     
     const { density } = useTable({ id: 'chef-plans-overview' });
 
-    const statusLabels: Record<string, { label: string, color: string, icon: any }> = {
+    const statusLabels: Record<string, { label: string, color: string, icon: React.ElementType }> = {
         draft: { label: "Rascunho", color: "bg-slate-100 text-slate-800", icon: Clock },
         submitted: { label: "Nova Submissão", color: "bg-blue-100 text-blue-800", icon: Clock },
         pending_review: { label: "Em Revisão", color: "bg-brand-light/20 text-indigo-800", icon: Clock },

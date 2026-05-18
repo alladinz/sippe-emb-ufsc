@@ -53,7 +53,7 @@ interface PreviewData {
   }[];
 }
 
-function DisciplineTreeItem({ disc }: { disc: any }) {
+function DisciplineTreeItem({ disc }: { disc: PreviewData['disciplinas'][number] }) {
   const [expanded, setExpanded] = useState(false);
   return (
     <div className="border rounded mb-2 overflow-hidden bg-white shadow-sm">
@@ -72,7 +72,7 @@ function DisciplineTreeItem({ disc }: { disc: any }) {
         <div className="p-0 border-t">
           <table className="w-full text-[11px]">
             <tbody className="divide-y">
-              {disc.turmas.map((t: any, i: number) => (
+              {disc.turmas.map((t, i: number) => (
                 <tr key={i} className="hover:bg-slate-50">
                   <td className="p-2 px-4 font-bold text-slate-600 w-24">Turma {t.turma}</td>
                   <td className="p-2 text-slate-500 italic flex items-center gap-2">
@@ -115,7 +115,7 @@ export function ImportarPlanilha() {
       setPreviewData(data);
       setState("PREVIEW");
       MySwal.close();
-    } catch (error: any) {
+    } catch (error) {
       MySwal.close();
       handleApiError(error);
     }
@@ -149,7 +149,7 @@ export function ImportarPlanilha() {
       setState("RESULT");
       MySwal.close();
       toastSuccess(`Importação concluída com sucesso.`);
-    } catch (error: any) {
+    } catch (error) {
       MySwal.close();
       handleApiError(error);
     }
@@ -192,7 +192,7 @@ export function ImportarPlanilha() {
       setState("RESULT");
       MySwal.close();
       toastSuccess("Importação de arquivo concluída.");
-    } catch (error: any) {
+    } catch (error) {
       MySwal.close();
       handleApiError(error);
     } finally {
@@ -200,15 +200,15 @@ export function ImportarPlanilha() {
     }
   };
 
-  const handleApiError = (error: any) => {
-    const msg = error.message || "";
+  const handleApiError = (error: unknown) => {
+    const msg = error instanceof Error ? error.message : String(error);
     if (msg.includes("credentials")) {
       toastError("Erro de autenticação com o Google Sheets. Verifique as configurações do servidor.");
     } else if (msg.includes("Planilha não encontrada") || msg.includes("404")) {
       toastError("Planilha não encontrada. Verifique se ela foi compartilhada com a conta de serviço.");
     } else if (msg.includes("semestre ativo")) {
       toastError("Nenhum semestre ativo configurado. Configure um semestre antes de importar.");
-    } else if (error.name === "TypeError" && msg.includes("fetch")) {
+    } else if (error instanceof Error && error.name === "TypeError" && msg.includes("fetch")) {
       toastError("Erro de conexão. Verifique sua internet e tente novamente.");
     } else {
       toastError(msg || "Ocorreu um erro inesperado.");

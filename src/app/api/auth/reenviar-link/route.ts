@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { user as userTable, member, organization } from '@/db/schema';
-import { eq, and, inArray } from 'drizzle-orm';
+import { user as userTable, member } from '@/db/schema';
+import { eq } from 'drizzle-orm';
 import { criarTokenPrimeiroAcesso } from '@/services/tokenService';
 import { auth } from '@/lib/auth/auth';
 import { headers } from 'next/headers';

@@ -85,8 +85,9 @@ export async function POST(request: Request) {
         validationReport: { invalid }
     });
 
-  } catch (error: any) {
-    console.error("Error in XLSX import:", error.message);
-    return new NextResponse(error.message || "Erro ao importar arquivo XLSX", { status: 500 });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Erro ao importar arquivo XLSX";
+    console.error("Error in XLSX import:", errorMessage);
+    return new NextResponse(errorMessage, { status: 500 });
   }
 }

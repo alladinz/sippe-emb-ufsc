@@ -2,15 +2,19 @@ import { db } from "../../db";
 import * as schema from "../../db/schema";
 import { eq, and } from "drizzle-orm";
 import { cookies, headers } from "next/headers";
-import { verificarAccessToken, verificarRefreshToken, gerarAccessToken } from "../../services/jwtService";
+import { verificarAccessToken, verificarRefreshToken } from "../../services/jwtService";
 import crypto from 'crypto';
+
+interface JWTPayload {
+  id: string;
+}
 
 export const auth = {
   api: {
-    getSession: async (options?: { headers: any }) => {
+    getSession: async () => {
       const allHeaders = await headers();
       const authHeader = allHeaders.get("authorization");
-      let token = authHeader?.split(" ")[1];
+      const token = authHeader?.split(" ")[1];
 
       // If no auth header, check cookies (might be needed for server components)
       if (!token) {
@@ -25,7 +29,7 @@ export const auth = {
 
         if (refreshToken) {
           try {
-            const payload = verificarRefreshToken(refreshToken) as any;
+            const payload = verificarRefreshToken(refreshToken) as unknown as JWTPayload;
             const tokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex');
             
             const stored = await db.select().from(schema.refreshTokens)
@@ -40,7 +44,7 @@ export const auth = {
                 return { user };
               }
             }
-          } catch (e) {
+          } catch {
             return null;
           }
         }
@@ -48,26 +52,26 @@ export const auth = {
       }
 
       try {
-        const payload = verificarAccessToken(token) as any;
+        const payload = verificarAccessToken(token) as unknown as JWTPayload;
         const user = await db.query.user.findFirst({
           where: eq(schema.user.id, payload.id)
         });
         if (!user || user.status !== 'active') return null;
         return { user };
-      } catch (e) {
+      } catch {
         return null;
       }
     },
-    getActiveMember: async (options?: { headers: any }) => {
-        const session = await auth.api.getSession(options);
+    getActiveMember: async () => {
+        const session = await auth.api.getSession();
         if (!session) return null;
         return await db.query.member.findFirst({
             where: eq(schema.member.userId, session.user.id),
             with: { organization: true }
         });
     },
-    listOrganizations: async (options?: { headers: any }) => {
-        const session = await auth.api.getSession(options);
+    listOrganizations: async () => {
+        const session = await auth.api.getSession();
         if (!session) return [];
         return await db.query.member.findMany({
             where: eq(schema.member.userId, session.user.id),

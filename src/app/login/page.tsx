@@ -76,9 +76,13 @@ export default function LoginPage() {
       setAccessToken(data.accessToken);
       router.push("/dashboard");
       router.refresh();
-    } catch (err: any) {
+    } catch (err) {
       console.error("Login error:", err);
-      setError(err.response?.data?.error || "Ocorreu um erro ao fazer login. Tente novamente.");
+      let errorMessage = "Ocorreu um erro ao fazer login. Tente novamente.";
+      if (err instanceof Error) {
+        errorMessage = (err as { response?: { data?: { error?: string } } }).response?.data?.error || err.message;
+      }
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -96,8 +100,8 @@ export default function LoginPage() {
         setResetSuccess(false);
         setResetEmail("");
       }, 5000);
-    } catch (err: any) {
-      setResetError(err.message || "Erro ao solicitar redefinição.");
+    } catch (err) {
+      setResetError(err instanceof Error ? err.message : "Erro ao solicitar redefinição.");
     } finally {
       setResetLoading(false);
     }

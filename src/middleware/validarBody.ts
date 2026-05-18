@@ -18,7 +18,7 @@ export async function validarBody(req: NextRequest, schema: ZodSchema) {
       };
     }
     return { success: true, data: result.data };
-  } catch (error) {
+  } catch {
     return {
       success: false,
       response: NextResponse.json({ error: 'Corpo da requisição inválido' }, { status: 400 })

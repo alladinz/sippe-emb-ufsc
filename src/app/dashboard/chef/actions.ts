@@ -12,6 +12,27 @@ import path from "path";
 
 import { createNotification } from "@/lib/notifications";
 
+interface RawBibliographyItem {
+    authors?: string;
+    details?: string;
+    full?: string;
+}
+
+interface RawCourse {
+    code?: string;
+    name?: string;
+    phase?: string | number;
+    workload_hours?: string | number;
+    description?: string;
+    syllabus?: string;
+    bibliography?: {
+        basic?: (string | RawBibliographyItem)[];
+        complementary?: (string | RawBibliographyItem)[];
+    };
+    basic_bibliography?: RawBibliographyItem[];
+    complementary_bibliography?: RawBibliographyItem[];
+}
+
 async function verifyChef() {
     const session = await auth.api.getSession({
         headers: await headers(),
@@ -33,7 +54,7 @@ async function verifyChef() {
     return { session, chefMembership };
 }
 
-export async function importMasterCoursesAction(coursesList: any[], graduation: string) {
+export async function importMasterCoursesAction(coursesList: RawCourse[], graduation: string) {
     await verifyChef();
     await processCoursesBatch(coursesList, graduation);
     revalidatePath("/dashboard/chef");
@@ -80,7 +101,7 @@ export async function syncMasterDataFolderAction() {
     revalidatePath("/dashboard/chef");
 }
 
-async function processCoursesBatch(coursesList: any[], graduation: string, year: string = "2016") {
+async function processCoursesBatch(coursesList: RawCourse[], graduation: string, year: string = "2016") {
     for (const rawCourse of coursesList) {
         // Normalization
         let code = rawCourse.code?.trim();
@@ -119,17 +140,17 @@ async function processCoursesBatch(coursesList: any[], graduation: string, year:
         };
 
         if (rawCourse.bibliography && !Array.isArray(rawCourse.bibliography)) {
-            normalizedBib.basic = (rawCourse.bibliography.basic || []).map((b: any) => typeof b === 'string' ? { authors: "", details: b } : b);
-            normalizedBib.complementary = (rawCourse.bibliography.complementary || []).map((b: any) => typeof b === 'string' ? { authors: "", details: b } : b);
+            normalizedBib.basic = (rawCourse.bibliography.basic || []).map((b) => typeof b === 'string' ? { authors: "", details: b } : { authors: b.authors || "", details: b.details || b.full || "" });
+            normalizedBib.complementary = (rawCourse.bibliography.complementary || []).map((b) => typeof b === 'string' ? { authors: "", details: b } : { authors: b.authors || "", details: b.details || b.full || "" });
         } else {
             // Support new structure: basic_bibliography: [{authors: "", details: ""}]
-            normalizedBib.basic = (rawCourse.basic_bibliography || []).map((b: any) => ({
+            normalizedBib.basic = (rawCourse.basic_bibliography || []).map((b) => ({
                 authors: b.authors || "",
-                details: b.details || b.full || b
+                details: b.details || b.full || ""
             }));
-            normalizedBib.complementary = (rawCourse.complementary_bibliography || []).map((b: any) => ({
+            normalizedBib.complementary = (rawCourse.complementary_bibliography || []).map((b) => ({
                 authors: b.authors || "",
-                details: b.details || b.full || b
+                details: b.details || b.full || ""
             }));
         }
 
@@ -179,7 +200,7 @@ async function processCoursesBatch(coursesList: any[], graduation: string, year:
     }
 }
 
-export async function updateUniversityCourseAction(id: string, data: any) {
+export async function updateUniversityCourseAction(id: string, data: Partial<RawCourse>) {
     await verifyChef();
     await db.update(universityCourses)
         .set({
@@ -320,7 +341,7 @@ export async function addUserAction(email: string, name: string, role: string, o
 export async function updateUserAccessAction(memberId: string, role: string, organizationId?: string) {
     await verifyChef();
     
-    const updateData: any = { role };
+    const updateData: { role: string; organizationId?: string } = { role };
     if (organizationId) {
         updateData.organizationId = organizationId;
     }
@@ -403,7 +424,7 @@ export async function assignTeacherToCourseAction(
         throw new Error("Selecione ao menos um curso/graduação.");
     }
 
-    const { session, chefMembership } = await verifyChef();
+    const { session } = await verifyChef();
 
     // 1. Get metadata
     const metadata = await db.query.universityCourses.findFirst({
@@ -442,7 +463,7 @@ export async function assignTeacherToCourseAction(
     // Process Prerequisites (Fetch names for codes)
 
     let formattedPrerequisites = "";
-    if (metadata.prerequisites && Array.isArray(metadata.prerequisites) && (metadata.prerequisites as any).length > 0) {
+    if (metadata.prerequisites && Array.isArray(metadata.prerequisites) && (metadata.prerequisites as string[]).length > 0) {
         const prereqCodes = metadata.prerequisites as string[];
         const prereqMetadata = await db.query.universityCourses.findMany({
             where: inArray(universityCourses.code, prereqCodes)
@@ -487,9 +508,9 @@ Os(as) alunos(as) que eventualmente faltarem em alguma avaliação que foram per
     });
 
     // 4. Add Bibliography
-    const bib = metadata.bibliography as { basic: any[], complementary: any[] };
+    const bib = metadata.bibliography as { basic: RawBibliographyItem[], complementary: RawBibliographyItem[] };
     
-    const insertBibItems = async (items: any[], type: "basic" | "complementary") => {
+    const insertBibItems = async (items: (string | RawBibliographyItem)[], type: "basic" | "complementary") => {
         if (!items || !Array.isArray(items)) return;
         
         for (const item of items) {
@@ -537,34 +558,6 @@ Os(as) alunos(as) que eventualmente faltarem em alguma avaliação que foram per
 
     revalidatePath("/dashboard/chef");
     revalidatePath("/dashboard/study-plans");
-}
-
-// Utility to attempt parsing UFSC bib string
-function parseBibString(str: string) {
-    // Example: "FLEMMING, D. M.; GONÇALVES, M. B. Cálculo A. 6. ed. São Paulo: Pearson Prentice Hall, 2007. ISBN 978-85-76051-15-2."
-    
-    // This is a naive parser for the specific UFSC format seen in the JSON
-    const isbnMatch = str.match(/ISBN\s*([0-9-xX]+)/i);
-    const isbn = isbnMatch ? isbnMatch[1] : null;
-    
-    const yearMatch = str.match(/,\s*(\d{4})\./);
-    const year = yearMatch ? parseInt(yearMatch[1]) : null;
-    
-    // Very simple split for author/title
-    // Usually "AUTHORS. Title. Ed. City: Publisher, Year."
-    const parts = str.split('. ');
-    const author = parts[0] || "Autor Desconhecido";
-    const title = parts[1] || str;
-    const publisherPart = parts.find(p => p.includes(':'));
-    const publisher = publisherPart ? publisherPart.split(':')[1]?.split(',')[0]?.trim() : null;
-
-    return {
-        author,
-        title,
-        year,
-        publisher,
-        isbn
-    };
 }
 
 export async function toggleActiveSemesterAction(id: string) {

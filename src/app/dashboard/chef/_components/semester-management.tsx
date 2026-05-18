@@ -9,8 +9,16 @@ import { Calendar, Save, Loader2, Plus, Trash2 } from "lucide-react";
 import { upsertSemesterAction, deleteSemesterAction, toggleActiveSemesterAction } from "../actions";
 import { confirmDialog, toastError, toastSuccess, toastWarning } from "@/lib/swal";
 
+interface Semester {
+    id: string;
+    name: string;
+    startDate: string | Date;
+    endDate: string | Date;
+    ativo: boolean;
+}
+
 interface SemesterManagementProps {
-    semesters: any[];
+    semesters: Semester[];
 }
 
 export function SemesterManagement({ semesters }: SemesterManagementProps) {

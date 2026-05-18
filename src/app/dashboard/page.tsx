@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from "@/components/ui/button";
 import { FileEdit, ArrowRight, Clock, BookOpen } from "lucide-react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 export default async function DashboardPage() {
   const session = await auth.api.getSession({
@@ -161,8 +162,4 @@ function Badge({ children, className, variant = "default" }: { children: React.R
             {children}
         </span>
     );
-}
-
-function cn(...classes: any[]) {
-    return classes.filter(Boolean).join(" ");
 }

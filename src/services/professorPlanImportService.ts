@@ -254,7 +254,7 @@ export async function importProfessoresEPlanos(
         // In onConflictDoUpdate, returning may return existing if no update happened or EXCLUDED
         // Actually Drizzle returning() works with upsert.
         // We'll track if it was created or updated.
-        const wasUpdated = (turmaUpserted as any).updatedAt > (turmaUpserted as any).createdAt; // Simple heuristic
+        const wasUpdated = (turmaUpserted as { updatedAt: Date, createdAt: Date }).updatedAt > (turmaUpserted as { updatedAt: Date, createdAt: Date }).createdAt; // Simple heuristic
         if (wasUpdated) result.turmasAtualizadas++; else result.turmasCriadas++;
 
         // --- STEP D: Create draft plan if none exists ---
@@ -282,7 +282,7 @@ export async function importProfessoresEPlanos(
               const classIdentifier = row.agrupamentoPratico || `${phaseStr}${gradCode}`;
 
               let formattedPrerequisites = "";
-              if (metadata.prerequisites && Array.isArray(metadata.prerequisites) && (metadata.prerequisites as any).length > 0) {
+              if (metadata.prerequisites && Array.isArray(metadata.prerequisites) && metadata.prerequisites.length > 0) {
                   const prereqCodes = metadata.prerequisites as string[];
                   const prereqMetadata = await tx.query.universityCourses.findMany({
                       where: inArray(universityCourses.code, prereqCodes)
@@ -328,14 +328,15 @@ Os(as) alunos(as) que eventualmente faltarem em alguma avaliação que foram per
                   classIdentifier: classIdentifier,
               });
 
-              const bib = metadata.bibliography as { basic: any[], complementary: any[] };
-              const insertBibItems = async (items: any[], type: "basic" | "complementary") => {
+              type BibItem = string | { authors: string, details: string };
+              const bib = metadata.bibliography as unknown as { basic: BibItem[], complementary: BibItem[] };
+              const insertBibItems = async (items: BibItem[], type: "basic" | "complementary") => {
                   if (!items || !Array.isArray(items)) return;
                   for (const item of items) {
                       let fullReference = "";
                       if (typeof item === 'object' && item !== null) {
                           const authors = (item.authors || "").trim();
-                          const details = (item.details || item.full || "").trim();
+                          const details = (item.details || "").trim();
                           fullReference = (authors && details) ? `${authors}. ${details}` : (authors || details);
                       } else if (typeof item === 'string') {
                           fullReference = item;
@@ -380,13 +381,13 @@ Os(as) alunos(as) que eventualmente faltarem em alguma avaliação que foram per
               });
           }
         }
-      } catch (err: any) {
+      } catch (err) {
         result.erros.push({
           row: rowIndex,
           professor: row.professorNome,
           disciplina: row.disciplinaNome,
           turma: row.turma,
-          message: err.message ?? 'Erro desconhecido'
+          message: err instanceof Error ? err.message : 'Erro desconhecido'
         });
         throw err; 
       }

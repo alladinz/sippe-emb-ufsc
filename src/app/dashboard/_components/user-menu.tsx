@@ -2,6 +2,7 @@
 
 import { authClient } from "@/lib/auth/client";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { 
     DropdownMenu, 
     DropdownMenuContent, 
@@ -67,7 +68,13 @@ export function UserMenu({ user, roleLabel, roleId }: UserMenuProps) {
                 <Button variant="ghost" className="flex items-center gap-3 px-2 hover:bg-slate-100 transition-all h-auto py-1.5">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${roleStyles}`}>
                         {user.image ? (
-                            <img src={user.image} alt={user.name} className="w-full h-full rounded-full object-cover" />
+                            <Image 
+                                src={user.image} 
+                                alt={user.name} 
+                                width={32} 
+                                height={32} 
+                                className="w-full h-full rounded-full object-cover" 
+                            />
                         ) : (
                             user.name.charAt(0).toUpperCase()
                         )}

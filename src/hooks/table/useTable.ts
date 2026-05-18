@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { TableState } from '@/types/table';
 
 interface UseTableProps {
@@ -43,7 +43,9 @@ export function useTable({
 
   // Persist state to localStorage (except selection)
   useEffect(() => {
-    const { selectedIds, ...persistableState } = state;
+    const persistableState = { ...state };
+    // @ts-expect-error - we want to remove this property before persisting
+    delete persistableState.selectedIds;
     localStorage.setItem(storageKey, JSON.stringify(persistableState));
   }, [state, storageKey]);
 
@@ -59,7 +61,7 @@ export function useTable({
     setState(prev => ({ ...prev, search, page: 1 }));
   }, []);
 
-  const setFilters = useCallback((filters: Record<string, any>) => {
+  const setFilters = useCallback((filters: Record<string, unknown>) => {
     setState(prev => ({ ...prev, filters, page: 1 }));
   }, []);
 

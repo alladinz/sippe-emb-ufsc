@@ -2,7 +2,7 @@ export interface TableState {
   page: number;
   limit: number;
   search: string;
-  filters: Record<string, any>;
+  filters: Record<string, unknown>;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
   selectedIds: string[];

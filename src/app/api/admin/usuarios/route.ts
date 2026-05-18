@@ -68,7 +68,8 @@ export async function GET(request: Request) {
         limit,
         totalPages: Math.ceil(total / limit)
     });
-  } catch (error: any) {
-    return new NextResponse(error.message, { status: 500 });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Erro ao buscar usuários";
+    return new NextResponse(errorMessage, { status: 500 });
   }
 }

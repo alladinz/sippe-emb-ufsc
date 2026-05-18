@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth/auth";
 import { db } from "@/db";
 import { studyPlans } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { ArrowLeft, Printer, MessageSquare, Download } from "lucide-react";
+import { ArrowLeft, MessageSquare, Download } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { ReviewActions } from "./review-actions";
@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StudyPlanStatus } from "@/lib/schemas/study-plan";
 import { cn } from "@/lib/utils";
+import { ScheduleItem } from "@/types/study-plan";
 
 interface PreviewStudyPlanPageProps {
   params: Promise<{ id: string }>;
@@ -91,8 +92,7 @@ export default async function PreviewStudyPlanPage({ params, searchParams }: Pre
     notFound();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const userRole = (activeMember as any)?.role as string;
+  const userRole = (activeMember as { role?: string })?.role || "";
   const isCoordinator = activeMember && (userRole === "coordenador" || userRole === "chefe");
   const isChef = activeMember && userRole === "chefe";
   const isSecretary = activeMember && userRole === "secretario";
@@ -100,9 +100,8 @@ export default async function PreviewStudyPlanPage({ params, searchParams }: Pre
   
   const canArchive = (isChef || isSecretary) && plan.status === "approved";
   
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const schedule = (plan.schedule as any[]) || [];
-  const numSelectedDays = schedule.filter((s: any) => s.enabled).length;
+  const schedule = (plan.schedule as unknown as ScheduleItem[]) || [];
+  const numSelectedDays = schedule.filter((s: ScheduleItem) => s.enabled).length;
   const hasMoreThanOneDay = numSelectedDays !== 1;
 
   // Chef doesn't need to approve (per user request), so show review actions only for coordinator of that org

@@ -18,8 +18,18 @@ import { Edit, Loader2, Save } from "lucide-react";
 import { updateUniversityCourseAction } from "../actions";
 import { toastError, toastSuccess } from "@/lib/swal";
 
+interface UniversityCourse {
+    id: string;
+    code: string;
+    name: string;
+    curriculum?: string | null;
+    workloadHours?: number | null;
+    phase?: number | null;
+    syllabus?: string | null;
+}
+
 interface EditCourseDialogProps {
-    course: any;
+    course: UniversityCourse;
 }
 
 export function EditCourseDialog({ course }: EditCourseDialogProps) {

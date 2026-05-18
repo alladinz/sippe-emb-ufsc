@@ -120,8 +120,9 @@ export async function GET() {
       professoresNovos,
       disciplinas: summary.disciplinas,
     });
-  } catch (error: any) {
-    console.error("Error in sheets preview:", error.message);
-    return new NextResponse(error.message || "Erro ao processar planilha", { status: 500 });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Erro ao processar planilha";
+    console.error("Error in sheets preview:", errorMessage);
+    return new NextResponse(errorMessage, { status: 500 });
   }
 }

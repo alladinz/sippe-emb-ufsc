@@ -37,7 +37,7 @@ export async function requestPasswordResetAction(email: string) {
             `,
         });
         return { success: true };
-    } catch (error: any) {
+    } catch (error) {
         console.error("Password reset email error:", error);
         throw new Error("Erro ao enviar e-mail. Tente novamente.");
     }
