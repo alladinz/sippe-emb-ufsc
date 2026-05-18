@@ -1,0 +1,1786 @@
+{
+  "source_file": "ppc_cientec_2025.pdf",
+  "total_disciplines": 33,
+  "disciplines": [
+    {
+      "code": "EMB5001",
+      "name": "Cálculo Diferencial e Integral I",
+      "phase": "",
+      "credits": "04",
+      "workload_hours": "72",
+      "type": "",
+      "prerequisites": "",
+      "description": "Noções sobre funções de uma variável real. Limite e continuidade. Derivada. Aplicações de Derivada. Integral definida e indefinida - Método da substituição e Integração por partes.",
+      "basic_bibliography": [
+        {
+          "authors": "FLEMMING, D. M.; GONÇALVES, M. B",
+          "details": "Cálculo A. 6. ed. São Paulo: Pearson Prentice Hall, 2007. ISBN 978-85-76051-15-2.",
+          "full": "FLEMMING, D. M.; GONÇALVES, M. B. Cálculo A. 6. ed. São Paulo: Pearson Prentice Hall, 2007. ISBN 978-85-76051-15-2."
+        },
+        {
+          "authors": "GUIDORIZZI, H. L",
+          "details": "Um Curso de Cálculo. 5. ed. Rio de Janeiro: Livros Técnicos e Científicos Editora S.A., 2002. 1 v. ISBN 978-85-21612-59-9.",
+          "full": "GUIDORIZZI, H. L. Um Curso de Cálculo. 5. ed. Rio de Janeiro: Livros Técnicos e Científicos Editora S.A., 2002. 1 v. ISBN 978-85-21612-59-9."
+        },
+        {
+          "authors": "STEWART,",
+          "details": "Cálculo. 6. ed. São Paulo: Cengage Learning, 2009. 1 v. ISBN 978-85- 22106-60-8.",
+          "full": "STEWART,. Cálculo. 6. ed. São Paulo: Cengage Learning, 2009. 1 v. ISBN 978-85- 22106-60-8."
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "ANTON, H. A.; BIVES, I.; DAVIS, S",
+          "details": "Cálculo. 8. ed. Porto Alegre: Bookman Companhia Editora/Artmed Editora S.A., 2007. 1 v. ISBN 978-85-60031-63-4",
+          "full": "ANTON, H. A.; BIVES, I.; DAVIS, S. Cálculo. 8. ed. Porto Alegre: Bookman Companhia Editora/Artmed Editora S.A., 2007. 1 v. ISBN 978-85-60031-63-4"
+        },
+        {
+          "authors": "DEMANA, F. D. et al",
+          "details": "Pré-cálculo. 2 ed. São Paulo: Pearson Prentice Hall, 2013.",
+          "full": "DEMANA, F. D. et al. Pré-cálculo. 2 ed. São Paulo: Pearson Prentice Hall, 2013."
+        },
+        {
+          "authors": "ISBN 978-85-814-3096-6",
+          "details": "",
+          "full": "ISBN 978-85-814-3096-6"
+        },
+        {
+          "authors": "LEITHOLD, L. O Cálculo com Geometria Analítica. 3. ed",
+          "details": "São Paulo: HarbraLtda, 1994. 1 v. ISBN 978-85-29400-94-5",
+          "full": "LEITHOLD, L. O Cálculo com Geometria Analítica. 3. ed. São Paulo: HarbraLtda, 1994. 1 v. ISBN 978-85-29400-94-5"
+        },
+        {
+          "authors": "SIMMONS, G. F",
+          "details": "Cálculo com Geometria Analítica. São Paulo: Pearson Makron Books, 1987. 1 v. ISBN 978-00-74504-11-6",
+          "full": "SIMMONS, G. F. Cálculo com Geometria Analítica. São Paulo: Pearson Makron Books, 1987. 1 v. ISBN 978-00-74504-11-6"
+        },
+        {
+          "authors": "THOMAS, G. B.; et al",
+          "details": "Cálculo.12.ed.São Paulo: Pearson Prentice Hall, 2012. 1 v.",
+          "full": "THOMAS, G. B.; et al. Cálculo.12.ed.São Paulo: Pearson Prentice Hall, 2012. 1 v."
+        },
+        {
+          "authors": "ISBN 978-85-814-3086-7",
+          "details": "",
+          "full": "ISBN 978-85-814-3086-7"
+        }
+      ]
+    },
+    {
+      "code": "EMB5005",
+      "name": "Geometria Analítica",
+      "phase": "",
+      "credits": "04",
+      "workload_hours": "72",
+      "type": "",
+      "prerequisites": "",
+      "description": "Matrizes. Determinantes. Sistemas lineares. Álgebra vetorial. Estudo da reta e do plano. Curvas planas. Superfícies.",
+      "basic_bibliography": [
+        {
+          "authors": "BOULOS, P.; CAMARGO, I",
+          "details": "Geometria Analítica, um tratamento vetorial. 3 ed. São Paulo: Editora Pearson, 2005. ISBN 978-85-87918-91-8",
+          "full": "BOULOS, P.; CAMARGO, I. Geometria Analítica, um tratamento vetorial. 3 ed. São Paulo: Editora Pearson, 2005. ISBN 978-85-87918-91-8"
+        },
+        {
+          "authors": "STEINBRUCH, A.; WINTERLE, P",
+          "details": "Geometria Analítica. 2. ed. São Paulo: Pearson Makron Books, 1987. ISBN 0-07-450409-6",
+          "full": "STEINBRUCH, A.; WINTERLE, P. Geometria Analítica. 2. ed. São Paulo: Pearson Makron Books, 1987. ISBN 0-07-450409-6"
+        },
+        {
+          "authors": "STEINBRUCH, A.; WINTERLE, P",
+          "details": "Álgebra Linear. 2. ed. São Paulo: McGraw-Hill, 1987. ISBN 978-00-74504-12-3",
+          "full": "STEINBRUCH, A.; WINTERLE, P. Álgebra Linear. 2. ed. São Paulo: McGraw-Hill, 1987. ISBN 978-00-74504-12-3"
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "ANTON, H.; RORRES, C",
+          "details": "Álgebra linear: com aplicações. 10. ed. Porto Alegre: Bookman, 2012. ISBN 978-85-407-0169-4",
+          "full": "ANTON, H.; RORRES, C. Álgebra linear: com aplicações. 10. ed. Porto Alegre: Bookman, 2012. ISBN 978-85-407-0169-4"
+        },
+        {
+          "authors": "BOLDRINI, J. L.; et al",
+          "details": "Álgebra Linear. 3. ed. São Paulo: Editora Harbra, 1980. ISBN 85-294-0202-2",
+          "full": "BOLDRINI, J. L.; et al. Álgebra Linear. 3. ed. São Paulo: Editora Harbra, 1980. ISBN 85-294-0202-2"
+        },
+        {
+          "authors": "KOLMAN, B.; HILL, D. R",
+          "details": "Introdução à álgebra linear com aplicações. 8. ed. Rio de Janeiro: LTC, 2006. ISBN 978-85-216-1478-4",
+          "full": "KOLMAN, B.; HILL, D. R. Introdução à álgebra linear com aplicações. 8. ed. Rio de Janeiro: LTC, 2006. ISBN 978-85-216-1478-4"
+        },
+        {
+          "authors": "KUHLKAMP, N",
+          "details": "Matrizes e Sistemas de Equações Lineares. 4. ed. Florianópolis: Editora da UFSC, 2015. ISBN 978-85-328-0728-1",
+          "full": "KUHLKAMP, N. Matrizes e Sistemas de Equações Lineares. 4. ed. Florianópolis: Editora da UFSC, 2015. ISBN 978-85-328-0728-1"
+        },
+        {
+          "authors": "WINTERLE, P",
+          "details": "Vetores e Geometria Analítica. São Paulo: Makron Books, 2000.",
+          "full": "WINTERLE, P. Vetores e Geometria Analítica. São Paulo: Makron Books, 2000."
+        },
+        {
+          "authors": "ISBN 85-346-1109-2",
+          "details": "",
+          "full": "ISBN 85-346-1109-2"
+        }
+      ]
+    },
+    {
+      "code": "EMB5055",
+      "name": "Representação Gráfica",
+      "phase": "",
+      "credits": "03",
+      "workload_hours": "54",
+      "type": "",
+      "prerequisites": "",
+      "description": "Noções fundamentais para elaboração e interpretação de esboços e desenhos técnicos. Fundamentos de Desenho Geométrico. Desenho de objetos no 1º e 3º diedros. Desenho Projetivo, vistas e cortes. Normas para desenho (ABNT). Cotagem. Escalas. Perspectiva Isométrica. Aplicação das projeções nos desenhos de engenharia por meio manual e computacional.",
+      "basic_bibliography": [
+        {
+          "authors": "SILVA, A",
+          "details": "Desenho técnico moderno. 4. ed. Rio de Janeiro: LTC, 2006. ISBN 978- 85-21615-22-4",
+          "full": "SILVA, A. Desenho técnico moderno. 4. ed. Rio de Janeiro: LTC, 2006. ISBN 978- 85-21615-22-4"
+        },
+        {
+          "authors": "SILVA, J. C",
+          "details": "Desenho técnico mecânico. 2. ed. rev. e ampl. Florianópolis: UFSC, 2009. ISBN 978-85-32804-62-4",
+          "full": "SILVA, J. C. Desenho técnico mecânico. 2. ed. rev. e ampl. Florianópolis: UFSC, 2009. ISBN 978-85-32804-62-4"
+        },
+        {
+          "authors": "MANFÉ, G.; POZZA, Rino; SCARATO, G.",
+          "details": "Desenho técnico mecânico: curso completo para as escolas técnicas e ciclo básico das faculdades de engenharia. São Paulo: Hemus, 2004. ISBN 978-85-28900-07-1",
+          "full": "MANFÉ, G.; POZZA, Rino; SCARATO, G.. Desenho técnico mecânico: curso completo para as escolas técnicas e ciclo básico das faculdades de engenharia. São Paulo: Hemus, 2004. ISBN 978-85-28900-07-1"
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "MONTENEGRO, G",
+          "details": "Desenho de Projetos. São Paulo: Edgar Blucher, 2007. ISBN 978-85-21204-26-8",
+          "full": "MONTENEGRO, G. Desenho de Projetos. São Paulo: Edgar Blucher, 2007. ISBN 978-85-21204-26-8"
+        },
+        {
+          "authors": "RIBEIRO, C. P. B. V.; PAPAZOGLOU, R. S",
+          "details": "Desenho técnico para engenharias. 1. ed. Curitiba: Juruá, 2008. ISBN 978-85-362-1679-9",
+          "full": "RIBEIRO, C. P. B. V.; PAPAZOGLOU, R. S. Desenho técnico para engenharias. 1. ed. Curitiba: Juruá, 2008. ISBN 978-85-362-1679-9"
+        },
+        {
+          "authors": "RODRIGUES, A. R",
+          "details": "Desenho técnico mecânico: projeto e fabricação no desenvolvimento de produtos industriais. 1.ed. Rio de Janeiro: Elsevier, 2015.",
+          "full": "RODRIGUES, A. R. Desenho técnico mecânico: projeto e fabricação no desenvolvimento de produtos industriais. 1.ed. Rio de Janeiro: Elsevier, 2015."
+        },
+        {
+          "authors": "ISBN 978-85-352-7423-3",
+          "details": "",
+          "full": "ISBN 978-85-352-7423-3"
+        },
+        {
+          "authors": "SOUZA, A. F.; ULBRICH, C. B. L",
+          "details": "Engenharia integrada por computador e sistemas CAD/CAM/CNC: princípios e aplicações. 2. ed. rev. e ampl. São Paulo: Artliber, 2013. ISBN 978-85-880-9890-9",
+          "full": "SOUZA, A. F.; ULBRICH, C. B. L. Engenharia integrada por computador e sistemas CAD/CAM/CNC: princípios e aplicações. 2. ed. rev. e ampl. São Paulo: Artliber, 2013. ISBN 978-85-880-9890-9"
+        },
+        {
+          "authors": "SPECK, H. J.; PEIXOTO, V. V",
+          "details": "Manual básico de desenho técnico. 6. ed. rev. Florianópolis: UFSC, 2010. ISBN 978-85-32805-08-9",
+          "full": "SPECK, H. J.; PEIXOTO, V. V. Manual básico de desenho técnico. 6. ed. rev. Florianópolis: UFSC, 2010. ISBN 978-85-32805-08-9"
+        }
+      ]
+    },
+    {
+      "code": "EMB5036",
+      "name": "Química para Engenharia",
+      "phase": "",
+      "credits": "04",
+      "workload_hours": "72",
+      "type": "",
+      "prerequisites": "",
+      "description": "Sistema internacional de unidades. Átomos e moléculas. Ligações químicas e estrutura molecular. Equações químicas. Estequiometria. Soluções aquosas. Termoquímica. Eletroquímica: oxidação-redução, células eletroquímicas, equação de Nernst, eletrólise. Siderurgia: Obtenção do ferro gusa e do aço. Aços especiais. Polímeros: estrutura química, propriedades, aplicações. Cerâmicas: cerâmicas tradicionais e avançadas, propriedades, aplicações. Compósitos. Corrosão metálica: tipos e formas, meios corrosivos, mecanismos de proteção, monitoramento. Combustíveis e combustão. Química Ambiental. Atividades Laboratoriais.",
+      "basic_bibliography": [
+        {
+          "authors": "BROWN, L. S.; HOLME, T. A",
+          "details": "Química Geral Aplicada à Engenharia. São Paulo: Cengage Learning, 2009. ISBN 978-85-22106-88-2",
+          "full": "BROWN, L. S.; HOLME, T. A. Química Geral Aplicada à Engenharia. São Paulo: Cengage Learning, 2009. ISBN 978-85-22106-88-2"
+        },
+        {
+          "authors": "GENTIL, V",
+          "details": "Corrosão. 5. ed. Rio de Janeiro: LTC, 2007. ISBN 978-85-21615-56-9",
+          "full": "GENTIL, V. Corrosão. 5. ed. Rio de Janeiro: LTC, 2007. ISBN 978-85-21615-56-9"
+        },
+        {
+          "authors": "CANEVAROLO Jr., S. V",
+          "details": "Ciência de Polímeros: um texto básico para tecnólogos e engenheiros. 3. ed. São Paulo: Editora Artliber, 2010. ISBN 978-85-88098-10-7",
+          "full": "CANEVAROLO Jr., S. V. Ciência de Polímeros: um texto básico para tecnólogos e engenheiros. 3. ed. São Paulo: Editora Artliber, 2010. ISBN 978-85-88098-10-7"
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "ARAUJO, L.A",
+          "details": "Manual de Siderurgia. 2. ed. São Paulo: Editora Arte & Ciência, 2005, v. 1. ISBN 978-85-61165-01-7",
+          "full": "ARAUJO, L.A. Manual de Siderurgia. 2. ed. São Paulo: Editora Arte & Ciência, 2005, v. 1. ISBN 978-85-61165-01-7"
+        },
+        {
+          "authors": "BROWN, T.L.; LEMAY Jr., H.E.; BRUSTEN, B.E",
+          "details": "Química: a Ciência Central. 9. ed. São Paulo: Pearson Prentice Hall, 2005. ISBN 978-85-879-1842-0",
+          "full": "BROWN, T.L.; LEMAY Jr., H.E.; BRUSTEN, B.E. Química: a Ciência Central. 9. ed. São Paulo: Pearson Prentice Hall, 2005. ISBN 978-85-879-1842-0"
+        },
+        {
+          "authors": "CALLISTER JÚNIOR, W.D",
+          "details": "Ciência e Engenharia dos Materiais: uma introdução. 7. ed. Rio de Janeiro: Livros Técnicos e Científico, 2008. ISBN 978-85-21615-95-8",
+          "full": "CALLISTER JÚNIOR, W.D. Ciência e Engenharia dos Materiais: uma introdução. 7. ed. Rio de Janeiro: Livros Técnicos e Científico, 2008. ISBN 978-85-21615-95-8"
+        },
+        {
+          "authors": "ROCHA, J.C., ROSA, A.H., CARDOSO, A.A",
+          "details": "Introdução à Química Ambiental. Porto Alegre: Bookman, 2004. ISBN 853-6304-67-7",
+          "full": "ROCHA, J.C., ROSA, A.H., CARDOSO, A.A. Introdução à Química Ambiental. Porto Alegre: Bookman, 2004. ISBN 853-6304-67-7"
+        },
+        {
+          "authors": "OLIVEIRA, A.P.N., HOTZA, D",
+          "details": "Tecnologia de fabricação de revestimentos cerâmicos. 2. ed. rev. Florianópolis: UFSC, 2015. ISBN 978-85-328-0710-6",
+          "full": "OLIVEIRA, A.P.N., HOTZA, D. Tecnologia de fabricação de revestimentos cerâmicos. 2. ed. rev. Florianópolis: UFSC, 2015. ISBN 978-85-328-0710-6"
+        }
+      ]
+    },
+    {
+      "code": "EMB5060",
+      "name": "Projeto Conhecer e Integrar",
+      "phase": "",
+      "credits": "04",
+      "workload_hours": "72",
+      "type": "",
+      "prerequisites": "",
+      "description": "Contextualização à vida acadêmica: a universidade, o curso, o currículo, os serviços de apoio, os laboratórios, prevenção e combate a incêndios e desastres. Métodos científicos na resolução de problemas envolvendo a ciência, tecnologia e sociedade. Valorizar a cidadania, meio ambiente e o desenvolvimento da autoestima. Introdução à atividade profissional: especificação, projeto, construção de protótipos e testes. Redação de relatórios técnicos, exposição oral e interface acadêmica com o sistema de ensino fundamental e médio.",
+      "basic_bibliography": [
+        {
+          "authors": "MARTINS, D. S.; ZILBERKNOP, L. S",
+          "details": "Português instrumental: de acordo com as atuais normas da ABNT. 29. Ed. São Paulo: Atlas, 2010. ISBN 978-85-245-722-9",
+          "full": "MARTINS, D. S.; ZILBERKNOP, L. S. Português instrumental: de acordo com as atuais normas da ABNT. 29. Ed. São Paulo: Atlas, 2010. ISBN 978-85-245-722-9"
+        },
+        {
+          "authors": "MORENO, C",
+          "details": "Guia prático do português correto: para gostar de aprender. Porto Alegre: L&PM Pocket, 2010. ISBN 978-85-254-1317-8",
+          "full": "MORENO, C. Guia prático do português correto: para gostar de aprender. Porto Alegre: L&PM Pocket, 2010. ISBN 978-85-254-1317-8"
+        },
+        {
+          "authors": "RODRIGUES, A. R. et al",
+          "details": "Desenho técnico mecânico: projeto e fabricação no desenvolvimento de produtos industriais. Rio de Janeiro: Elsevier, 2015. ISBN 978- 85-352-7423-3",
+          "full": "RODRIGUES, A. R. et al. Desenho técnico mecânico: projeto e fabricação no desenvolvimento de produtos industriais. Rio de Janeiro: Elsevier, 2015. ISBN 978- 85-352-7423-3"
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "BARBOSA, C. A tríade do tempo",
+          "details": "Rio de Janeiro: Sextante, 2011. ISBN 978-85- 754-2724-8",
+          "full": "BARBOSA, C. A tríade do tempo. Rio de Janeiro: Sextante, 2011. ISBN 978-85- 754-2724-8"
+        },
+        {
+          "authors": "COSTA, G. A. et al. EAD, PBL e o desafio da educação em rede : metodologias ativas e outras práticas na formação do educador coinvestigador",
+          "details": "São Paulo: Blucher, 2018. Disponível em: https://doi.org/10.5151/9788580393613",
+          "full": "COSTA, G. A. et al. EAD, PBL e o desafio da educação em rede : metodologias ativas e outras práticas na formação do educador coinvestigador. São Paulo: Blucher, 2018. Disponível em: https://doi.org/10.5151/9788580393613"
+        },
+        {
+          "authors": "EVANS, B",
+          "details": "Beginning Arduino programming. 2011. Berkeley, CA: Apress: Imprint: Apress, 2011. 272 p. ISBN 9781430237785. Disponível em: https://doi.org/10.100 7/978-1-4302-3778-5",
+          "full": "EVANS, B. Beginning Arduino programming. 2011. Berkeley, CA: Apress: Imprint: Apress, 2011. 272 p. ISBN 9781430237785. Disponível em: https://doi.org/10.100 7/978-1-4302-3778-5"
+        },
+        {
+          "authors": "SCOLARI, S. et al Design para acessibilidade e inclusão",
+          "details": "São Paulo: Blucher, 2018. Disponível em: https://doi.org/10.5151/9788580393040",
+          "full": "SCOLARI, S. et al Design para acessibilidade e inclusão. São Paulo: Blucher, 2018. Disponível em: https://doi.org/10.5151/9788580393040"
+        },
+        {
+          "authors": "SILVA, C. L. et al",
+          "details": "Inovação e sustentabilidade. Curitiba: Aymará educação, 2012. (UTFinova). ISBN 978-85-784-1888-5",
+          "full": "SILVA, C. L. et al. Inovação e sustentabilidade. Curitiba: Aymará educação, 2012. (UTFinova). ISBN 978-85-784-1888-5"
+        }
+      ]
+    },
+    {
+      "code": "EMB5648",
+      "name": "Programação I",
+      "phase": "",
+      "credits": "04",
+      "workload_hours": "72",
+      "type": "",
+      "prerequisites": "",
+      "description": "Introdução a arquitetura de computadores. Lógica de programação: formalização de problemas com representação em pseudocódigo (algoritmos) e fluxograma, tipos de dados, estruturas de seleção e repetição, fluxo de execução, modularização (funções e procedimentos), estruturas de dados homogêneas (vetores e matrizes). Introdução a apontadores. Arquivos. Implementação prática de algoritmos em uma linguagem de alto nível.",
+      "basic_bibliography": [
+        {
+          "authors": "FORBELLONE, A. L. V.; EBERSPACHER, H. F",
+          "details": "Lógica de Programação. A construção de algoritmos e estruturas de dados. 3. ed. São Paulo: Pearson Prentice Hall, 2005. ISBN 978-85-76050-24-7",
+          "full": "FORBELLONE, A. L. V.; EBERSPACHER, H. F. Lógica de Programação. A construção de algoritmos e estruturas de dados. 3. ed. São Paulo: Pearson Prentice Hall, 2005. ISBN 978-85-76050-24-7"
+        },
+        {
+          "authors": "MANZANO, J.A.G; OLIVEIRA, J.F. de",
+          "details": "Algoritmos – lógica para desenvolvimento de programação de computadores. 29 ed.rev. São Paulo: Érica, 2019. ISBN 978- 85-3653145-8",
+          "full": "MANZANO, J.A.G; OLIVEIRA, J.F. de. Algoritmos – lógica para desenvolvimento de programação de computadores. 29 ed.rev. São Paulo: Érica, 2019. ISBN 978- 85-3653145-8"
+        },
+        {
+          "authors": "ZIVIANI, N",
+          "details": "Projeto de algoritmos: com implementações em Pascal e C. 3.ed.rev. e ampliada. São Paulo: Cengage Learning, 2011. ISBN 978-85-22110- 50-6",
+          "full": "ZIVIANI, N. Projeto de algoritmos: com implementações em Pascal e C. 3.ed.rev. e ampliada. São Paulo: Cengage Learning, 2011. ISBN 978-85-22110- 50-6"
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "HOLLOWAY, J.P",
+          "details": "Introdução à programação para engenharia – resolvendo problemas com algoritmos. 1.ed. São Paulo: LTC, 2006. ISBN 978-85-21614-53-1",
+          "full": "HOLLOWAY, J.P. Introdução à programação para engenharia – resolvendo problemas com algoritmos. 1.ed. São Paulo: LTC, 2006. ISBN 978-85-21614-53-1"
+        },
+        {
+          "authors": "LOPES, A.;GARCIA,G",
+          "details": "Introdução à programação: 500 algoritmos resolvidos. Rio de Janeiro: Editora Campus, 2002. ISBN 85-352-1019-9",
+          "full": "LOPES, A.;GARCIA,G. Introdução à programação: 500 algoritmos resolvidos. Rio de Janeiro: Editora Campus, 2002. ISBN 85-352-1019-9"
+        },
+        {
+          "authors": "MIZRAHI, V.V",
+          "details": "Treinamento em linguagem.2.ed. São Paulo: Pearson Prentice Hall, 2008. ISBN 975-85-76051-91-6",
+          "full": "MIZRAHI, V.V. Treinamento em linguagem.2.ed. São Paulo: Pearson Prentice Hall, 2008. ISBN 975-85-76051-91-6"
+        },
+        {
+          "authors": "PINHEIRO, F.A.C",
+          "details": "Elementos de programação em C. Porto Alegre: Bookman, 2012. ISBN 978-85-407-0202-8",
+          "full": "PINHEIRO, F.A.C. Elementos de programação em C. Porto Alegre: Bookman, 2012. ISBN 978-85-407-0202-8"
+        },
+        {
+          "authors": "PUGA, S.;RISSETTI, G",
+          "details": "Lógica de programação e estruturas de dados com aplicações em Java. 2.ed. São Paulo: Pearson Prentice Hall, 2009. ISBN 85-879- 1882-6",
+          "full": "PUGA, S.;RISSETTI, G. Lógica de programação e estruturas de dados com aplicações em Java. 2.ed. São Paulo: Pearson Prentice Hall, 2009. ISBN 85-879- 1882-6"
+        }
+      ]
+    },
+    {
+      "code": "EMB5029",
+      "name": "Cálculo Diferencial e Integral II",
+      "phase": "",
+      "credits": "04",
+      "workload_hours": "72",
+      "type": "",
+      "prerequisites": "EMB5001 Cálculo Diferencial e Integral I",
+      "description": "Métodos de integração. Aplicações da integral definida. Integrais impróprias. Funções de várias variáveis. Derivadas parciais. Aplicações das derivadas parciais. Integração múltipla.",
+      "basic_bibliography": [
+        {
+          "authors": "FLEMMING, D. M.; GONÇALVES, M. B",
+          "details": "Cálculo B. 6. ed. São Paulo: Pearson Prentice Hall, 2007. ISBN 978-85-32804-55-6",
+          "full": "FLEMMING, D. M.; GONÇALVES, M. B. Cálculo B. 6. ed. São Paulo: Pearson Prentice Hall, 2007. ISBN 978-85-32804-55-6"
+        },
+        {
+          "authors": "STEWART, J",
+          "details": "Cálculo. 6 ed. São Paulo: Cengage Learning, 2009. 1 v.ISBN 978-85- 22106-60-8",
+          "full": "STEWART, J. Cálculo. 6 ed. São Paulo: Cengage Learning, 2009. 1 v.ISBN 978-85- 22106-60-8"
+        },
+        {
+          "authors": "STEWART, J",
+          "details": "Cálculo. 6 ed. São Paulo: Cengage Learning, 2009. 2 v.ISBN 978-85- 22106-61-5",
+          "full": "STEWART, J. Cálculo. 6 ed. São Paulo: Cengage Learning, 2009. 2 v.ISBN 978-85- 22106-61-5"
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "ANTON, H.; DAVIS, S.; BIVENS, I",
+          "details": "Cálculo. 10. ed. Porto Alegre: Bookman, 2014.",
+          "full": "ANTON, H.; DAVIS, S.; BIVENS, I. Cálculo. 10. ed. Porto Alegre: Bookman, 2014."
+        },
+        {
+          "authors": "ISBN 978-85-826-0245-4",
+          "details": "",
+          "full": "ISBN 978-85-826-0245-4"
+        },
+        {
+          "authors": "GUIDORIZZI, H. L",
+          "details": "Um Curso de Cálculo. 5. ed. Rio de Janeiro: Livros Técnicos e Científicos Editora S.A, 2001. 2 v. ISBN 978-85-21612-80-3",
+          "full": "GUIDORIZZI, H. L. Um Curso de Cálculo. 5. ed. Rio de Janeiro: Livros Técnicos e Científicos Editora S.A, 2001. 2 v. ISBN 978-85-21612-80-3"
+        },
+        {
+          "authors": "LEITHOLD, L. O Cálculo Com Geometria Analítica. 3. ed",
+          "details": "São Paulo: Harbra LTDA. 2 v. ISBN 85-294-0206-5",
+          "full": "LEITHOLD, L. O Cálculo Com Geometria Analítica. 3. ed. São Paulo: Harbra LTDA. 2 v. ISBN 85-294-0206-5"
+        },
+        {
+          "authors": "SIMMONS, G. F",
+          "details": "Cálculo Com Geometria Analítica. São Paulo: Pearson, 2008. 2 v. ISBN 978-85-34614-68-9",
+          "full": "SIMMONS, G. F. Cálculo Com Geometria Analítica. São Paulo: Pearson, 2008. 2 v. ISBN 978-85-34614-68-9"
+        },
+        {
+          "authors": "THOMAS, G. B.; et al",
+          "details": "Cálculo. 11. ed. São Paulo: Pearson Prentice Hall, 2009. 2 v. ISBN 978-85-88639-36-2",
+          "full": "THOMAS, G. B.; et al. Cálculo. 11. ed. São Paulo: Pearson Prentice Hall, 2009. 2 v. ISBN 978-85-88639-36-2"
+        }
+      ]
+    },
+    {
+      "code": "EMB5048",
+      "name": "Física I",
+      "phase": "",
+      "credits": "04",
+      "workload_hours": "72",
+      "type": "",
+      "prerequisites": "",
+      "description": "Unidades de medidas e vetores. Cinemática. Leis de Newton e aplicações. Trabalho e energia potencial. Conservação da energia. Conservação do momento linear e angular. Rotação de corpos rígidos e rolamento. Atividades Laboratoriais.",
+      "basic_bibliography": [
+        {
+          "authors": "RESNICK, R.; HALLIDAY, D.; WALKER, J",
+          "details": "Fundamentos de Física. 8. ed. Rio de Janeiro: LTC, 2009. 1 v. ISBN 978-85-216-1605-4",
+          "full": "RESNICK, R.; HALLIDAY, D.; WALKER, J. Fundamentos de Física. 8. ed. Rio de Janeiro: LTC, 2009. 1 v. ISBN 978-85-216-1605-4"
+        },
+        {
+          "authors": "SERWAY, R. A.; JEWETT, J. W",
+          "details": "Princípios de Física. São Paulo: Cengage Learning, 2009. 1 v. ISBN 85-221-038-2-8",
+          "full": "SERWAY, R. A.; JEWETT, J. W. Princípios de Física. São Paulo: Cengage Learning, 2009. 1 v. ISBN 85-221-038-2-8"
+        },
+        {
+          "authors": "TIPLER, P. A.; MOSCA, G",
+          "details": "Física para Cientistas e Engenheiros. 6. ed. Rio de Janeiro: LTC, 2009. 1 v. ISBN 978-85-216-17105-5",
+          "full": "TIPLER, P. A.; MOSCA, G. Física para Cientistas e Engenheiros. 6. ed. Rio de Janeiro: LTC, 2009. 1 v. ISBN 978-85-216-17105-5"
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "CUTNELL, J. D.; JOHNSON, K. W",
+          "details": "Física. 6. ed. Rio de Janeiro: LTC, 2012. 1 v. ISBN 978-85-216-1491-3",
+          "full": "CUTNELL, J. D.; JOHNSON, K. W. Física. 6. ed. Rio de Janeiro: LTC, 2012. 1 v. ISBN 978-85-216-1491-3"
+        },
+        {
+          "authors": "FEYNMAN, R. P.; LEIGHTON, R. B.; SANDS, M",
+          "details": "The Feynman Lectures on Physics. Porto Alegre: Bookman, 2008. 1 v. ISBN 978-85-778-0259-3",
+          "full": "FEYNMAN, R. P.; LEIGHTON, R. B.; SANDS, M. The Feynman Lectures on Physics. Porto Alegre: Bookman, 2008. 1 v. ISBN 978-85-778-0259-3"
+        },
+        {
+          "authors": "NUSSENZVEIG, M. H",
+          "details": "Curso de Física Básica. 4. ed. São Paulo: Edgar Blucher, 2002. 1 v. ISBN 85-21-202-98-9",
+          "full": "NUSSENZVEIG, M. H. Curso de Física Básica. 4. ed. São Paulo: Edgar Blucher, 2002. 1 v. ISBN 85-21-202-98-9"
+        },
+        {
+          "authors": "SEARS, F.; YOUNG, H. D.; FREEDMAN, R. A.; ZEMANSKY, M. W",
+          "details": "Física. 12. ed. São Paulo: Pearson, 2008. 1 v. ISBN 978-85-886-393-0-0",
+          "full": "SEARS, F.; YOUNG, H. D.; FREEDMAN, R. A.; ZEMANSKY, M. W. Física. 12. ed. São Paulo: Pearson, 2008. 1 v. ISBN 978-85-886-393-0-0"
+        },
+        {
+          "authors": "TELLES, D. D´Alkmin; NETTO, João M",
+          "details": "Física com aplicação tecnológica. 1. ed. São Paulo: Edgar Blucher, 2011. 1 v. ISBN 978-85-212-0587-6",
+          "full": "TELLES, D. D´Alkmin; NETTO, João M. Física com aplicação tecnológica. 1. ed. São Paulo: Edgar Blucher, 2011. 1 v. ISBN 978-85-212-0587-6"
+        }
+      ]
+    },
+    {
+      "code": "EMB5022",
+      "name": "Ciência dos Materiais",
+      "phase": "",
+      "credits": "04",
+      "workload_hours": "72",
+      "type": "",
+      "prerequisites": "EMB5001 Cálculo Diferencial e Integral I, EMB5036",
+      "description": "Introdução a Ciência e Engenharia dos Materiais – materiais aplicados na engenharia. Tipos, classificação e aplicações dos diversos materiais. Estrutura atômica e ligações inter-atômicas. Materiais cristalinos e não cristalinos. Imperfeições nos sólidos. Difusão. Processos metalográficos. Diagramas de equilíbrio. Comportamento mecânico e dinâmico dos materiais. Falhas, fratura, fadiga e fluência. Estrutura e propriedades dos materiais metálicos, cerâmicos e poliméricos. Introdução a compósitos.",
+      "basic_bibliography": [
+        {
+          "authors": "ASKELAND, D. R.; PHULÉ, P. P",
+          "details": "Ciência e engenharia de materiais. São Paulo: Cengage Learning, 2008. ISBN 978-85-22105-98-4",
+          "full": "ASKELAND, D. R.; PHULÉ, P. P. Ciência e engenharia de materiais. São Paulo: Cengage Learning, 2008. ISBN 978-85-22105-98-4"
+        },
+        {
+          "authors": "CALLISTER JÚNIOR, W. D",
+          "details": "Ciência e engenharia dos materiais: uma introdução. 7. ed. Rio de Janeiro: Livros Técnicos e Científico, 2008. ISBN 978-85-21615-95-8",
+          "full": "CALLISTER JÚNIOR, W. D. Ciência e engenharia dos materiais: uma introdução. 7. ed. Rio de Janeiro: Livros Técnicos e Científico, 2008. ISBN 978-85-21615-95-8"
+        },
+        {
+          "authors": "VAN VLACK, L. H",
+          "details": "Princípios de ciência dos materiais. São Paulo: Edgard Blucher, 1970. 18. reimpressão, 2011. ISBN 978-85-21201-21-2",
+          "full": "VAN VLACK, L. H. Princípios de ciência dos materiais. São Paulo: Edgard Blucher, 1970. 18. reimpressão, 2011. ISBN 978-85-21201-21-2"
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "ASHBY, M. F.; JONES, D. R.H",
+          "details": "Engenharia dos Materiais: Uma introdução a propriedades, aplicações e projeto. Tradução 3. ed. Rio de Janeiro: Elsevier, 2007. ISBN 978-85-35223-62-0",
+          "full": "ASHBY, M. F.; JONES, D. R.H. Engenharia dos Materiais: Uma introdução a propriedades, aplicações e projeto. Tradução 3. ed. Rio de Janeiro: Elsevier, 2007. ISBN 978-85-35223-62-0"
+        },
+        {
+          "authors": "COLPAERT, H",
+          "details": "Metalografia dos produtos siderúrgicos comuns. 4. ed. São Paulo: Edgar Blucher, 2008. ISBN 978-85-21204-49-7",
+          "full": "COLPAERT, H. Metalografia dos produtos siderúrgicos comuns. 4. ed. São Paulo: Edgar Blucher, 2008. ISBN 978-85-21204-49-7"
+        },
+        {
+          "authors": "PADILHA, Â. F",
+          "details": "Materiais de engenharia: Microestrutura. São Paulo: Hemus, 2007. ISBN 978-85-28904-42-0",
+          "full": "PADILHA, Â. F. Materiais de engenharia: Microestrutura. São Paulo: Hemus, 2007. ISBN 978-85-28904-42-0"
+        },
+        {
+          "authors": "SMITH, W. F.; HASHEMI, J",
+          "details": "Fundamentos da Engenharia e Ciência dos Materiais. 5. ed. Porto Alegre: MCGRAW-HILL. 2012. ISBN 978-85-80551-14-3",
+          "full": "SMITH, W. F.; HASHEMI, J. Fundamentos da Engenharia e Ciência dos Materiais. 5. ed. Porto Alegre: MCGRAW-HILL. 2012. ISBN 978-85-80551-14-3"
+        },
+        {
+          "authors": "SHACKELFORD, J. F",
+          "details": "Ciência dos Materiais. 6. ed. São Paulo: Pearson. 2008. ISBN 978-85-76051-60-2",
+          "full": "SHACKELFORD, J. F. Ciência dos Materiais. 6. ed. São Paulo: Pearson. 2008. ISBN 978-85-76051-60-2"
+        }
+      ]
+    },
+    {
+      "code": "EMB5012",
+      "name": "Desenho e Modelagem",
+      "phase": "",
+      "credits": "03",
+      "workload_hours": "54",
+      "type": "",
+      "prerequisites": "EMB5055 Representação Gráfica",
+      "description": "Sistemas CAD, metodologia para modelamento de produtos tridimensionais. Práticas com software CAD. Técnicas de modelamento sólido. Modelamento de produtos, geração de desenho de engenharia, normas de desenho técnico, desenho de conjunto, montagem, lista de materiais.",
+      "basic_bibliography": [
+        {
+          "authors": "ROHLEDER, E.; SPECK, H. J",
+          "details": "Tutoriais de Modelagem 3D Utilizando o SolidWorks. 3. ed. Florianópolis: Visual Books, 2011. ISBN 987-85-75022-37-5",
+          "full": "ROHLEDER, E.; SPECK, H. J. Tutoriais de Modelagem 3D Utilizando o SolidWorks. 3. ed. Florianópolis: Visual Books, 2011. ISBN 987-85-75022-37-5"
+        },
+        {
+          "authors": "SILVA, J. C. da",
+          "details": "Desenho Técnico Mecânico. 2. ed. rev. e ampl. Florianópolis:",
+          "full": "SILVA, J. C. da. Desenho Técnico Mecânico. 2. ed. rev. e ampl. Florianópolis:"
+        },
+        {
+          "authors": "UFSC, 2009",
+          "details": "116 p. ISBN 978-85-32804-62-4",
+          "full": "UFSC, 2009. 116 p. ISBN 978-85-32804-62-4"
+        },
+        {
+          "authors": "SPECK, H. J.; PEIXOTO, V. V",
+          "details": "Manual Básico de Desenho Técnico. 6. ed. rev. Florianópolis: Ed. da UFSC, 2010. ISBN 978-85-32805-08-9",
+          "full": "SPECK, H. J.; PEIXOTO, V. V. Manual Básico de Desenho Técnico. 6. ed. rev. Florianópolis: Ed. da UFSC, 2010. ISBN 978-85-32805-08-9"
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "ABNT",
+          "details": "Home Page da Associação Brasileira de Normas Técnicas. [On-Line] Disponível na Internet via WWW. URL: http://www.abnt.org.br Biblioteca Virtual da USP. Material didático. [On-Line] Disponível na Internet via WWW. URL: http://www.bibvirt.futuro.usp.br",
+          "full": "ABNT. Home Page da Associação Brasileira de Normas Técnicas. [On-Line] Disponível na Internet via WWW. URL: http://www.abnt.org.br Biblioteca Virtual da USP. Material didático. [On-Line] Disponível na Internet via WWW. URL: http://www.bibvirt.futuro.usp.br"
+        },
+        {
+          "authors": "PROVENZA, F",
+          "details": "Desenhista de Máquinas. 1. ed. São Paulo: F. Provenza, 1960. ISBN 978-85-60311-01-9.",
+          "full": "PROVENZA, F. Desenhista de Máquinas. 1. ed. São Paulo: F. Provenza, 1960. ISBN 978-85-60311-01-9."
+        },
+        {
+          "authors": "PROVENZA, F",
+          "details": "Projetista de Máquinas. 6. ed. São Paulo: Pro-Tec, 1978. ISBN 978- 85-60311-00-2.",
+          "full": "PROVENZA, F. Projetista de Máquinas. 6. ed. São Paulo: Pro-Tec, 1978. ISBN 978- 85-60311-00-2."
+        },
+        {
+          "authors": "SILVA, A",
+          "details": "Desenho Técnico Moderno. 4. ed. Rio de Janeiro: LTC, 2006. ISBN 978- 85-21615-22-4",
+          "full": "SILVA, A. Desenho Técnico Moderno. 4. ed. Rio de Janeiro: LTC, 2006. ISBN 978- 85-21615-22-4"
+        },
+        {
+          "authors": "SOUZA, A. F. de; ULBRICH, C",
+          "details": "Brasil Lima. Engenharia Integrada por Computador e Sistemas CAD/CAM/CNC: Princípios e Aplicações. 2. ed. São Paulo: Artliber, 2013. ISBN 978-85-88098-47- 3",
+          "full": "SOUZA, A. F. de; ULBRICH, C. Brasil Lima. Engenharia Integrada por Computador e Sistemas CAD/CAM/CNC: Princípios e Aplicações. 2. ed. São Paulo: Artliber, 2013. ISBN 978-85-88098-47- 3"
+        }
+      ]
+    },
+    {
+      "code": "EMB5070",
+      "name": "Projeto Relacionar e Promover",
+      "phase": "",
+      "credits": "03",
+      "workload_hours": "54",
+      "type": "",
+      "prerequisites": "",
+      "description": "O autoconhecimento e a inteligência emocional nas intervenções com forças de caráter. Ética, moral, valores e as relações com a sociedade. Desenho universal. Riscos e impactos tecnológicos na construção dos papeis sociais. Sensibilidade e expressão cultural. Aprender a aprender.",
+      "basic_bibliography": [
+        {
+          "authors": "MARTINS, D. S.; ZILBERKNOP, L. S",
+          "details": "Português instrumental: de acordo com as atuais normas da ABNT. 29. Ed. São Paulo: Atlas, 2010. ISBN 978-85-245-722-9",
+          "full": "MARTINS, D. S.; ZILBERKNOP, L. S. Português instrumental: de acordo com as atuais normas da ABNT. 29. Ed. São Paulo: Atlas, 2010. ISBN 978-85-245-722-9"
+        },
+        {
+          "authors": "MERINO, E. A. D. et al",
+          "details": "Design, artefatos e sistema sustentável. São Paulo: Blucher, 2018. Disponível em: https://doi.org/10.5151/9788580392982",
+          "full": "MERINO, E. A. D. et al. Design, artefatos e sistema sustentável. São Paulo: Blucher, 2018. Disponível em: https://doi.org/10.5151/9788580392982"
+        },
+        {
+          "authors": "SCOLARI, Sergio et al",
+          "details": "Design para acessibilidade e inclusão. São Paulo: Blucher, 2018. 267 p. Disponível em: https://doi.org/10.5151/9788580393040",
+          "full": "SCOLARI, Sergio et al. Design para acessibilidade e inclusão. São Paulo: Blucher, 2018. 267 p. Disponível em: https://doi.org/10.5151/9788580393040"
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "BARBOSA, Christian. A tríade do tempo",
+          "details": "Rio de Janeiro: Sextante, 2011. ISBN 978-85-754-2724-8",
+          "full": "BARBOSA, Christian. A tríade do tempo. Rio de Janeiro: Sextante, 2011. ISBN 978-85-754-2724-8"
+        },
+        {
+          "authors": "CURY, Augusto. O código da inteligência: a formação de mentes brilhantes e a busca pela excelência emocional e profissional",
+          "details": "Rio de Janeiro: Ediouro, 2008.",
+          "full": "CURY, Augusto. O código da inteligência: a formação de mentes brilhantes e a busca pela excelência emocional e profissional. Rio de Janeiro: Ediouro, 2008."
+        },
+        {
+          "authors": "ISBN 978-85-603-0398-4",
+          "details": "",
+          "full": "ISBN 978-85-603-0398-4"
+        },
+        {
+          "authors": "GALEANO, E",
+          "details": "De pernas pro ar: a escola do mundo ao avesso. 8. ed. Porto Alegre: L&PM, 2005. viii, 370 p. ISBN 8525408336",
+          "full": "GALEANO, E. De pernas pro ar: a escola do mundo ao avesso. 8. ed. Porto Alegre: L&PM, 2005. viii, 370 p. ISBN 8525408336"
+        },
+        {
+          "authors": "SÜFFERT, C. J. A gestão do conhecimento como solução",
+          "details": "Rio de Janeiro: Qualitymark, 2008. ISBN 978-85-730-3727-2.",
+          "full": "SÜFFERT, C. J. A gestão do conhecimento como solução. Rio de Janeiro: Qualitymark, 2008. ISBN 978-85-730-3727-2."
+        },
+        {
+          "authors": "SILVA, C. L. et al",
+          "details": "Inovação e sustentabilidade. Curitiba: Aymará Educação, 2012. (UTFinova). ISBN 978-85-784-1888-5.",
+          "full": "SILVA, C. L. et al. Inovação e sustentabilidade. Curitiba: Aymará Educação, 2012. (UTFinova). ISBN 978-85-784-1888-5."
+        }
+      ]
+    },
+    {
+      "code": "EMB5039",
+      "name": "Física II",
+      "phase": "",
+      "credits": "04",
+      "workload_hours": "72",
+      "type": "",
+      "prerequisites": "EMB5001 Cálculo Diferencial e Integral I, EMB5048",
+      "description": "Gravitação. Estática e dinâmica de fluidos. Oscilações. Ondas mecânicas e acústicas. Temperatura. Calor. Teoria cinética dos gases. Leis da termodinâmica. Máquinas térmicas. Refrigeradores. Entropia. Atividades Laboratoriais.",
+      "basic_bibliography": [
+        {
+          "authors": "HALLIDAY, D.; RESNICK, R.; WALKER, J",
+          "details": "Fundamentos da Física – Vol. 2. 8. ed. Rio de Janeiro: Livros Técnicos e Científicos, 2009. ISBN 978-85-216-1606-1",
+          "full": "HALLIDAY, D.; RESNICK, R.; WALKER, J. Fundamentos da Física – Vol. 2. 8. ed. Rio de Janeiro: Livros Técnicos e Científicos, 2009. ISBN 978-85-216-1606-1"
+        },
+        {
+          "authors": "MOYSES, N. H.Curso de Física Básica 2 – Fluidos, Oscilações e Ondas, Calor. 4. ed",
+          "details": "São Paulo: Edgard Blücher, 2002. ISBN 978-85-212-0747-4",
+          "full": "MOYSES, N. H.Curso de Física Básica 2 – Fluidos, Oscilações e Ondas, Calor. 4. ed. São Paulo: Edgard Blücher, 2002. ISBN 978-85-212-0747-4"
+        },
+        {
+          "authors": "TIPLER, P. A.; MOSCA, G",
+          "details": "Física para cientistas e engenheiros - volume 1. 6. ed. Rio de Janeiro: Livros Técnicos e Científicos, 2009. ISBN 978-85-216-1710-5",
+          "full": "TIPLER, P. A.; MOSCA, G. Física para cientistas e engenheiros - volume 1. 6. ed. Rio de Janeiro: Livros Técnicos e Científicos, 2009. ISBN 978-85-216-1710-5"
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "ALONSO, M.; FINN, E. J",
+          "details": "Física: um curso universitário 2 – Campos e Ondas. São Paulo: Edgard Blücher, 1995. ISBN 978-85-212-0833-4",
+          "full": "ALONSO, M.; FINN, E. J. Física: um curso universitário 2 – Campos e Ondas. São Paulo: Edgard Blücher, 1995. ISBN 978-85-212-0833-4"
+        },
+        {
+          "authors": "YOUNG, H.D.; FREEDMAN, R.A",
+          "details": "Física. 12. ed. São Paulo: Addison Wesley, Pearson, 2008-2009. 4 v. (v.2).ISBN 978-85-886-3933-1",
+          "full": "YOUNG, H.D.; FREEDMAN, R.A. Física. 12. ed. São Paulo: Addison Wesley, Pearson, 2008-2009. 4 v. (v.2).ISBN 978-85-886-3933-1"
+        },
+        {
+          "authors": "CUTNELL, J. D.; JOHNSON, K. W",
+          "details": "Física Vol. 1. 6. ed. Rio de Janeiro: Livros Técnicos e Científicos, 2006. ISBN 978-85-216-1491-3",
+          "full": "CUTNELL, J. D.; JOHNSON, K. W. Física Vol. 1. 6. ed. Rio de Janeiro: Livros Técnicos e Científicos, 2006. ISBN 978-85-216-1491-3"
+        },
+        {
+          "authors": "KNIGHT, R. D",
+          "details": "Física: Uma abordagem estratégica – volume 1: Mecânica Newtoniana, Gravitação, Oscilações e Ondas. 2. ed. Porto Alegre: Bookman. 2009. ISBN 978-85-778-0470-2",
+          "full": "KNIGHT, R. D. Física: Uma abordagem estratégica – volume 1: Mecânica Newtoniana, Gravitação, Oscilações e Ondas. 2. ed. Porto Alegre: Bookman. 2009. ISBN 978-85-778-0470-2"
+        },
+        {
+          "authors": "SERWAY, R. A; JEWETT, J. W",
+          "details": "Princípios da Física. São Paulo: Cengage Learning, 2004, 4 v. (V.2) ISBN 85-221-04-13-1",
+          "full": "SERWAY, R. A; JEWETT, J. W. Princípios da Física. São Paulo: Cengage Learning, 2004, 4 v. (V.2) ISBN 85-221-04-13-1"
+        }
+      ]
+    },
+    {
+      "code": "EMB5057",
+      "name": "Estatística I",
+      "phase": "",
+      "credits": "04",
+      "workload_hours": "72",
+      "type": "",
+      "prerequisites": "EMB5029 Cálculo Diferencial e Integral II",
+      "description": "Estatística descritiva e análise exploratória de dados. Teoria da probabilidade. Variáveis aleatórias discretas e contínuas, e suas principais distribuições de probabilidade. Estimação de parâmetros. Teste de hipóteses para parâmetros: média, proporção e variância. Comparação entre dois tratamentos.",
+      "basic_bibliography": [
+        {
+          "authors": "BARBETTA, P. A.; REIS, M. M.; BORNIA, A. C",
+          "details": "Estatística: para cursos de engenharia e informática. 2. ed. São Paulo (SP): Atlas, 2008. ISBN 978-85-224- 4989-7",
+          "full": "BARBETTA, P. A.; REIS, M. M.; BORNIA, A. C. Estatística: para cursos de engenharia e informática. 2. ed. São Paulo (SP): Atlas, 2008. ISBN 978-85-224- 4989-7"
+        },
+        {
+          "authors": "MONTGOMERY, D.C.; RUNGER, G. C",
+          "details": "Estatística aplicada e probabilidade para engenheiros. 5. ed. Rio de Janeiro (RJ): LTC, 2012. ISBN 978-85-216-1902-4",
+          "full": "MONTGOMERY, D.C.; RUNGER, G. C. Estatística aplicada e probabilidade para engenheiros. 5. ed. Rio de Janeiro (RJ): LTC, 2012. ISBN 978-85-216-1902-4"
+        },
+        {
+          "authors": "TRIOLA, Mario F",
+          "details": "Introdução à estatística. 10. ed. Rio de Janeiro (RJ): LTC, 2008.",
+          "full": "TRIOLA, Mario F. Introdução à estatística. 10. ed. Rio de Janeiro (RJ): LTC, 2008."
+        },
+        {
+          "authors": "ISBN 978-85-216-1586-6",
+          "details": "",
+          "full": "ISBN 978-85-216-1586-6"
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "DEVORE. J. L",
+          "details": "Probabilidade e estatística para engenharia e ciências. São Paulo: Cengage Learning, 2015. ISBN 978-85-221-1183-1",
+          "full": "DEVORE. J. L. Probabilidade e estatística para engenharia e ciências. São Paulo: Cengage Learning, 2015. ISBN 978-85-221-1183-1"
+        },
+        {
+          "authors": "COSTA NETO, Pedro Luiz de Oliveira",
+          "details": "Estatística. São Paulo (SP): Edgard Blucher, 2002. ISBN 978-85-212-0300-1",
+          "full": "COSTA NETO, Pedro Luiz de Oliveira. Estatística. São Paulo (SP): Edgard Blucher, 2002. ISBN 978-85-212-0300-1"
+        },
+        {
+          "authors": "MEYER, Paul L",
+          "details": "Probabilidade: aplicações à Estatística. 2ª ed. Rio de Janeiro:",
+          "full": "MEYER, Paul L. Probabilidade: aplicações à Estatística. 2ª ed. Rio de Janeiro:"
+        },
+        {
+          "authors": "LTC, 1983",
+          "details": "ISBN 852-16-0294-4",
+          "full": "LTC, 1983. ISBN 852-16-0294-4"
+        },
+        {
+          "authors": "ROSS, S. M",
+          "details": "Introduction to Probability and Statistics for Engineers and Scientists. 4. ed. Elsevier, 2009. ISBN 978-01-237-0483-2. Disponível em: https://www.sciencedirect.com/ book/9780123704832/introduction-to- probability-and-statistics-for-engineers-and-scientists.",
+          "full": "ROSS, S. M. Introduction to Probability and Statistics for Engineers and Scientists. 4. ed. Elsevier, 2009. ISBN 978-01-237-0483-2. Disponível em: https://www.sciencedirect.com/ book/9780123704832/introduction-to- probability-and-statistics-for-engineers-and-scientists."
+        },
+        {
+          "authors": "SPIEGEL, M. R",
+          "details": "Estatística. 3. ed. São Paulo: Pearson Makron Books, 2012. ISBN 978-85-346-0120-7",
+          "full": "SPIEGEL, M. R. Estatística. 3. ed. São Paulo: Pearson Makron Books, 2012. ISBN 978-85-346-0120-7"
+        }
+      ]
+    },
+    {
+      "code": "EMB5102",
+      "name": "Processos de Fabricação",
+      "phase": "",
+      "credits": "04",
+      "workload_hours": "72",
+      "type": "",
+      "prerequisites": "EMB5022 Ciência dos Materiais",
+      "description": "Classificação e descrição sumária dos diversos processos de fabricação. Fundamento dos processos de fundição contínua e em moldes: principais parâmetros, ferramentas, máquinas e equipamentos, campo de aplicações. Fundamento dos processos de conformação de materiais metálicos (laminação, forjamento, trefilação, extrusão e estampagem): principais parâmetros, ferramentas, máquinas e equipamentos, campo de aplicações. Fundamentos de metalurgia do pó: sinterização. Fundamentos dos processos de usinagem: torneamento, furação, fresamento, retificação, eletroerosão. Principais parâmetros dos processos de usinagem. Ferramentas de corte: materiais, revestimentos e geometrias, desgaste. Qualidade de superfícies após processo específico de fabricação, erros dimensionais. Máquinas e equipamentos. Introdução ao Comando Numérico Computadorizado (CNC). Introdução a programação e simulação da usinagem CNC e integração entre sistemas CAD\\CAM\\CNC. NC.",
+      "basic_bibliography": [
+        {
+          "authors": "DINIZ, A. E.; MARCONDES, F. C.; COPPINI, N. L",
+          "details": "Tecnologia da usinagem dos materiais. 6. ed. São Paulo: Artliber, 2008. ISBN: 85-872-9601-9",
+          "full": "DINIZ, A. E.; MARCONDES, F. C.; COPPINI, N. L. Tecnologia da usinagem dos materiais. 6. ed. São Paulo: Artliber, 2008. ISBN: 85-872-9601-9"
+        },
+        {
+          "authors": "FERRARESI, D",
+          "details": "Usinagem dos metais. São Paulo: E. Blucher, 1970. ISBN: 978-85- 212-0859-4",
+          "full": "FERRARESI, D. Usinagem dos metais. São Paulo: E. Blucher, 1970. ISBN: 978-85- 212-0859-4"
+        },
+        {
+          "authors": "HELMAN, H.; CETLIN, P. R",
+          "details": "Fundamentos da conformação mecânica dos metais. 2. ed. São Paulo: Artliber, 2010. ISBN: 978-85-880-9828-2",
+          "full": "HELMAN, H.; CETLIN, P. R. Fundamentos da conformação mecânica dos metais. 2. ed. São Paulo: Artliber, 2010. ISBN: 978-85-880-9828-2"
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "ARAÚJO, L. A",
+          "details": "Manual de siderurgia. 2.ed. São Paulo: Arte & Ciência, 2005. ISBN 978-85-611-6501-7",
+          "full": "ARAÚJO, L. A. Manual de siderurgia. 2.ed. São Paulo: Arte & Ciência, 2005. ISBN 978-85-611-6501-7"
+        },
+        {
+          "authors": "SCHAEFFER, L",
+          "details": "Conformação mecânica: cálculos aplicados em processos de fabricação. Porto Alegre: Imprensa Livre, 2007. ISBN 978-85-769-7073-6",
+          "full": "SCHAEFFER, L. Conformação mecânica: cálculos aplicados em processos de fabricação. Porto Alegre: Imprensa Livre, 2007. ISBN 978-85-769-7073-6"
+        },
+        {
+          "authors": "SILVA, A. L. V. C.; MEI, P. R",
+          "details": "Aços e ligas especiais. 3. ed. rev. São Paulo: Edgard Blucher, 2010. ISBN 978-85-212-0518-0",
+          "full": "SILVA, A. L. V. C.; MEI, P. R. Aços e ligas especiais. 3. ed. rev. São Paulo: Edgard Blucher, 2010. ISBN 978-85-212-0518-0"
+        },
+        {
+          "authors": "SOUZA, A. F.; ULBRICH, C. B. L",
+          "details": "Engenharia integrada por computador e sistemas CAD/CAM/CNC: princípios e aplicações. São Paulo: Artliber, 2013. ISBN 978-85- 880-9847-3",
+          "full": "SOUZA, A. F.; ULBRICH, C. B. L. Engenharia integrada por computador e sistemas CAD/CAM/CNC: princípios e aplicações. São Paulo: Artliber, 2013. ISBN 978-85- 880-9847-3"
+        },
+        {
+          "authors": "RODRIGUES, A. R et al",
+          "details": "Desenho técnico mecânico: projeto e fabricação no desenvolvimento de produtos industriais. Rio de Janeiro: Elsevier, 2015. ISBN 978- 85-352-7423-3.",
+          "full": "RODRIGUES, A. R et al. Desenho técnico mecânico: projeto e fabricação no desenvolvimento de produtos industriais. Rio de Janeiro: Elsevier, 2015. ISBN 978- 85-352-7423-3."
+        }
+      ]
+    },
+    {
+      "code": "EMB5056",
+      "name": "Ergonomia e Segurança",
+      "phase": "",
+      "credits": "02",
+      "workload_hours": "36",
+      "type": "",
+      "prerequisites": "",
+      "description": "Conceitos básicos. Fisiologia do trabalho. Antropometria e Biomecânica. Processos Cognitivos. Metodologias de análise ergonômica. Ergonomia do produto. Desenho Universal. Variáveis ambientais: iluminação, ruído, vibrações, temperatura. Análise ergonômica e segurança do trabalho.",
+      "basic_bibliography": [
+        {
+          "authors": "DUL, J.; WEERDMEESTER, B",
+          "details": "Ergonomia prática. 2. ed. São Paulo: Edgard Blucher, 2004. ISBN 978-85-21206-42-2",
+          "full": "DUL, J.; WEERDMEESTER, B. Ergonomia prática. 2. ed. São Paulo: Edgard Blucher, 2004. ISBN 978-85-21206-42-2"
+        },
+        {
+          "authors": "IIDA, I",
+          "details": "Ergonomia: projeto e produção. 2. ed. São Paulo: Edgard Blucher, 2005.",
+          "full": "IIDA, I. Ergonomia: projeto e produção. 2. ed. São Paulo: Edgard Blucher, 2005."
+        },
+        {
+          "authors": "ISBN 978-85-21203-54-4",
+          "details": "",
+          "full": "ISBN 978-85-21203-54-4"
+        },
+        {
+          "authors": "KROEMER, K. H. E; GRANDJEAN, E",
+          "details": "Manual de ergonomia: adaptando o trabalho ao homem. 5. ed. Porto Alegre: Bookman, 2005. ISBN 978-85-363-0437- 3",
+          "full": "KROEMER, K. H. E; GRANDJEAN, E. Manual de ergonomia: adaptando o trabalho ao homem. 5. ed. Porto Alegre: Bookman, 2005. ISBN 978-85-363-0437- 3"
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "AMORIM, C. et al",
+          "details": "Ergonomia e tecnologia [em foco]. São Paulo: Blucher, [201- ]. Disponível em: https://doi.org/10.5151/9786555500455",
+          "full": "AMORIM, C. et al. Ergonomia e tecnologia [em foco]. São Paulo: Blucher, [201- ]. Disponível em: https://doi.org/10.5151/9786555500455"
+        },
+        {
+          "authors": "BETIOL, M. I. S.; DANIELLOU, F. A ergonomia em busca de seus princípios: debates epistemológicos",
+          "details": "São Paulo: Edgard Blucher, 2004. ISBN 852- 1203-50-0.",
+          "full": "BETIOL, M. I. S.; DANIELLOU, F. A ergonomia em busca de seus princípios: debates epistemológicos. São Paulo: Edgard Blucher, 2004. ISBN 852- 1203-50-0."
+        },
+        {
+          "authors": "CYBIS, W; BETIOL, A. H; FAUST, R Ergonomia e Usabilidade. 3. ed",
+          "details": "São Paulo: Novatec, 2015. ISBN 978-85-75224-59-5.",
+          "full": "CYBIS, W; BETIOL, A. H; FAUST, R Ergonomia e Usabilidade. 3. ed. São Paulo: Novatec, 2015. ISBN 978-85-75224-59-5."
+        },
+        {
+          "authors": "GUERIN, F. et al",
+          "details": "Compreender o trabalho para transformá-lo: a prática da ergonomia. São Paulo: Edgard Blucher, 2001. ISBN 852-1202-97-0",
+          "full": "GUERIN, F. et al. Compreender o trabalho para transformá-lo: a prática da ergonomia. São Paulo: Edgard Blucher, 2001. ISBN 852-1202-97-0"
+        },
+        {
+          "authors": "MÁSCULO, F. S.; VIDAL, M. C",
+          "details": "Ergonomia: Trabalho Adequado e Eficiente. 1. ed. Rio de Janeiro: Campus, 2011. ISBN 978-85-35238-02-0",
+          "full": "MÁSCULO, F. S.; VIDAL, M. C. Ergonomia: Trabalho Adequado e Eficiente. 1. ed. Rio de Janeiro: Campus, 2011. ISBN 978-85-35238-02-0"
+        }
+      ]
+    },
+    {
+      "code": "EMB5059",
+      "name": "Metodologia de Projeto",
+      "phase": "",
+      "credits": "04",
+      "workload_hours": "72",
+      "type": "",
+      "prerequisites": "Aprovação em 800horas-aula",
+      "description": "Introdução: contexto e importância do projeto de produtos. Modelos do processo e planejamento do projeto de produtos/serviços. Métodos e ferramentas para a especificação de problemas de projeto e de concepção de produtos/serviços. Projeto preliminar: modelagem, análise e simulação de soluções de projeto. Projeto detalhado. Técnicas de prototipagem. Desenvolvimento de projetos com a Comunidade. Técnicas e conceitos de Desenho Universal em projetos de engenharia.",
+      "basic_bibliography": [
+        {
+          "authors": "CAMBIAGHI, S",
+          "details": "Desenho Universal. São Paulo: Senac, 2017. ISBN: 85-39-61304-2",
+          "full": "CAMBIAGHI, S. Desenho Universal. São Paulo: Senac, 2017. ISBN: 85-39-61304-2"
+        },
+        {
+          "authors": "BACK, N.; OGLIARI; A. SILVA, J.C.; DIAS, A",
+          "details": "Projeto Integrado de Produtos: Planejamento, Concepção e Modelagem. São Paulo: Manole, 2008. ISBN 978- 85-204-2208-3",
+          "full": "BACK, N.; OGLIARI; A. SILVA, J.C.; DIAS, A. Projeto Integrado de Produtos: Planejamento, Concepção e Modelagem. São Paulo: Manole, 2008. ISBN 978- 85-204-2208-3"
+        },
+        {
+          "authors": "ROZENFELD, H. et al",
+          "details": "Gestão de Desenvolvimento de Produtos. Uma referência para a melhoria do processo. São Paulo: Saraiva, 2006. ISBN 85-02-05446-5",
+          "full": "ROZENFELD, H. et al. Gestão de Desenvolvimento de Produtos. Uma referência para a melhoria do processo. São Paulo: Saraiva, 2006. ISBN 85-02-05446-5"
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "AHRENS, C. H. et al",
+          "details": "Prototipagem rápida: tecnologias e aplicações. 1. ed. São Paulo: Edgard Blucher, 2007. ISBN 85-212-0388-8",
+          "full": "AHRENS, C. H. et al. Prototipagem rápida: tecnologias e aplicações. 1. ed. São Paulo: Edgard Blucher, 2007. ISBN 85-212-0388-8"
+        },
+        {
+          "authors": "ASSOCIAÇÃO BRASILEIRA DE NORMAS TÉCNICAS. NBR 9050:2020 Acessibilidade a edificações, mobiliário, espaços e equipamentos urbanos",
+          "details": "Rio de Janeiro, 2021.",
+          "full": "ASSOCIAÇÃO BRASILEIRA DE NORMAS TÉCNICAS. NBR 9050:2020 Acessibilidade a edificações, mobiliário, espaços e equipamentos urbanos. Rio de Janeiro, 2021."
+        },
+        {
+          "authors": "PAHL, Gerhard; BEITZ, Wolfgang; FELDHUSEN, Jörg; GROTE, Karl-Friedrich",
+          "details": "Projeto na Engenharia: Fundamentos do desenvolvimento eficaz de produtos, métodos e aplicações. São Paulo: Edgard Blücher, 2005. ISBN 978-85-212-0363-6",
+          "full": "PAHL, Gerhard; BEITZ, Wolfgang; FELDHUSEN, Jörg; GROTE, Karl-Friedrich. Projeto na Engenharia: Fundamentos do desenvolvimento eficaz de produtos, métodos e aplicações. São Paulo: Edgard Blücher, 2005. ISBN 978-85-212-0363-6"
+        },
+        {
+          "authors": "ROMEIRO FILHO, E",
+          "details": "; FERREIRA, C. V.; MIGUEL, P. A. C.; GOUVINHAS, R.P. ;",
+          "full": "ROMEIRO FILHO, E. ; FERREIRA, C. V.; MIGUEL, P. A. C.; GOUVINHAS, R.P. ;"
+        },
+        {
+          "authors": "NAVEIRO, R.M",
+          "details": "Projeto do Produto. 1. ed. Rio de Janeiro: Elsevier, 2010. 376 p.",
+          "full": "NAVEIRO, R.M. Projeto do Produto. 1. ed. Rio de Janeiro: Elsevier, 2010. 376 p."
+        },
+        {
+          "authors": "ISBN 85-35-23351-2 _____ Um Guia do Conjunto de Conhecimentos em Gerenciamento de Projetos",
+          "details": "Terceira edição.(Guia PMBOK®). New York: Project Management Institute, Inc. 2004. ISBN 19-30-69974-3. Disponível em https://docplayer.com.br/1005985-Um- guia-do-conjunto-de-conhecimentos-em-gerenciamento-de-projetos-terceira- edicao-guia-pmbok.html",
+          "full": "ISBN 85-35-23351-2 _____ Um Guia do Conjunto de Conhecimentos em Gerenciamento de Projetos. Terceira edição.(Guia PMBOK®). New York: Project Management Institute, Inc. 2004. ISBN 19-30-69974-3. Disponível em https://docplayer.com.br/1005985-Um- guia-do-conjunto-de-conhecimentos-em-gerenciamento-de-projetos-terceira- edicao-guia-pmbok.html"
+        }
+      ]
+    },
+    {
+      "code": "EMB5049",
+      "name": "Física Experimental",
+      "phase": "",
+      "credits": "02",
+      "workload_hours": "36",
+      "type": "",
+      "prerequisites": "EMB5064 Física II",
+      "description": "Realização e análise de experimentos compreendendo os seguintes tópicos: Mecânica, ondas, oscilações, termodinâmica, eletricidade e magnetismo.",
+      "basic_bibliography": [
+        {
+          "authors": "YOUNG, Hugh D.; FREEDMAN, Roger A",
+          "details": "Física. 12. ed. São Paulo: Addison Wesley, Pearson, 2008-2009. 4 v. ISBN 9788588639300 (v.1).",
+          "full": "YOUNG, Hugh D.; FREEDMAN, Roger A. Física. 12. ed. São Paulo: Addison Wesley, Pearson, 2008-2009. 4 v. ISBN 9788588639300 (v.1)."
+        },
+        {
+          "authors": "YOUNG, Hugh D.; FREEDMAN, Roger A",
+          "details": "Física. 12. ed. São Paulo: Addison Wesley, Pearson, 2008-2009. 4 v. ISBN 9788588639300 (v.2).",
+          "full": "YOUNG, Hugh D.; FREEDMAN, Roger A. Física. 12. ed. São Paulo: Addison Wesley, Pearson, 2008-2009. 4 v. ISBN 9788588639300 (v.2)."
+        },
+        {
+          "authors": "YOUNG, Hugh D.; FREEDMAN, Roger A",
+          "details": "Física. 12. ed. São Paulo: Addison Wesley, Pearson, 2008-2009. 4 v. ISBN 9788588639300 (v.3).",
+          "full": "YOUNG, Hugh D.; FREEDMAN, Roger A. Física. 12. ed. São Paulo: Addison Wesley, Pearson, 2008-2009. 4 v. ISBN 9788588639300 (v.3)."
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "CAPUANO, Francisco G.; MARINO, Maria Aparecida Mendes",
+          "details": "Laboratório de eletricidade e eletrônica. 24. ed. São Paulo: Érica, 2007. ISBN 978-85-719-4016-1",
+          "full": "CAPUANO, Francisco G.; MARINO, Maria Aparecida Mendes. Laboratório de eletricidade e eletrônica. 24. ed. São Paulo: Érica, 2007. ISBN 978-85-719-4016-1"
+        },
+        {
+          "authors": "CAMPOS, A. et al",
+          "details": "Física Experimental básica na universidade. 2.ed. Belo Horizonte: UFMG, 2009. ISBN 978-85-328-0647-5. Disponível em https://www.fisica.ufmg.br/2018/07/11/nova-edicao-do-livro-fisica- experimental-basica-na-universidade/",
+          "full": "CAMPOS, A. et al. Física Experimental básica na universidade. 2.ed. Belo Horizonte: UFMG, 2009. ISBN 978-85-328-0647-5. Disponível em https://www.fisica.ufmg.br/2018/07/11/nova-edicao-do-livro-fisica- experimental-basica-na-universidade/"
+        },
+        {
+          "authors": "HOLMAN, J.P.Experimental Methods for Engineers. 8 ed",
+          "details": "New York: McGraw Hill, 2012. ISBN 978-0-07-352930-1",
+          "full": "HOLMAN, J.P.Experimental Methods for Engineers. 8 ed. New York: McGraw Hill, 2012. ISBN 978-0-07-352930-1"
+        },
+        {
+          "authors": "PIACENTINI, J. J. et al",
+          "details": "Introdução ao laboratório de física. 5. ed. Florianópolis: Ed. da UFSC, 2013. ISBN 978-85-328-0647-5",
+          "full": "PIACENTINI, J. J. et al. Introdução ao laboratório de física. 5. ed. Florianópolis: Ed. da UFSC, 2013. ISBN 978-85-328-0647-5"
+        },
+        {
+          "authors": "VUOLO, J. H",
+          "details": "Fundamentos da teoria de erros. 2. ed. rev. e ampl. São Paulo: Edgard Blucher, 1996. ISBN 85-21-200-56-0",
+          "full": "VUOLO, J. H. Fundamentos da teoria de erros. 2. ed. rev. e ampl. São Paulo: Edgard Blucher, 1996. ISBN 85-21-200-56-0"
+        }
+      ]
+    },
+    {
+      "code": "EMB5120",
+      "name": "Gestão e Organização",
+      "phase": "",
+      "credits": "04",
+      "workload_hours": "72",
+      "type": "",
+      "prerequisites": "Aprovação em 800 horas",
+      "description": "Histórico da teoria geral da administração. Abordagens básicas e evolução do pensamento administrativo. Conceito de Administração e funções administrativas. Gestão da Produção e Operações. Estratégia de Produção e Operações. Noções de Planejamento e Controle da Produção. Just in Time e Operações Enxutas. Gestão da Qualidade. Gestão de Pessoas. Noções de Empreendedorismo.",
+      "basic_bibliography": [
+        {
+          "authors": "CHIAVENATO, Idalberto",
+          "details": "Introdução a Teoria Geral da Administração. Rio de Janeiro: Elsevier; 2011. ISBN 978-85-352-4671-1",
+          "full": "CHIAVENATO, Idalberto. Introdução a Teoria Geral da Administração. Rio de Janeiro: Elsevier; 2011. ISBN 978-85-352-4671-1"
+        },
+        {
+          "authors": "KRAJEWSKI, Lee J.; RITZMAN, Larry P.; MALHOTRA, Manoj K",
+          "details": "Administração de Produção e Operações. São Paulo: Pearson Prentice Hall, 2009. ISBN 978-85-879- 1838-3",
+          "full": "KRAJEWSKI, Lee J.; RITZMAN, Larry P.; MALHOTRA, Manoj K. Administração de Produção e Operações. São Paulo: Pearson Prentice Hall, 2009. ISBN 978-85-879- 1838-3"
+        },
+        {
+          "authors": "SLACK, Nigel; STUART, Chambers; JOHNSON, Robert",
+          "details": "Administração da Produção. 3 ed. São Paulo: Atlas, 2009. ISBN 978-85-224-5353-5",
+          "full": "SLACK, Nigel; STUART, Chambers; JOHNSON, Robert. Administração da Produção. 3 ed. São Paulo: Atlas, 2009. ISBN 978-85-224-5353-5"
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "CORRÊA, Henrique L.; GIANESI, Irineu G. N.; CAON, Mauro",
+          "details": "Planejamento, programação e controle da produção: MRP II/ERP: conceitos, uso e implantação: base para SAP, Oracle Applications e outros softwares integrados de gestão. São Paulo: Atlas, 2007. ISBN 978-85-224-4853-1",
+          "full": "CORRÊA, Henrique L.; GIANESI, Irineu G. N.; CAON, Mauro. Planejamento, programação e controle da produção: MRP II/ERP: conceitos, uso e implantação: base para SAP, Oracle Applications e outros softwares integrados de gestão. São Paulo: Atlas, 2007. ISBN 978-85-224-4853-1"
+        },
+        {
+          "authors": "DAVIS, Mark M.; AQUILANO, Nicholas J.; CHASE, Richard B",
+          "details": "Fundamentos da administração da produção. Porto Alegre (RS): Bookman, 2001. ISBN 978-85-730- 7524-3",
+          "full": "DAVIS, Mark M.; AQUILANO, Nicholas J.; CHASE, Richard B. Fundamentos da administração da produção. Porto Alegre (RS): Bookman, 2001. ISBN 978-85-730- 7524-3"
+        },
+        {
+          "authors": "DORNELAS, J",
+          "details": "C. A., Empreendedorismo: Transformando Ideias em Negócios. 3ed.Campus, 2008. ISBN 978-85-352-3270-7",
+          "full": "DORNELAS, J. C. A., Empreendedorismo: Transformando Ideias em Negócios. 3ed.Campus, 2008. ISBN 978-85-352-3270-7"
+        },
+        {
+          "authors": "SOBRAL, Filipe; PECI, Alketa",
+          "details": "Administração: teoria e prática no contexto brasileiro. 2. ed. São Paulo: Pearson, 2013. ISBN 978-85-814-3085-0.",
+          "full": "SOBRAL, Filipe; PECI, Alketa. Administração: teoria e prática no contexto brasileiro. 2. ed. São Paulo: Pearson, 2013. ISBN 978-85-814-3085-0."
+        },
+        {
+          "authors": "TUBINO, D. F",
+          "details": "Planejamento e controle da produção: Teoria e Prática. São Paulo: Atlas, 2009. ISBN 978-85-224-5694-9",
+          "full": "TUBINO, D. F. Planejamento e controle da produção: Teoria e Prática. São Paulo: Atlas, 2009. ISBN 978-85-224-5694-9"
+        }
+      ]
+    },
+    {
+      "code": "EMB5113",
+      "name": "Modelagem de Sistemas",
+      "phase": "",
+      "credits": "04",
+      "workload_hours": "72",
+      "type": "",
+      "prerequisites": "Aprovação em 800 horas-aula",
+      "description": "Introdução à engenharia de sistemas. Formalismos de modelagem de sistemas discretos. Formalismos de modelagem de software (UML).",
+      "basic_bibliography": [
+        {
+          "authors": "LIMA, A. S. UML 2.5: Do Requisito à Solução",
+          "details": "São Paulo: Editora Érica, 2014. ISBN 978-85-365-0832-0.",
+          "full": "LIMA, A. S. UML 2.5: Do Requisito à Solução. São Paulo: Editora Érica, 2014. ISBN 978-85-365-0832-0."
+        },
+        {
+          "authors": "CASSANDRAS, C. G; LAFORTUNE, S",
+          "details": "Introduction to Discrete Event Systems. 2nd ed. 2008. New York, NY: Springer US: Imprint: Springer, 2008. ISBN 978-03-876- 8612-7. Disponível em: https://doi.org/10.1007/978-0-387-68612-7",
+          "full": "CASSANDRAS, C. G; LAFORTUNE, S. Introduction to Discrete Event Systems. 2nd ed. 2008. New York, NY: Springer US: Imprint: Springer, 2008. ISBN 978-03-876- 8612-7. Disponível em: https://doi.org/10.1007/978-0-387-68612-7"
+        },
+        {
+          "authors": "CARDOSO, J.; VALETTE, R",
+          "details": "Redes de Petri. 1997. Disponível em http://valetterobert.free.fr/enseignement.d/livroweb101004.pdf.",
+          "full": "CARDOSO, J.; VALETTE, R. Redes de Petri. 1997. Disponível em http://valetterobert.free.fr/enseignement.d/livroweb101004.pdf."
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "BUEDE, Dennis M",
+          "details": "The engineering design of systems: models and methods. Hoboken: John Wiley, 2009. ISBN 978-04-701-6402-0.",
+          "full": "BUEDE, Dennis M. The engineering design of systems: models and methods. Hoboken: John Wiley, 2009. ISBN 978-04-701-6402-0."
+        },
+        {
+          "authors": "FOWLER, M. UML essencial: um breve guia para a linguagem-padrão de modelagem de objetos. 3. ed",
+          "details": "Porto Alegre: Bookman, 2004. ISBN 85-363-045-4- 5",
+          "full": "FOWLER, M. UML essencial: um breve guia para a linguagem-padrão de modelagem de objetos. 3. ed. Porto Alegre: Bookman, 2004. ISBN 85-363-045-4- 5"
+        },
+        {
+          "authors": "GILLEANES T. A. G. UML 2 - Uma Abordagem Prática",
+          "details": "São Paulo: editora Novatec, 2011. ISBN 978-85-752-228-1-2.",
+          "full": "GILLEANES T. A. G. UML 2 - Uma Abordagem Prática. São Paulo: editora Novatec, 2011. ISBN 978-85-752-228-1-2."
+        },
+        {
+          "authors": "LARMAN, C",
+          "details": "Utilizando UML e padrõs: uma introdução à análise e ao projeto orientados a objetos e ao desenvolvimento iterativo. Porto Alegre: Bookman, 2007. ISBN 978-85-600-315-2-8.",
+          "full": "LARMAN, C. Utilizando UML e padrõs: uma introdução à análise e ao projeto orientados a objetos e ao desenvolvimento iterativo. Porto Alegre: Bookman, 2007. ISBN 978-85-600-315-2-8."
+        },
+        {
+          "authors": "WEILKIENS, T",
+          "details": "Systems Engineering with SysML/UML. Morgan Kaufmann Publishers Inc., 2008. ISBN 978-0123742742",
+          "full": "WEILKIENS, T. Systems Engineering with SysML/UML. Morgan Kaufmann Publishers Inc., 2008. ISBN 978-0123742742"
+        }
+      ]
+    },
+    {
+      "code": "EMB5058",
+      "name": "Estatística II",
+      "phase": "",
+      "credits": "03",
+      "workload_hours": "54",
+      "type": "",
+      "prerequisites": "EMB 5057 Estatística I",
+      "description": "Estimação de parâmetros pelo método da máxima verossimilhança. Regressão linear simples e múltipla: estimação de parâmetros e teste de hipóteses, predição para novas observações, analise da adequação do modelo, correlação. Introdução a Modelos Lineares Generalizados (MLG): família exponencial de distribuições, elementos básicos, principais MLGs para dados discretos, Estimação de parâmetros e teste de hipóteses, avaliação do ajuste do modelo. Aplicações com uso de ferramentas computacionais.",
+      "basic_bibliography": [
+        {
+          "authors": "DEVORE. J. L",
+          "details": "Probabilidade e estatística para engenharia e ciências. São Paulo: Cengage Learning, 2015. ISBN 978-85-221-1183-1",
+          "full": "DEVORE. J. L. Probabilidade e estatística para engenharia e ciências. São Paulo: Cengage Learning, 2015. ISBN 978-85-221-1183-1"
+        },
+        {
+          "authors": "BINGHAM, N.H; FRY, J. M",
+          "details": "Regression: Linear Models in Statistics. London: Springer, 2010. ISBN 978-1-84882-969-5. Disponivel em: https://doi.org/10.1007/978-1-84882-969-5",
+          "full": "BINGHAM, N.H; FRY, J. M. Regression: Linear Models in Statistics. London: Springer, 2010. ISBN 978-1-84882-969-5. Disponivel em: https://doi.org/10.1007/978-1-84882-969-5"
+        },
+        {
+          "authors": "ROSS, S. M",
+          "details": "Introduction to Probability and Statistics for Engineers and Scientists. 4. ed. Elsevier, 2009. ISBN 978-01-237-0483-2. Disponível em: https://www.sciencedirect.com/ book/9780123704832/introduction-to- probability-and-statistics-for-engineers-and-scientists.",
+          "full": "ROSS, S. M. Introduction to Probability and Statistics for Engineers and Scientists. 4. ed. Elsevier, 2009. ISBN 978-01-237-0483-2. Disponível em: https://www.sciencedirect.com/ book/9780123704832/introduction-to- probability-and-statistics-for-engineers-and-scientists."
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "MONTGOMERY, D. C.; RUNGER, G. C",
+          "details": "Estatística aplicada e probabilidade para engenheiros. 5. ed. Rio de Janeiro (RJ): LTC, 2012. ISBN 978-85-216-1902-4",
+          "full": "MONTGOMERY, D. C.; RUNGER, G. C. Estatística aplicada e probabilidade para engenheiros. 5. ed. Rio de Janeiro (RJ): LTC, 2012. ISBN 978-85-216-1902-4"
+        },
+        {
+          "authors": "DALGAARD, P",
+          "details": "Introductory Statistics with R. 2. ed, Springer, 2008. ISBN 978-03- 877-9053-4. Disponível em: https://link.springer.com/book/10.1007/978-0-387-79054-1",
+          "full": "DALGAARD, P. Introductory Statistics with R. 2. ed, Springer, 2008. ISBN 978-03- 877-9053-4. Disponível em: https://link.springer.com/book/10.1007/978-0-387-79054-1"
+        },
+        {
+          "authors": "DE COURSEY, W. J",
+          "details": "Statistics and Probability for Engineering Applications With Microsoft Excel. 1. ed. Woburn: Elsevier Science, 2003. ISBN 978-07-506-7618-2. Disponível em: https://www.sciencedirect.com/book/9780750676182/statistics- and-probability-for-engineering-applications",
+          "full": "DE COURSEY, W. J. Statistics and Probability for Engineering Applications With Microsoft Excel. 1. ed. Woburn: Elsevier Science, 2003. ISBN 978-07-506-7618-2. Disponível em: https://www.sciencedirect.com/book/9780750676182/statistics- and-probability-for-engineering-applications"
+        },
+        {
+          "authors": "SÁ, J. P. M",
+          "details": "Applied Statistics Using SPSS, STATISTICA and MATLAB. 1st ed. 2003. Berlin, Heidelberg: Springer Berlin Heidelberg: Imprint: Springer, 2003. xxii, 452 p. 156 il ISBN 9783662058046. Disponível em: https://doi.org/10.1007/978-3-662- 05804-6",
+          "full": "SÁ, J. P. M. Applied Statistics Using SPSS, STATISTICA and MATLAB. 1st ed. 2003. Berlin, Heidelberg: Springer Berlin Heidelberg: Imprint: Springer, 2003. xxii, 452 p. 156 il ISBN 9783662058046. Disponível em: https://doi.org/10.1007/978-3-662- 05804-6"
+        },
+        {
+          "authors": "HEIBERGER, R. M; HOLLAND, B",
+          "details": "Statistical Analysis and Data Display: An Intermediate Course with Examples in S-Plus, R, and SAS. 1st ed. 2004. New York: Springer New York: ISBN 978-14-757-4284-8. Disponível em: https://doi.org/10.1007/978-1-4757-4284-8",
+          "full": "HEIBERGER, R. M; HOLLAND, B. Statistical Analysis and Data Display: An Intermediate Course with Examples in S-Plus, R, and SAS. 1st ed. 2004. New York: Springer New York: ISBN 978-14-757-4284-8. Disponível em: https://doi.org/10.1007/978-1-4757-4284-8"
+        }
+      ]
+    },
+    {
+      "code": "EMB5061",
+      "name": "Metrologia",
+      "phase": "",
+      "credits": "03",
+      "workload_hours": "54",
+      "type": "",
+      "prerequisites": "EMB5057 Estatística I",
+      "description": "Conceitos fundamentais da metrologia científica e industrial; Sistema Internacional de Unidades; Medições diretas e Indiretas; Erros de medição; Características dos sistemas de medição; Calibração e rastreabilidade metrológica; Estimativa de incerteza de medição; Comprovação metrológica; Práticas em laboratório (grandezas mecânicas e elétricas).",
+      "basic_bibliography": [
+        {
+          "authors": "GONÇALVES Jr., A. A.; SOUSA, A. R.Fundamentos de Metrologia Científica e Industrial",
+          "details": "Barueri: Manole, 2008. ISBN 978-85-204-2116-1",
+          "full": "GONÇALVES Jr., A. A.; SOUSA, A. R.Fundamentos de Metrologia Científica e Industrial. Barueri: Manole, 2008. ISBN 978-85-204-2116-1"
+        },
+        {
+          "authors": "LIRA, F. A",
+          "details": "Metrologia na indústria. 7. ed. São Paulo: Érica, 2010. ISBN 978-85-719- 4783-2 Vocabulário Internacional de Metrologia: conceitos fundamentais e gerais de termos associados (VIM 2012). Duque de Caxias: INMETRO, 2012. ISBN 978-85- 869-2009-7. Disponível em https://www.gov.br/inmetro/pt-br/centrais-de- conteudo/publicacoes/documentos-tecnicos-em-metrologia/vim_2012.pdf /view",
+          "full": "LIRA, F. A. Metrologia na indústria. 7. ed. São Paulo: Érica, 2010. ISBN 978-85-719- 4783-2 Vocabulário Internacional de Metrologia: conceitos fundamentais e gerais de termos associados (VIM 2012). Duque de Caxias: INMETRO, 2012. ISBN 978-85- 869-2009-7. Disponível em https://www.gov.br/inmetro/pt-br/centrais-de- conteudo/publicacoes/documentos-tecnicos-em-metrologia/vim_2012.pdf /view"
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "Avaliação de dados de medição: guia para a expressão de incerteza de medição (GUM 2008)",
+          "details": "Duque de Caxias: INMETRO/CICMA/SEPIN, 2012. ISBN 978-85-869-2013-4. Disponível em: https://www.gov.br/inmetro/pt-br/centrais- de-conteudo/publicacoes/documentos-tecnicos-em- metrologia/gum_final.pdf /view Evaluation of the Uncertainty of Measurement in Calibration (EA-4/02 M). European-accreditation, 2013. Disponível em: https://european- accreditation.org/publications/ea-4-02-m/",
+          "full": "Avaliação de dados de medição: guia para a expressão de incerteza de medição (GUM 2008). Duque de Caxias: INMETRO/CICMA/SEPIN, 2012. ISBN 978-85-869-2013-4. Disponível em: https://www.gov.br/inmetro/pt-br/centrais- de-conteudo/publicacoes/documentos-tecnicos-em- metrologia/gum_final.pdf /view Evaluation of the Uncertainty of Measurement in Calibration (EA-4/02 M). European-accreditation, 2013. Disponível em: https://european- accreditation.org/publications/ea-4-02-m/"
+        },
+        {
+          "authors": "HEBRA, A",
+          "details": "The Physics of Metrology: All about Instruments: From Trundle Wheels to Atomic Clocks. Wien: Springer, 2010. ISBN 978-3-2117-8381-8. Disponível em: https://doi.org/10.1007/978-3-211-78381-8",
+          "full": "HEBRA, A. The Physics of Metrology: All about Instruments: From Trundle Wheels to Atomic Clocks. Wien: Springer, 2010. ISBN 978-3-2117-8381-8. Disponível em: https://doi.org/10.1007/978-3-211-78381-8"
+        },
+        {
+          "authors": "RABINOVICH, S. G",
+          "details": "Evaluating Measurement Accuracy. A Practical Approach. New York: Springer, 2010. ISBN: 9781441914569. Disponível em: https://doi.org/10.1007/978-1-4419-1456-9",
+          "full": "RABINOVICH, S. G. Evaluating Measurement Accuracy. A Practical Approach. New York: Springer, 2010. ISBN: 9781441914569. Disponível em: https://doi.org/10.1007/978-1-4419-1456-9"
+        },
+        {
+          "authors": "SILVA Neto, J. C",
+          "details": "Metrologia e Controle Dimensional. Rio de Janeiro: Elsevier, 2012. ISBN 978-85-352-5579-9",
+          "full": "SILVA Neto, J. C. Metrologia e Controle Dimensional. Rio de Janeiro: Elsevier, 2012. ISBN 978-85-352-5579-9"
+        }
+      ]
+    },
+    {
+      "code": "EMB5974",
+      "name": "Pesquisa Operacional I",
+      "phase": "",
+      "credits": "04",
+      "workload_hours": "72",
+      "type": "",
+      "prerequisites": "EMB 5005 Geometria Analítica",
+      "description": "Introdução: histórico, objetivos, restrições e modelos. Formulação de modelos de programação linear. Solução gráfica. Solução algébrica. Método simplex. Dualidade. Análise de sensibilidade. Problemas lineares especiais: Problema de transportes; Problema de atribuição; Problema de caminho mínimo; Problema de fluxo máximo. Ferramentas computacionais para solução de problemas.",
+      "basic_bibliography": [
+        {
+          "authors": "COLIN, E. C",
+          "details": "Pesquisa Operacional - 170 aplicações em estratégias, Finanças, Logistica, Produção, Marketing e Vendas. Rio de Janeiro: LTC, 2013. ISBN 978- 85-216-1559-0",
+          "full": "COLIN, E. C. Pesquisa Operacional - 170 aplicações em estratégias, Finanças, Logistica, Produção, Marketing e Vendas. Rio de Janeiro: LTC, 2013. ISBN 978- 85-216-1559-0"
+        },
+        {
+          "authors": "HILLIER, F. S.; LIEBERMAN, G.J",
+          "details": "Introdução à Pesquisa Operacional. 9. ed. São Paulo: Mcgraw Hill, 2013. ISBN 978-85-805-5118-1",
+          "full": "HILLIER, F. S.; LIEBERMAN, G.J. Introdução à Pesquisa Operacional. 9. ed. São Paulo: Mcgraw Hill, 2013. ISBN 978-85-805-5118-1"
+        },
+        {
+          "authors": "LACHTERMACHER, G",
+          "details": "Pesquisa Operacional na tomada de decisões. 4. ed. São Paulo: Pearson, 2009. ISBN 978-85-760-5093-3",
+          "full": "LACHTERMACHER, G. Pesquisa Operacional na tomada de decisões. 4. ed. São Paulo: Pearson, 2009. ISBN 978-85-760-5093-3"
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "ANDRADE, Eduardo Leopoldino de",
+          "details": "Introdução à pesquisa operacional: métodos e modelos para análise de decisões. 4. ed. Rio de Janeiro: LTC, 2009.",
+          "full": "ANDRADE, Eduardo Leopoldino de. Introdução à pesquisa operacional: métodos e modelos para análise de decisões. 4. ed. Rio de Janeiro: LTC, 2009."
+        },
+        {
+          "authors": "ISBN 978-85-216-1665-8",
+          "details": "",
+          "full": "ISBN 978-85-216-1665-8"
+        },
+        {
+          "authors": "ARENALES, M.; ARMENTANO, V.; MORABITO, R.; YANASSE, H",
+          "details": "Pesquisa Operacional. Rio de Janeiro: Elsevier, 2015. ISBN 978-85-352-7161-4",
+          "full": "ARENALES, M.; ARMENTANO, V.; MORABITO, R.; YANASSE, H. Pesquisa Operacional. Rio de Janeiro: Elsevier, 2015. ISBN 978-85-352-7161-4"
+        },
+        {
+          "authors": "GOLDBARG, M. C.; LUNA, H. P. L",
+          "details": "Otimização Combinatória e Programação Linear: modelos e algoritmos. 2. ed. Rio de Janeiro: Campus, 2005. ISBN 978-8- 5352-1520-5",
+          "full": "GOLDBARG, M. C.; LUNA, H. P. L. Otimização Combinatória e Programação Linear: modelos e algoritmos. 2. ed. Rio de Janeiro: Campus, 2005. ISBN 978-8- 5352-1520-5"
+        },
+        {
+          "authors": "WINSTON, W. L",
+          "details": "Operations Research: applications and algorithms. 4. ed. New York: Thomson, 2004. ISBN 978-0-5343-8058-8",
+          "full": "WINSTON, W. L. Operations Research: applications and algorithms. 4. ed. New York: Thomson, 2004. ISBN 978-0-5343-8058-8"
+        },
+        {
+          "authors": "TAHA, H. A",
+          "details": "Pesquisa Operacional. 8. ed. São Paulo: Pearson, 2008. ISBN 978-85- 7605-150-3",
+          "full": "TAHA, H. A. Pesquisa Operacional. 8. ed. São Paulo: Pearson, 2008. ISBN 978-85- 7605-150-3"
+        }
+      ]
+    },
+    {
+      "code": "EMB5961",
+      "name": "Engenharia Econômica",
+      "phase": "",
+      "credits": "03",
+      "workload_hours": "54",
+      "type": "",
+      "prerequisites": "EMB5057 Estatística I",
+      "description": "Fundamentos de economia. Princípios básicos de Engenharia Econômica. Matemática financeira. Investimento e modalidades de financiamento. Bases para comparação de alternativas de investimento. Impostos e depreciação. Análise da relação: custo x volume x lucro (ACVL). Análise de sensibilidade. Análise de substituição de equipamentos. Análise de alternativas sob condições de risco e incerteza. Tópicos de Finanças e investimentos. Utilização de simulação na Engenharia Econômica em estudo de caso.",
+      "basic_bibliography": [
+        {
+          "authors": "ASSAF NETO, A",
+          "details": "Matemática Financeira e Suas Aplicações. 10. ed. São Paulo: Atlas, 2008. ISBN 97885-22448-89-0",
+          "full": "ASSAF NETO, A. Matemática Financeira e Suas Aplicações. 10. ed. São Paulo: Atlas, 2008. ISBN 97885-22448-89-0"
+        },
+        {
+          "authors": "CASAROTTO FILHO, N.; KOPITTKE, B.H",
+          "details": "Análise de Investimentos: Matemática Financeira, Engenharia Econômica, Tomada de Decisão, Estratégia Empresarial. 11. ed. São Paulo: Atlas, 2010. ISBN 978-8522457-89-2",
+          "full": "CASAROTTO FILHO, N.; KOPITTKE, B.H. Análise de Investimentos: Matemática Financeira, Engenharia Econômica, Tomada de Decisão, Estratégia Empresarial. 11. ed. São Paulo: Atlas, 2010. ISBN 978-8522457-89-2"
+        },
+        {
+          "authors": "HIRSCHFELD, Henrique",
+          "details": "Engenharia econômica e análise de custos: aplicações práticas para economistas, engenheiros, analistas de investimentos e administradores. 7. ed. rev. atual. ampl. São Paulo: Atlas, 2009. ISBN 978-85- 22426-62-1",
+          "full": "HIRSCHFELD, Henrique. Engenharia econômica e análise de custos: aplicações práticas para economistas, engenheiros, analistas de investimentos e administradores. 7. ed. rev. atual. ampl. São Paulo: Atlas, 2009. ISBN 978-85- 22426-62-1"
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "GITMAN, L. J",
+          "details": "Princípios de Administração Financeira. 10. ed. São Paulo: Pearson, 2010. ISBN 978-85-886-3912-6",
+          "full": "GITMAN, L. J. Princípios de Administração Financeira. 10. ed. São Paulo: Pearson, 2010. ISBN 978-85-886-3912-6"
+        },
+        {
+          "authors": "GONÇALVES, A",
+          "details": "Engenharia econômica e finanças. Rio de Janeiro: Elsevier, 2009. ISBN 978-85-352-3210-3",
+          "full": "GONÇALVES, A. Engenharia econômica e finanças. Rio de Janeiro: Elsevier, 2009. ISBN 978-85-352-3210-3"
+        },
+        {
+          "authors": "MONTORO FILHO, A. F. et al",
+          "details": "Manual de Economia. 6. ed., rev. e ampl. São Paulo: Saraiva, 2013. 653 p. ISBN 978-85-02135-05-5",
+          "full": "MONTORO FILHO, A. F. et al. Manual de Economia. 6. ed., rev. e ampl. São Paulo: Saraiva, 2013. 653 p. ISBN 978-85-02135-05-5"
+        },
+        {
+          "authors": "MOTTA, R. R et al Engenharia Econômica e Finanças. 1. ed",
+          "details": "Coleção ABEPRO. Rio de Janeiro: Elsevier, 2008. ISBN 978-85-35232-10-3",
+          "full": "MOTTA, R. R et al Engenharia Econômica e Finanças. 1. ed. Coleção ABEPRO. Rio de Janeiro: Elsevier, 2008. ISBN 978-85-35232-10-3"
+        },
+        {
+          "authors": "SOUZA, A.; CLEMENTE, A",
+          "details": "Decisões Financeiras e Análise de Investimentos: Fundamentos, Técnicas e Aplicações. 6 ed. São Paulo: Atlas, 2008. ISBN 978-85- 22450-37-4",
+          "full": "SOUZA, A.; CLEMENTE, A. Decisões Financeiras e Análise de Investimentos: Fundamentos, Técnicas e Aplicações. 6 ed. São Paulo: Atlas, 2008. ISBN 978-85- 22450-37-4"
+        }
+      ]
+    },
+    {
+      "code": "EMB5977",
+      "name": "Logística I",
+      "phase": "",
+      "credits": "02",
+      "workload_hours": "36",
+      "type": "",
+      "prerequisites": "EMB5120 Gestão e Organização",
+      "description": "Conceitos: Logística, Logística de Suprimentos, Logística de Distribuição e Logística Integrada. Logística reversa. Cadeia de Suprimentos. Processos da Cadeia de Suprimentos. Gestão da Cadeia de Suprimentos. Nível de Serviço Logístico. Indicadores de Desempenho. Tecnologias e Processos da Cadeia de Suprimentos.",
+      "basic_bibliography": [
+        {
+          "authors": "BALLOU, R",
+          "details": "Gerenciamento da Cadeia de Suprimentos. Editora Bookman, São Paulo, 2006. ISBN 978-85-363-0591-2.",
+          "full": "BALLOU, R. Gerenciamento da Cadeia de Suprimentos. Editora Bookman, São Paulo, 2006. ISBN 978-85-363-0591-2."
+        },
+        {
+          "authors": "BOWERSOX D.; CLOSS D",
+          "details": "Logística Empresarial: o processo de integração da Cadeia de Suprimentos. Editora Atlas, São Paulo, 2004. ISBN 85-224-287-7-8",
+          "full": "BOWERSOX D.; CLOSS D. Logística Empresarial: o processo de integração da Cadeia de Suprimentos. Editora Atlas, São Paulo, 2004. ISBN 85-224-287-7-8"
+        },
+        {
+          "authors": "CHRISTOPHER, M",
+          "details": "Logística e gerenciamento da Cadeia de Suprimentos: Estratégias para a redução de custos e melhoria dos Serviços. Editora Pioneira, São Paulo, 2012. ISBN 978-85-221-1116-9",
+          "full": "CHRISTOPHER, M. Logística e gerenciamento da Cadeia de Suprimentos: Estratégias para a redução de custos e melhoria dos Serviços. Editora Pioneira, São Paulo, 2012. ISBN 978-85-221-1116-9"
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "ALVARENGA, A.C.; NOVAES,A.G.N",
+          "details": "Logística aplicada: suprimento e distribuição física. 3. ed. São Paulo (SP): E. Blucher, 2000. ISBN 978-85-212-0268-4.",
+          "full": "ALVARENGA, A.C.; NOVAES,A.G.N. Logística aplicada: suprimento e distribuição física. 3. ed. São Paulo (SP): E. Blucher, 2000. ISBN 978-85-212-0268-4."
+        },
+        {
+          "authors": "BARAT, J",
+          "details": "Logística, transporte e desenvolvimento econômico. São Paulo: Editora CLA, 2007. ISBN 85-85-45-425-3",
+          "full": "BARAT, J. Logística, transporte e desenvolvimento econômico. São Paulo: Editora CLA, 2007. ISBN 85-85-45-425-3"
+        },
+        {
+          "authors": "CHOPRA, S.; MEINDL, P",
+          "details": "Gestão da Cadeia de Suprimentos: estratégia, planejamento e operações. São Paulo: Pearson Prentice Hall, 2011. ISBN 978- 85-760-5836-6",
+          "full": "CHOPRA, S.; MEINDL, P. Gestão da Cadeia de Suprimentos: estratégia, planejamento e operações. São Paulo: Pearson Prentice Hall, 2011. ISBN 978- 85-760-5836-6"
+        },
+        {
+          "authors": "DIAS, M. A. P",
+          "details": "Administração de Materiais: uma abordagem logística. São Paulo: Atlas, 2010. ISBN 978-85-224-5919-3",
+          "full": "DIAS, M. A. P. Administração de Materiais: uma abordagem logística. São Paulo: Atlas, 2010. ISBN 978-85-224-5919-3"
+        },
+        {
+          "authors": "NOVAES, A. G",
+          "details": "Logística e gerenciamento da cadeia de distribuição: estratégia, operação e avaliação. Editora Campus. Rio de Janeiro, 2014. ISBN 978-85-352-7982-5",
+          "full": "NOVAES, A. G. Logística e gerenciamento da cadeia de distribuição: estratégia, operação e avaliação. Editora Campus. Rio de Janeiro, 2014. ISBN 978-85-352-7982-5"
+        }
+      ]
+    },
+    {
+      "code": "EMB5067",
+      "name": "Gestão da Qualidade",
+      "phase": "",
+      "credits": "02",
+      "workload_hours": "36",
+      "type": "",
+      "prerequisites": "EMB5120 Gestão e Organização",
+      "description": "A evolução do conceito e as dimensões da qualidade; Fundamentos e princípios da gestão da qualidade; Abordagem de risco no planejamento estratégico e operacional; Normas de Sistemas de Gestão da Qualidade e o processo de certificação; Auditorias de sistema, de processo e de produto; Manutenção e Melhoria Contínua na gestão da qualidade; Normas setoriais de sistemas de gestão da qualidade..",
+      "basic_bibliography": [
+        {
+          "authors": "CARPINETTI, L.C. R",
+          "details": "Gestão da Qualidade. 3.ed. São Paulo: Atlas, 2016. ISBN 978-85-970-0391-8",
+          "full": "CARPINETTI, L.C. R. Gestão da Qualidade. 3.ed. São Paulo: Atlas, 2016. ISBN 978-85-970-0391-8"
+        },
+        {
+          "authors": "CARVALHO, M. M. de; PALADINI, E. P",
+          "details": "Gestão da Qualidade: Teoria e Casos. 2. ed. Rio de Janeiro: Elsevier, 2012. ISBN 978-85-352-4887-6 Associação Brasileira de Normas Técnicas. ABNT NBR ISO 9001-Sistemas de gestão da qualidade - Requisitos. Rio de Janeiro: ABNT, 2015 (versão atualizada).",
+          "full": "CARVALHO, M. M. de; PALADINI, E. P. Gestão da Qualidade: Teoria e Casos. 2. ed. Rio de Janeiro: Elsevier, 2012. ISBN 978-85-352-4887-6 Associação Brasileira de Normas Técnicas. ABNT NBR ISO 9001-Sistemas de gestão da qualidade - Requisitos. Rio de Janeiro: ABNT, 2015 (versão atualizada)."
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "PALADINI, E. P",
+          "details": "Gestão da qualidade: teoria e prática. 3. ed. São Paulo: Atlas, 2012. ISBN 978-85-224-7115-7 RODRIGUEs, M. V. Ações para a Qualidade. São Paulo: Gen Atlas, 2020. ISBN 978-85-951-5014-0",
+          "full": "PALADINI, E. P. Gestão da qualidade: teoria e prática. 3. ed. São Paulo: Atlas, 2012. ISBN 978-85-224-7115-7 RODRIGUEs, M. V. Ações para a Qualidade. São Paulo: Gen Atlas, 2020. ISBN 978-85-951-5014-0"
+        },
+        {
+          "authors": "WANKHADE,L.; DABADE, B",
+          "details": "Quality Uncertainty and Perception. Berlin: Springer, 2010. ISBN 978-37-908-2195-6. Disponível em https://doi.org/10.1007/978-3-7908- 2195-6 Associação Brasileira de Normas Técnicas. ABNT NBR ISO 9000-Sistemas de gestão da qualidade - Vocabulário. Rio de Janeiro: ABNT, 2015 (versão atualizada). Associação Brasileira de Normas Técnicas. ABNT NBR ISO 9004-Gestão da qualidade - Qualidade de uma organização - Orientação para alcançar o sucesso sustentado. Rio de Janeiro: ABNT, 2019 (versão atualizada).",
+          "full": "WANKHADE,L.; DABADE, B. Quality Uncertainty and Perception. Berlin: Springer, 2010. ISBN 978-37-908-2195-6. Disponível em https://doi.org/10.1007/978-3-7908- 2195-6 Associação Brasileira de Normas Técnicas. ABNT NBR ISO 9000-Sistemas de gestão da qualidade - Vocabulário. Rio de Janeiro: ABNT, 2015 (versão atualizada). Associação Brasileira de Normas Técnicas. ABNT NBR ISO 9004-Gestão da qualidade - Qualidade de uma organização - Orientação para alcançar o sucesso sustentado. Rio de Janeiro: ABNT, 2019 (versão atualizada)."
+        }
+      ]
+    },
+    {
+      "code": "EMB5054",
+      "name": "Relações Interpessoais nas Organizações",
+      "phase": "",
+      "credits": "02",
+      "workload_hours": "36",
+      "type": "",
+      "prerequisites": "EMB5120 Gestão e Organização",
+      "description": "Formação da personalidade e dos papéis organizacionais. A importância do autoconhecimento na dinâmica cognitiva e emocional das relações interpessoais. Inteligência emocional. Historicidade, contemporaneidade e características sociais na construção do eu. As atividades laborais e os papéis sociais. A importância da comunicação na constituição dos indivíduos e dentro das organizações. Relações interpessoais e dinâmica organizacional. Ética e Moralidade. Líderes e Liderança.",
+      "basic_bibliography": [
+        {
+          "authors": "MAY, R. O homem a procura de si mesmo. 33. ed",
+          "details": "Petrópolis: Vozes, 2011. ISBN 978-85-326-04-0-2-6.",
+          "full": "MAY, R. O homem a procura de si mesmo. 33. ed. Petrópolis: Vozes, 2011. ISBN 978-85-326-04-0-2-6."
+        },
+        {
+          "authors": "MINICUCCI, A",
+          "details": "Relações humanas: psicologia das relações interpessoais. 6. ed. São Paulo: Atlas, 2001. ISBN 978-85-224-29-8-4-4.",
+          "full": "MINICUCCI, A. Relações humanas: psicologia das relações interpessoais. 6. ed. São Paulo: Atlas, 2001. ISBN 978-85-224-29-8-4-4."
+        },
+        {
+          "authors": "ROGERS, C. R",
+          "details": "Um jeito de ser. São Paulo: EPU, 1986. ISBN 978-85-126-02-5-0-9.",
+          "full": "ROGERS, C. R. Um jeito de ser. São Paulo: EPU, 1986. ISBN 978-85-126-02-5-0-9."
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "HELLER, A. O cotidiano e a história. 8. ed",
+          "details": "São Paulo: Paz e Terra, 2008. ISBN 978- 85-775-30-5-5-7",
+          "full": "HELLER, A. O cotidiano e a história. 8. ed. São Paulo: Paz e Terra, 2008. ISBN 978- 85-775-30-5-5-7"
+        },
+        {
+          "authors": "LANE, S.; CODO, W",
+          "details": "Psicologia social: o homem em movimento. São Paulo: Brasiliense, 2006. ISBN 978-85-111-50-2-3-0",
+          "full": "LANE, S.; CODO, W. Psicologia social: o homem em movimento. São Paulo: Brasiliense, 2006. ISBN 978-85-111-50-2-3-0"
+        },
+        {
+          "authors": "MENDES, A. M.; TAMAYO, A",
+          "details": "Valores organizacionais e prazer-sofrimento no trabalho. Psico-USF, v. 6, n. 1, p. 39-46, jan./jan. 2001. Disponível em https://doi.org/10.1590/S1413-82712001000100006",
+          "full": "MENDES, A. M.; TAMAYO, A. Valores organizacionais e prazer-sofrimento no trabalho. Psico-USF, v. 6, n. 1, p. 39-46, jan./jan. 2001. Disponível em https://doi.org/10.1590/S1413-82712001000100006"
+        },
+        {
+          "authors": "SANTOS, S. S. S",
+          "details": "Relações interpessoais nas organizações: a inteligência espiritual como potencial para auxiliar os lideres nesse processo. Dissertação (Mestrado em Gestão e Negócios) - Universidade do Vale do Rio dos Sinos, Porto Alegre, 2019. Disponível em http://www.repositorio.jesuita.org.br/handle/UNISINOS/8814",
+          "full": "SANTOS, S. S. S. Relações interpessoais nas organizações: a inteligência espiritual como potencial para auxiliar os lideres nesse processo. Dissertação (Mestrado em Gestão e Negócios) - Universidade do Vale do Rio dos Sinos, Porto Alegre, 2019. Disponível em http://www.repositorio.jesuita.org.br/handle/UNISINOS/8814"
+        },
+        {
+          "authors": "TAVARES, W. M",
+          "details": "Interações interpessoais e qualidade de vida no trabalho: contribuições para a gestão organizacional. Dissertação (Mestrado em Gestão Organizacional) - Universidade Federal de Goiás, Catalão, 2015. Disponível em http://repositorio.bc.ufg.br/tede/handle/tede/5429",
+          "full": "TAVARES, W. M. Interações interpessoais e qualidade de vida no trabalho: contribuições para a gestão organizacional. Dissertação (Mestrado em Gestão Organizacional) - Universidade Federal de Goiás, Catalão, 2015. Disponível em http://repositorio.bc.ufg.br/tede/handle/tede/5429"
+        }
+      ]
+    },
+    {
+      "code": "EMB5320",
+      "name": "Empreendedorismo e Inovação",
+      "phase": "",
+      "credits": "02",
+      "workload_hours": "36",
+      "type": "",
+      "prerequisites": "EMB5120 Gestão e Organização",
+      "description": "Conceito de inovação. Tipos de inovação. Estratégias de Inovação. A inovação como um processo organizacional. Mecanismos de fomento e cooperação em pesquisa e desenvolvimento. Empreendedorismo. Características, tipos e habilidades do empreendedor. Plano de Negócios – etapas, processos e elaboração.",
+      "basic_bibliography": [
+        {
+          "authors": "CORAL, E.; OGLIARI, A.; ABREU, A. F",
+          "details": "Gestão integrada da inovação: estratégia, organização e desenvolvimento de produtos. São Paulo: Atlas, 2008. ISBN 978- 85-224-4976-7",
+          "full": "CORAL, E.; OGLIARI, A.; ABREU, A. F. Gestão integrada da inovação: estratégia, organização e desenvolvimento de produtos. São Paulo: Atlas, 2008. ISBN 978- 85-224-4976-7"
+        },
+        {
+          "authors": "DORNELAS, J",
+          "details": "Empreendedorismo - Transformando Ideias Em Negócios. 5 ed. Rio de Janeiro: LTC, 2014. ISBN.: 978-85-216-2497-4",
+          "full": "DORNELAS, J. Empreendedorismo - Transformando Ideias Em Negócios. 5 ed. Rio de Janeiro: LTC, 2014. ISBN.: 978-85-216-2497-4"
+        },
+        {
+          "authors": "OSTERWALDER, A",
+          "details": "Inovação em Modelos de Negócios – Business Model Generation. 1. ed. São Paulo: Alta Books, 2011. ISBN 978-85-76085-50-8",
+          "full": "OSTERWALDER, A. Inovação em Modelos de Negócios – Business Model Generation. 1. ed. São Paulo: Alta Books, 2011. ISBN 978-85-76085-50-8"
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "PAVANI Jr, O.; SCUCUGLIA, R",
+          "details": "Mapeamento e gestão por processos - BPM: business process management. São Paulo: M. Books, 2011. ISBN 978-85-768- 0103-0",
+          "full": "PAVANI Jr, O.; SCUCUGLIA, R. Mapeamento e gestão por processos - BPM: business process management. São Paulo: M. Books, 2011. ISBN 978-85-768- 0103-0"
+        },
+        {
+          "authors": "MONTEIRO Jr., J. G",
+          "details": "Criatividade e inovação. São Paulo: Pearson, 2011. ISBN 978-85-760-5884-7",
+          "full": "MONTEIRO Jr., J. G. Criatividade e inovação. São Paulo: Pearson, 2011. ISBN 978-85-760-5884-7"
+        },
+        {
+          "authors": "LAPOLLI, É. M.; FRANZONI, A. M. B.; SOUZA, V. A. B",
+          "details": "Vivências empreendedoras: a prática de empreendedorismo em organizações. Florianópolis: Pandion, 2012. ISBN 978-85-609-466-6-2",
+          "full": "LAPOLLI, É. M.; FRANZONI, A. M. B.; SOUZA, V. A. B. Vivências empreendedoras: a prática de empreendedorismo em organizações. Florianópolis: Pandion, 2012. ISBN 978-85-609-466-6-2"
+        },
+        {
+          "authors": "TIDD, J.; PAVITT, K.; BESSANT, J",
+          "details": "Gestão da Inovação. 3. ed. Porto Alegre: Bookman, 2008. ISBN 278-857-7802-02-9",
+          "full": "TIDD, J.; PAVITT, K.; BESSANT, J. Gestão da Inovação. 3. ed. Porto Alegre: Bookman, 2008. ISBN 278-857-7802-02-9"
+        },
+        {
+          "authors": "CASAROTTO FILHO, Nelson; KOPITTKE, Bruno Hartmut",
+          "details": "Analise de investimentos: matemática financeira, engenharia econômica, tomada de decisão, estratégia empresarial. 11. ed. São Paulo: Atlas, 2011 ISBN 978-85-224-5789-2",
+          "full": "CASAROTTO FILHO, Nelson; KOPITTKE, Bruno Hartmut. Analise de investimentos: matemática financeira, engenharia econômica, tomada de decisão, estratégia empresarial. 11. ed. São Paulo: Atlas, 2011 ISBN 978-85-224-5789-2"
+        }
+      ]
+    },
+    {
+      "code": "EMB5978",
+      "name": "Logística II",
+      "phase": "",
+      "credits": "04",
+      "workload_hours": "72",
+      "type": "",
+      "prerequisites": "EMB5977 Logística I",
+      "description": "Gestão de materiais. Previsão de Demanda. Introdução ao Planejamento de Vendas e operações. Planejamento e controle da produção. Noções de Teoria das restrições. Dimensionamento e controle de estoques. Custos relacionados aos Estoques. Desenvolvimento e avaliação de fornecedores.",
+      "basic_bibliography": [
+        {
+          "authors": "CORRÊA, H. L.; GIANESI, I.G. N; CAON, M",
+          "details": "Planejamento, programação e controle da produção: MRP II/ERP: conceitos, uso e implantação: base para",
+          "full": "CORRÊA, H. L.; GIANESI, I.G. N; CAON, M. Planejamento, programação e controle da produção: MRP II/ERP: conceitos, uso e implantação: base para"
+        },
+        {
+          "authors": "SAP, oracle applications e outros softwares integrados de gestão. 5. ed",
+          "details": "São Paulo: Atlas, 2007. ISBN 978-85-224-4853-1 SIMCHI-LEVI, D.; KAMINSKY, P.; SIMCHI-LEVI, E. Cadeia de suprimentos: projeto e gestão. 3. ed. [rev.]. Porto Alegre: Bookman, 2010. ISBN 978-85-778-0611-9",
+          "full": "SAP, oracle applications e outros softwares integrados de gestão. 5. ed. São Paulo: Atlas, 2007. ISBN 978-85-224-4853-1 SIMCHI-LEVI, D.; KAMINSKY, P.; SIMCHI-LEVI, E. Cadeia de suprimentos: projeto e gestão. 3. ed. [rev.]. Porto Alegre: Bookman, 2010. ISBN 978-85-778-0611-9"
+        },
+        {
+          "authors": "WANKE, Peter.Gestão de estoques na cadeia de suprimento: decisões e modelos quantitativos. 3. ed",
+          "details": "São Paulo: Atlas, 2011. ISBN 978-85-224-6215-5",
+          "full": "WANKE, Peter.Gestão de estoques na cadeia de suprimento: decisões e modelos quantitativos. 3. ed. São Paulo: Atlas, 2011. ISBN 978-85-224-6215-5"
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "BALLOU, R. H",
+          "details": "Gerenciamento da cadeia de suprimentos/logística empresarial. 5. ed. Porto Alegre: Bookman, 2006. ISBN 978-85-363-0591-2",
+          "full": "BALLOU, R. H. Gerenciamento da cadeia de suprimentos/logística empresarial. 5. ed. Porto Alegre: Bookman, 2006. ISBN 978-85-363-0591-2"
+        },
+        {
+          "authors": "CHRISTOPHER, M",
+          "details": "Logística e gerenciamento da cadeia de suprimentos. São Paulo: Cengage Learning, 2012. ISBN 978-85-221-1116-9",
+          "full": "CHRISTOPHER, M. Logística e gerenciamento da cadeia de suprimentos. São Paulo: Cengage Learning, 2012. ISBN 978-85-221-1116-9"
+        },
+        {
+          "authors": "DIAS, M. A.P",
+          "details": "Administração de materiais: uma abordagem logística. 5. ed. São Paulo: Atlas, 2010. ISBN 978-85-224-5919-3.",
+          "full": "DIAS, M. A.P. Administração de materiais: uma abordagem logística. 5. ed. São Paulo: Atlas, 2010. ISBN 978-85-224-5919-3."
+        },
+        {
+          "authors": "FRANCISCHINI, P. G.; GURGEL, F.A",
+          "details": "Administração de materiais e do patrimônio. 2.ed. São Paulo: Cengage Learning, 2013. ISBN 978-85-221-127-9",
+          "full": "FRANCISCHINI, P. G.; GURGEL, F.A. Administração de materiais e do patrimônio. 2.ed. São Paulo: Cengage Learning, 2013. ISBN 978-85-221-127-9"
+        },
+        {
+          "authors": "SLACK, N. et al",
+          "details": "Gerenciamento de operações e de processos: princípios e práticas de impacto estratégico. 2. ed. Porto Alegre: Bookman, 2013. ISBN 978- 85-778-0797-0",
+          "full": "SLACK, N. et al. Gerenciamento de operações e de processos: princípios e práticas de impacto estratégico. 2. ed. Porto Alegre: Bookman, 2013. ISBN 978- 85-778-0797-0"
+        }
+      ]
+    },
+    {
+      "code": "EMB5992",
+      "name": "Planejamento Estratégico",
+      "phase": "",
+      "credits": "02",
+      "workload_hours": "36",
+      "type": "",
+      "prerequisites": "EMB5120 Gestão e Organização",
+      "description": "Contextualização e definição de Estratégia. Teorias de Estratégia. Planejamento Estratégico, Tático e Operacional. Modelos para a formulação, implementação e avaliação do Planejamento Estratégico.",
+      "basic_bibliography": [
+        {
+          "authors": "MINTZBERG, H., ALHSTRAND, B., LAMPEL, J",
+          "details": "Safári de Estratégia: um Roteiro pela Selva do Planejamento Estratégico. Bookman, 2010. ISBN 978-85-778-0721-5",
+          "full": "MINTZBERG, H., ALHSTRAND, B., LAMPEL, J. Safári de Estratégia: um Roteiro pela Selva do Planejamento Estratégico. Bookman, 2010. ISBN 978-85-778-0721-5"
+        },
+        {
+          "authors": "MINTZBERG, H",
+          "details": "O processo da estratégia. 4. ed Porto Alegre: Bookman, 2006.",
+          "full": "MINTZBERG, H. O processo da estratégia. 4. ed Porto Alegre: Bookman, 2006."
+        },
+        {
+          "authors": "ISBN 85-36-305-87-8",
+          "details": "",
+          "full": "ISBN 85-36-305-87-8"
+        },
+        {
+          "authors": "OLIVEIRA, D. P.R",
+          "details": "Planejamento Estratégico. Conceitos, metodologia, práticas. Rio de Janeiro: Altas, 2013. ISBN 978-85-224-7485-1",
+          "full": "OLIVEIRA, D. P.R. Planejamento Estratégico. Conceitos, metodologia, práticas. Rio de Janeiro: Altas, 2013. ISBN 978-85-224-7485-1"
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "CORRÊA, H. L.; GIANESI, I.G. N.; CAON, M",
+          "details": "Planejamento, programação e controle da produção: MRP II/ERP: conceitos, uso e implantação: base para",
+          "full": "CORRÊA, H. L.; GIANESI, I.G. N.; CAON, M. Planejamento, programação e controle da produção: MRP II/ERP: conceitos, uso e implantação: base para"
+        },
+        {
+          "authors": "SAP, Oracle Applications e outros softwares integrados de gestão",
+          "details": "São Paulo: Atlas, 2008. ISBN 978-85-224-4853-1",
+          "full": "SAP, Oracle Applications e outros softwares integrados de gestão. São Paulo: Atlas, 2008. ISBN 978-85-224-4853-1"
+        },
+        {
+          "authors": "PEREIRA, M. F",
+          "details": "Planejamento estratégico: teorias, modelos e processos. São Paulo: Atlas, 2010. ISBN 978-85-224-5863-9",
+          "full": "PEREIRA, M. F. Planejamento estratégico: teorias, modelos e processos. São Paulo: Atlas, 2010. ISBN 978-85-224-5863-9"
+        },
+        {
+          "authors": "PORTER, M.E",
+          "details": "Estratégia competitiva: técnicas para análise de indústrias e da concorrência. Rio de Janeiro: Campus, 2004. ISBN 978-85-352-1526-7",
+          "full": "PORTER, M.E. Estratégia competitiva: técnicas para análise de indústrias e da concorrência. Rio de Janeiro: Campus, 2004. ISBN 978-85-352-1526-7"
+        },
+        {
+          "authors": "PORTER, M. E",
+          "details": "Competição = On competition: estratégias competitivas essenciais. Rio de Janeiro: Campus, 2009. ISBN 978-85-352-3110-6",
+          "full": "PORTER, M. E. Competição = On competition: estratégias competitivas essenciais. Rio de Janeiro: Campus, 2009. ISBN 978-85-352-3110-6"
+        },
+        {
+          "authors": "SOBRAL, F.; PECI, A",
+          "details": "Administração: teoria e prática no contexto brasileiro. 2. ed. São Paulo: Pearson, 2013. ISBN 978-85-814-3085-0",
+          "full": "SOBRAL, F.; PECI, A. Administração: teoria e prática no contexto brasileiro. 2. ed. São Paulo: Pearson, 2013. ISBN 978-85-814-3085-0"
+        }
+      ]
+    },
+    {
+      "code": "EMB5080",
+      "name": "Projeto Comunicar e Gerar",
+      "phase": "",
+      "credits": "04",
+      "workload_hours": "72",
+      "type": "",
+      "prerequisites": "Mínimo 1650 horas",
+      "description": "Experiência universitária e a transição para o mercado profissional. A representação da criatividade e suas funções sociais para ciência, tecnologia e sociedade. Riscos e Impactos tecnológicos e ambientais. Vivência em produtos e/ou processos com demanda real para propositiva de soluções. Entender a formação interdisciplinar aplicada à atividade de final de curso.",
+      "basic_bibliography": [
+        {
+          "authors": "MERINO, E. A.D. et al",
+          "details": "Design, artefatos e sistema sustentável. São Paulo: Blucher, 2018. Disponível em: https://doi.org/10.5151/9788580392982",
+          "full": "MERINO, E. A.D. et al. Design, artefatos e sistema sustentável. São Paulo: Blucher, 2018. Disponível em: https://doi.org/10.5151/9788580392982"
+        },
+        {
+          "authors": "SERTEK, P.; GUINDANI, R. A.; MARTINS, T. S",
+          "details": "Administração e planejamento estratégico. Curitiba: Intersaberes, 2012. ISBN 978-85-657-0454-0",
+          "full": "SERTEK, P.; GUINDANI, R. A.; MARTINS, T. S. Administração e planejamento estratégico. Curitiba: Intersaberes, 2012. ISBN 978-85-657-0454-0"
+        },
+        {
+          "authors": "SÜFFERT, C.J. A gestão do conhecimento como solução",
+          "details": "Rio de Janeiro: Qualitymark, 2008. ISBN 978-85-730-3727-2",
+          "full": "SÜFFERT, C.J. A gestão do conhecimento como solução. Rio de Janeiro: Qualitymark, 2008. ISBN 978-85-730-3727-2"
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "BARBOSA, C. A tríade do tempo",
+          "details": "Rio de Janeiro: Sextante, 2011. ISBN 978-85- 754-2724-8",
+          "full": "BARBOSA, C. A tríade do tempo. Rio de Janeiro: Sextante, 2011. ISBN 978-85- 754-2724-8"
+        },
+        {
+          "authors": "CURY, A. O código da inteligência: a formação de mentes brilhantes e a busca pela excelência emocional e profissional",
+          "details": "Rio de Janeiro: Ediouro, 2008.",
+          "full": "CURY, A. O código da inteligência: a formação de mentes brilhantes e a busca pela excelência emocional e profissional. Rio de Janeiro: Ediouro, 2008."
+        },
+        {
+          "authors": "ISBN 978-85-603-0398-4",
+          "details": "",
+          "full": "ISBN 978-85-603-0398-4"
+        },
+        {
+          "authors": "GARCIA, A. M",
+          "details": "Falando em público com auto-estima: simples, fácil e objetivo. 9. ed. Florianópolis: Ed. do Autor, 2000.",
+          "full": "GARCIA, A. M. Falando em público com auto-estima: simples, fácil e objetivo. 9. ed. Florianópolis: Ed. do Autor, 2000."
+        },
+        {
+          "authors": "NAKAGAWA, M",
+          "details": "Empreendedorismo: elabore seu plano de negócio e faça a diferença. São Paulo: SENAC, 2013. ISBN 978-85-396-0433-3",
+          "full": "NAKAGAWA, M. Empreendedorismo: elabore seu plano de negócio e faça a diferença. São Paulo: SENAC, 2013. ISBN 978-85-396-0433-3"
+        },
+        {
+          "authors": "SILVA, C. L. et al",
+          "details": "Inovação e sustentabilidade. Curitiba: Aymará educação, 2012. ISBN 978-85-784-1888-5",
+          "full": "SILVA, C. L. et al. Inovação e sustentabilidade. Curitiba: Aymará educação, 2012. ISBN 978-85-784-1888-5"
+        }
+      ]
+    },
+    {
+      "code": "EMB5350",
+      "name": "Controle Estatístico da Qualidade",
+      "phase": "",
+      "credits": "04",
+      "workload_hours": "72",
+      "type": "",
+      "prerequisites": "EMB5057 Estatística I",
+      "description": "Fundamentos e metodos estatísticos aplicavéis ao controle da qualidade e à melhoria continua. Controle estatístico do processo e análise da capacidade: compreensão da variação, gráficos de controle para variáveis e para atributos, índices de capacidade, gráficos de controle para aplicações específicas. Análise dos sistemas de medição: impacto da variação do sistema de medição na inspeção do produto e no controle do processo, medidas de posição e de variação, avaliação gráfica. Planos de amostragem na inspeção por atributo. Planejamento de experimentos: diretrizes gerais, planejamento fatorial, análise estatística; análise dos resíduos.",
+      "basic_bibliography": [
+        {
+          "authors": "CARVALHO, M. M. de; PALADINI, E. P",
+          "details": "Gestão da Qualidade: Teoria e Casos. 2. ed. Rio de Janeiro: Elsevier, 2012. ISBN 978-85-352-4887-6",
+          "full": "CARVALHO, M. M. de; PALADINI, E. P. Gestão da Qualidade: Teoria e Casos. 2. ed. Rio de Janeiro: Elsevier, 2012. ISBN 978-85-352-4887-6"
+        },
+        {
+          "authors": "COSTA, A. F. B; EPPRECHT, E. K; CARPINETTI, L. C. R",
+          "details": "Controle estatístico de qualidade. 2. ed. 8. reimpr. São Paulo: Atlas, 2014. ISBN 978-85-224-4156-3",
+          "full": "COSTA, A. F. B; EPPRECHT, E. K; CARPINETTI, L. C. R. Controle estatístico de qualidade. 2. ed. 8. reimpr. São Paulo: Atlas, 2014. ISBN 978-85-224-4156-3"
+        },
+        {
+          "authors": "MONTGOMERY, D. C",
+          "details": "Introdução ao controle estatístico da qualidade. 4. ed. Rio de Janeiro: LTC, 2004. ISBN 978-85-216-1400-5",
+          "full": "MONTGOMERY, D. C. Introdução ao controle estatístico da qualidade. 4. ed. Rio de Janeiro: LTC, 2004. ISBN 978-85-216-1400-5"
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "Automotive Industry Action Group. CEP - Fundamentos de Controle Estatístico do Processo. 2ª",
+          "details": "Edição Americana. AIAG, 2005. Automotive Industry Action Group. MSA - Análise do Sistema de Medição. 4ª. Edição Americana. AIAG, 2010. Allen, T. T. Introduction to Engineering Statistics and Lean Sigma. London: Springer, 2010. ISBN 978-18-499-6000-7. Disponível em: http://dx.doi.org/10.1007/978-1-84996-000-7 DEVORE. J. L. Probabilidade e estatística para engenharia e ciências. São Paulo: Cengage Learning, 2015. ISBN 978-85-221-1183-1",
+          "full": "Automotive Industry Action Group. CEP - Fundamentos de Controle Estatístico do Processo. 2ª. Edição Americana. AIAG, 2005. Automotive Industry Action Group. MSA - Análise do Sistema de Medição. 4ª. Edição Americana. AIAG, 2010. Allen, T. T. Introduction to Engineering Statistics and Lean Sigma. London: Springer, 2010. ISBN 978-18-499-6000-7. Disponível em: http://dx.doi.org/10.1007/978-1-84996-000-7 DEVORE. J. L. Probabilidade e estatística para engenharia e ciências. São Paulo: Cengage Learning, 2015. ISBN 978-85-221-1183-1"
+        },
+        {
+          "authors": "MONTGOMERY, D. C.; RUNGER, G. C",
+          "details": "Estatística Aplicada e Probabilidade para Engenheiros. 5. ed. Rio de Janeiro: LTC, 2012. ISBN 978-85-216-1902-4",
+          "full": "MONTGOMERY, D. C.; RUNGER, G. C. Estatística Aplicada e Probabilidade para Engenheiros. 5. ed. Rio de Janeiro: LTC, 2012. ISBN 978-85-216-1902-4"
+        }
+      ]
+    },
+    {
+      "code": "EMB5984",
+      "name": "Processos Estocásticos",
+      "phase": "",
+      "credits": "04",
+      "workload_hours": "72",
+      "type": "",
+      "prerequisites": "EMB5057 Estatística I e EMB5974 Pesquisa",
+      "description": "Processos Estocásticos: definição, cadeias de Markov e matriz de transição. Teoria de Filas: sistemas M/M/1, M/M/c e M/M/c/k. Simulação: geração de números pseudo-aleatórios; formulação de modelos de simulação; validação de modelos; ferramentas de simulação. Ferramentas computacionais para solução de problemas.",
+      "basic_bibliography": [
+        {
+          "authors": "ANDRADE, E. L",
+          "details": "Introdução à pesquisa operacional: métodos e modelos para a análise de decisão. 4. ed. Rio de Janeiro: LTC, 2009. ISBN 978-85-216-1665-8",
+          "full": "ANDRADE, E. L. Introdução à pesquisa operacional: métodos e modelos para a análise de decisão. 4. ed. Rio de Janeiro: LTC, 2009. ISBN 978-85-216-1665-8"
+        },
+        {
+          "authors": "STEVENSON, W. J",
+          "details": "Estatística aplicada à administração. São Paulo: Harbra, 1986.",
+          "full": "STEVENSON, W. J. Estatística aplicada à administração. São Paulo: Harbra, 1986."
+        },
+        {
+          "authors": "ISBN 85-294-0092-5",
+          "details": "",
+          "full": "ISBN 85-294-0092-5"
+        },
+        {
+          "authors": "HILLIER, F. S.; LIEBERMAN, G. J",
+          "details": "Introdução à pesquisa operacional. 9. ed. Rio de Janeiro: Campus, 2013. ISBN 978-85-805-5118-1",
+          "full": "HILLIER, F. S.; LIEBERMAN, G. J. Introdução à pesquisa operacional. 9. ed. Rio de Janeiro: Campus, 2013. ISBN 978-85-805-5118-1"
+        }
+      ],
+      "complementary_bibliography": [
+        {
+          "authors": "CLARKE, A",
+          "details": "Bruce; DISNEY, Ralph L. Probabilidade e processos estocásticos. Rio de Janeiro: LTC, 1979. ISBN 85-21-600-26-7.",
+          "full": "CLARKE, A. Bruce; DISNEY, Ralph L. Probabilidade e processos estocásticos. Rio de Janeiro: LTC, 1979. ISBN 85-21-600-26-7."
+        },
+        {
+          "authors": "MOREIRA, Daniel Augusto",
+          "details": "Pesquisa operacional: curso introdutório. 2. ed. São Paulo: Cengage Learning, 2007. ISBN 978-85-221-1051-3",
+          "full": "MOREIRA, Daniel Augusto. Pesquisa operacional: curso introdutório. 2. ed. São Paulo: Cengage Learning, 2007. ISBN 978-85-221-1051-3"
+        },
+        {
+          "authors": "MONTGOMERY, D. C.; RUNGER, G. C",
+          "details": "Estatística Aplicada e Probabilidade para Engenheiros. Rio de Janeiro: LTC, 2012. ISBN 978-85216-1902-4",
+          "full": "MONTGOMERY, D. C.; RUNGER, G. C. Estatística Aplicada e Probabilidade para Engenheiros. Rio de Janeiro: LTC, 2012. ISBN 978-85216-1902-4"
+        },
+        {
+          "authors": "STEVENSON, William J",
+          "details": "Estatística aplicada à administração. São Paulo: Harbra, 1981. 495 p. ISBN 85-29-400-92-5",
+          "full": "STEVENSON, William J. Estatística aplicada à administração. São Paulo: Harbra, 1981. 495 p. ISBN 85-29-400-92-5"
+        },
+        {
+          "authors": "FREITAS FILHO, P. J",
+          "details": "Introdução à modelagem e simulação de sistemas. 2 ed. Florianópolis: Visual Books, 2008. ISBN 978-85-750-2228-3",
+          "full": "FREITAS FILHO, P. J. Introdução à modelagem e simulação de sistemas. 2 ed. Florianópolis: Visual Books, 2008. ISBN 978-85-750-2228-3"
+        },
+        {
+          "authors": "PRADO, D",
+          "details": "Usando o ARENA em Simulação. 5ª Edição. Editora Falconi, 2014.",
+          "full": "PRADO, D. Usando o ARENA em Simulação. 5ª Edição. Editora Falconi, 2014."
+        }
+      ]
+    },
+    {
+      "code": "EMB5000",
+      "name": "Atividades Complementares",
+      "phase": "",
+      "credits": "16",
+      "workload_hours": "288",
+      "type": "",
+      "prerequisites": "Atender o regulamento das Atividades Acadêmicas",
+      "description": "res Créditos: 16 Carga Horária: 288 horas-aula Pré-requisitos Obrigatórios: Atender o regulamento das Atividades Acadêmicas Complementares Validação: O discente abrirá um chamado de validação de Atividades Complementares no Portal de Atendimentos – PAI (https://atendimento.ufsc.br) e anexar o Formulário e os demais documentos que serão validados. Disciplinas Optativas Os estudantes do curso devem cumprir, para efeito de integralização curricular, no mínimo 32 créditos, equivalentes a 480 horas (576 horas-aula) de disciplinas optativas, podendo ser cursadas a partir da 2ª fase-sugestão, observados os pré-requisitos. As disciplinas são de livre escolha do aluno entre as oferecidas pela Universidade Federal de Santa Catarina – UFSC.",
+      "basic_bibliography": [],
+      "complementary_bibliography": []
+    }
+  ]
+}
