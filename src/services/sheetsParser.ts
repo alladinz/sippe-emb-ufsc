@@ -10,24 +10,24 @@ export interface DisciplinaRow {
   // Offering
   oferta:            boolean;
   vagas:             number;
-  formato:           string;
+  formato:           string | null | undefined;
   creditosTeorico:   number;
-  ambienteTeorico:   string;
-  lotacaoTeorico:    number;
+  ambienteTeorico:   string | null | undefined;
+  lotacaoTeorico:    number | undefined;
   creditosPratico:   number;
-  ambientePratico:   string;
-  lotacaoPratico:    number;
+  ambientePratico:   string | null | undefined;
+  lotacaoPratico:    number | undefined;
 
   // Grouping (informational only)
-  agrupamentoTeorico:          string;
-  vagasAgrupamentoTeorico:     number;
-  agrupamentoPratico:          string;
-  vagasAgrupamentoPratico:     number;
+  agrupamentoTeorico:          string | null | undefined;
+  vagasAgrupamentoTeorico:     number | undefined;
+  agrupamentoPratico:          string | null | undefined;
+  vagasAgrupamentoPratico:     number | undefined;
 
   // Professor — THE OTHER KEY FIELD
-  professorIndicacao:  string;
+  professorIndicacao:  string | null | undefined;
   professorNome:       string;
-  indicacaoHorario:    string;
+  indicacaoHorario:    string | null | undefined;
 }
 
 function parseDisciplinaCodigo(colA: string, colG: string): string {
