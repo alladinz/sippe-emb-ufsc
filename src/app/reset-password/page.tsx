@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth/client";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Loader2, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
-export default function ResetPasswordPage() {
+function ResetPasswordForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -160,5 +160,17 @@ export default function ResetPasswordPage() {
         Sistema SIPPE · UFSC - CTJ
       </p>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={
+        <div className="flex min-h-screen items-center justify-center bg-[#f0f4f8]">
+            <Loader2 className="w-10 h-10 animate-spin text-brand-blue" />
+        </div>
+    }>
+      <ResetPasswordForm />
+    </Suspense>
   );
 }
