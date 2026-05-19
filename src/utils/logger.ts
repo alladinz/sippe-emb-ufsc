@@ -1,19 +1,15 @@
 import winston from 'winston';
 
-export const logger = winston.createLogger({
-  level: process.env.NODE_ENV === 'production' 
-    ? 'warn' : 'info',
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.errors({ stack: true }),
-    winston.format.json()
-  ),
-  transports: [
-    new winston.transports.Console({
-      format: process.env.NODE_ENV === 'development'
-        ? winston.format.simple()
-        : winston.format.json()
-    }),
+const transports: winston.transport[] = [
+  new winston.transports.Console({
+    format: process.env.NODE_ENV === 'development'
+      ? winston.format.simple()
+      : winston.format.json()
+  })
+];
+
+if (process.env.NODE_ENV === 'development') {
+  transports.push(
     new winston.transports.File({ 
       filename: 'logs/error.log', 
       level: 'error',
@@ -25,5 +21,16 @@ export const logger = winston.createLogger({
       maxsize: 10 * 1024 * 1024,
       maxFiles: 10
     })
-  ]
+  );
+}
+
+export const logger = winston.createLogger({
+  level: process.env.NODE_ENV === 'production' 
+    ? 'warn' : 'info',
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.errors({ stack: true }),
+    winston.format.json()
+  ),
+  transports
 });

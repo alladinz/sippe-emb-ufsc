@@ -1,14 +1,16 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import * as schema from "./schema";
-import dotenvSafe from 'dotenv-safe';
 import path from "path";
+import dotenvSafe from 'dotenv-safe';
 
-dotenvSafe.config({
-  allowEmptyValues: false,
-  example: path.resolve(process.cwd(), '.env.example'),
-  path: path.resolve(process.cwd(), '.env.local')
-});
+if (process.env.NODE_ENV !== 'production') {
+  dotenvSafe.config({
+    allowEmptyValues: false,
+    example: path.resolve(process.cwd(), '.env.example'),
+    path: path.resolve(process.cwd(), '.env.local')
+  });
+}
 
 export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
