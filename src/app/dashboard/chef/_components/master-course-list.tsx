@@ -236,7 +236,7 @@ export function MasterCourseList({ courses: initialCourses, teachers, organizati
                     <div className="space-y-1">
                         <Label className="text-[10px] uppercase text-slate-500 font-bold">Currículo</Label>
                         <Select 
-                            value={filters.curriculum || "all"} 
+                            value={(filters.curriculum as string) || "all"} 
                             onValueChange={(val) => setFilters({ ...filters, curriculum: val === "all" ? undefined : val })}
                         >
                             <SelectTrigger className="h-9">
