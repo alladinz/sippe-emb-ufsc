@@ -77,9 +77,9 @@ export function MasterCourseList({ courses: initialCourses, teachers, organizati
             params.set("page", page.toString());
             params.set("limit", limit.toString());
             if (search) params.set("search", search);
-            if (filters.phase && filters.phase !== "all") params.set("phase", filters.phase);
-            if (filters.graduation && filters.graduation !== "all") params.set("graduation", filters.graduation);
-            if (filters.curriculum && filters.curriculum !== "all") params.set("curriculum", filters.curriculum);
+            if (filters.phase && filters.phase !== "all") params.set("phase", filters.phase as string);
+            if (filters.graduation && filters.graduation !== "all") params.set("graduation", filters.graduation as string);
+            if (filters.curriculum && filters.curriculum !== "all") params.set("curriculum", filters.curriculum as string);
 
             const res = await fetch(`/api/admin/master-courses?${params.toString()}`);
             if (!res.ok) throw new Error("Failed to fetch courses");
