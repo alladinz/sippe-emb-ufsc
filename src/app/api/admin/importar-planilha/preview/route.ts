@@ -71,7 +71,7 @@ export async function GET() {
 
       // 3. Check plans
       const allResolvedCodes = Array.from(new Set(resolvedCodeMap.values()));
-      const existingDiscs = await db.query.disciplinasTable.findMany({
+      const existingDiscs = await db.query.disciplinas.findMany({
           where: inArray(disciplinasTable.codigo, allResolvedCodes)
       });
 
