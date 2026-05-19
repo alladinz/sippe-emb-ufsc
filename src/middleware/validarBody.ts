@@ -1,7 +1,10 @@
 import { ZodSchema } from 'zod';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function validarBody(req: NextRequest, schema: ZodSchema) {
+export async function validarBody<T>(req: NextRequest, schema: ZodSchema<T>): Promise<
+  | { success: true; data: T }
+  | { success: false; response: NextResponse }
+> {
   try {
     const body = await req.json();
     const result = schema.safeParse(body);

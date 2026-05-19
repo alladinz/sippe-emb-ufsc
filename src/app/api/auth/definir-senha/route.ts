@@ -10,7 +10,6 @@ import { logger } from '@/utils/logger';
 import { rateLimitMiddleware } from '@/lib/rateLimit';
 
 const definirSenhaSchema = z.object({
-// ... (rest of imports and schema)
   token: z.string().length(64, 'Token inválido'),
   novaSenha: z.string()
     .min(8, 'Mínimo 8 caracteres')

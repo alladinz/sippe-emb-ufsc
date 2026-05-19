@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/utils/logger';
 
-type ApiHandler = (req: NextRequest, ...args: unknown[]) => Promise<NextResponse> | Promise<Response>;
+type ApiHandler = (req: NextRequest, ...args: unknown[]) => Promise<NextResponse | Response>;
 
 export function withErrorHandler(handler: ApiHandler) {
   return async (req: NextRequest, ...args: unknown[]) => {
