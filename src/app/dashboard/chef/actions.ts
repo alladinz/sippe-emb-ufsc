@@ -72,7 +72,17 @@ export async function syncMasterDataFolderAction() {
     };
 
     const jsonDir = path.join(process.cwd(), "public", "json");
-    if (!fs.existsSync(jsonDir)) throw new Error("Diretório /public/json não encontrado");
+    console.log("Tentando ler diretório de disciplinas em:", jsonDir);
+    
+    if (!fs.existsSync(jsonDir)) {
+        // Fallback for some serverless environments
+        const fallbackDir = path.join(process.cwd(), ".next/server/vendor-chunks/public/json");
+        if (fs.existsSync(fallbackDir)) {
+            // Found it in a weird place
+        } else {
+            throw new Error(`Diretório de disciplinas não encontrado. Caminho tentado: ${jsonDir}`);
+        }
+    }
 
     const files = fs.readdirSync(jsonDir).filter(f => f.endsWith(".json"));
     
