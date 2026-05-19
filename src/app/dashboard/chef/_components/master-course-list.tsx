@@ -254,7 +254,7 @@ export function MasterCourseList({ courses: initialCourses, teachers, organizati
                     <div className="space-y-1">
                         <Label className="text-[10px] uppercase text-slate-500 font-bold">Graduação</Label>
                         <Select 
-                            value={filters.graduation || "all"} 
+                            value={(filters.graduation as string) || "all"} 
                             onValueChange={(val) => setFilters({ ...filters, graduation: val === "all" ? undefined : val })}
                         >
                             <SelectTrigger className="h-9">
@@ -272,7 +272,7 @@ export function MasterCourseList({ courses: initialCourses, teachers, organizati
                     <div className="space-y-1">
                         <Label className="text-[10px] uppercase text-slate-500 font-bold">Fase</Label>
                         <Select 
-                            value={filters.phase || "all"} 
+                            value={(filters.phase as string) || "all"} 
                             onValueChange={(val) => setFilters({ ...filters, phase: val === "all" ? undefined : val })}
                         >
                             <SelectTrigger className="h-9">
