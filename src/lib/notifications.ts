@@ -39,6 +39,10 @@ export async function createNotification({
     });
 
     if (targetUser?.email) {
+        const baseUrl = process.env.FRONTEND_URL 
+            || process.env.BETTER_AUTH_URL 
+            || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+
         await sendEmail({
             to: targetUser.email,
             subject: `[Sippe] ${title}`,
@@ -53,17 +57,17 @@ export async function createNotification({
                         <span style="color: #64748b;">${message || ''}</span>
                     </div>
                     <p style="margin-top: 30px;">
-                        <a href="${process.env.BETTER_AUTH_URL || 'http://localhost:3000'}/dashboard" 
+                        <a href="${baseUrl}/dashboard"
                            style="background-color: #2563eb; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;">
-                            Acessar o Painel
+                            Ver no Sistema
                         </a>
                     </p>
-                    <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 30px 0;" />
+                    <hr style="margin: 30px 0; border: 0; border-top: 1px solid #e2e8f0;" />
                     <p style="color: #94a3b8; font-size: 12px; text-align: center;">
-                        Este é um e-mail automático. Por favor, não responda.
+                        Este é um e-mail automático, por favor não responda.
                     </p>
                 </div>
-            `
+            `,
         });
     }
   } catch (error) {

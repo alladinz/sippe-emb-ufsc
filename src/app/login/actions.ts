@@ -19,7 +19,13 @@ export async function requestPasswordResetAction(email: string) {
 
     // 2. Generate custom secure token
     const token = await criarTokenPrimeiroAcesso(existingUser.id);
-    const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${token}`;
+    
+    // Base URL priority: FRONTEND_URL > BETTER_AUTH_URL > VERCEL_URL > localhost
+    const baseUrl = process.env.FRONTEND_URL 
+        || process.env.BETTER_AUTH_URL 
+        || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+        
+    const resetLink = `${baseUrl}/reset-password?token=${token}`;
 
     // 3. Send manual email
     try {

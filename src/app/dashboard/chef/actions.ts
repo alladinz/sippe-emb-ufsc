@@ -57,8 +57,10 @@ export async function importMasterCoursesAction(coursesList: RawCourse[], gradua
     revalidatePath("/dashboard/chef");
 }
 
-export async function syncMasterDataFolderAction() {
-    await verifyChef();
+export async function syncMasterDataFolderAction(isCli: boolean = false) {
+    if (!isCli) {
+        await verifyChef();
+    }
     
     const gradMap: Record<string, string> = {
         "aero": "Engenharia Aeroespacial",
