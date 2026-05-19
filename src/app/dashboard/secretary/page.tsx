@@ -1,4 +1,3 @@
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/db";
@@ -14,9 +13,7 @@ interface SecretaryDashboardPageProps {
 }
 
 export default async function SecretaryDashboardPage({ searchParams }: SecretaryDashboardPageProps) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await auth.api.getSession();
 
   if (!session) redirect("/login");
 

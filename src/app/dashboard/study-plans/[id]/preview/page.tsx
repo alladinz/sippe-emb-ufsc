@@ -1,4 +1,3 @@
-import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/db";
@@ -25,9 +24,7 @@ export default async function PreviewStudyPlanPage({ params, searchParams }: Pre
   const { id } = await params;
   const { pdf } = await searchParams;
   const isForPdf = pdf === "true";
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await auth.api.getSession();
 
   if (!session) {
     redirect("/login");
@@ -35,18 +32,14 @@ export default async function PreviewStudyPlanPage({ params, searchParams }: Pre
 
   let activeMember = null;
   try {
-      activeMember = await auth.api.getActiveMember({
-          headers: await headers()
-      });
+      activeMember = await auth.api.getActiveMember();
   } catch {
       console.log("Preview page: getActiveMember failed");
   }
 
   if (!activeMember) {
       try {
-          const memberships = await auth.api.listOrganizations({
-              headers: await headers()
-          });
+          const memberships = await auth.api.listOrganizations();
           if (memberships && memberships.length > 0 && session.user.id) {
               const memberRecord = await db.query.member.findFirst({
                   where: (members, { and, eq }) => and(

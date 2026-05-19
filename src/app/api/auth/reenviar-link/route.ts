@@ -4,7 +4,6 @@ import { user as userTable, member } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { criarTokenPrimeiroAcesso } from '@/services/tokenService';
 import { auth } from '@/lib/auth/auth';
-import { headers } from 'next/headers';
 import { rateLimitMiddleware } from '@/lib/rateLimit';
 
 import { withErrorHandler } from '@/lib/errorHandler';
@@ -13,9 +12,7 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
   const rateLimitResponse = rateLimitMiddleware(req, 15 * 60 * 1000, 10, 'Muitas tentativas. Aguarde 15 minutos.');
   if (rateLimitResponse) return rateLimitResponse;
   
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await auth.api.getSession();
 
   if (!session) {
     return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });

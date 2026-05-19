@@ -1,7 +1,6 @@
 "use server";
 
 import { auth } from "@/lib/auth/auth";
-import { headers } from "next/headers";
 import { db } from "@/db";
 import { studyPlans } from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -10,25 +9,19 @@ import { isValidTransition, StudyPlanStatus } from "@/lib/schemas/study-plan";
 import { createNotification } from "@/lib/notifications";
 
 async function verifyCoordinator(planId: string) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await auth.api.getSession();
 
   if (!session) throw new Error("Não autenticado");
 
   let activeMember = null;
   try {
-      activeMember = await auth.api.getActiveMember({
-          headers: await headers()
-      });
+      activeMember = await auth.api.getActiveMember();
   } catch {
       console.log("Action: getActiveMember failed");
   }
 
   if (!activeMember) {
-      const memberships = await auth.api.listOrganizations({
-          headers: await headers()
-      });
+      const memberships = await auth.api.listOrganizations();
       if (memberships && memberships.length > 0) {
           const memberRecord = await db.query.member.findFirst({
               where: (members, { and, eq }) => and(
@@ -153,26 +146,20 @@ export async function rejectStudyPlanAction(id: string, feedback: string) {
 }
 
 async function verifyAdmin(planId: string) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await auth.api.getSession();
 
   if (!session) throw new Error("Não autenticado");
 
   // Similar logic to verifyCoordinator but specifically for admin/secretary roles
   let activeMember = null;
   try {
-      activeMember = await auth.api.getActiveMember({
-          headers: await headers()
-      });
+      activeMember = await auth.api.getActiveMember();
   } catch {
       // Ignore
   }
 
   if (!activeMember) {
-      const memberships = await auth.api.listOrganizations({
-          headers: await headers()
-      });
+      const memberships = await auth.api.listOrganizations();
       if (memberships && memberships.length > 0) {
           const memberRecord = await db.query.member.findFirst({
               where: (members, { and, eq }) => and(

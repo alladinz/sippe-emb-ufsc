@@ -1,4 +1,3 @@
-import { headers } from "next/headers";
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/db";
 import { studyPlans } from "@/db/schema";
@@ -10,9 +9,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 export default async function DashboardPage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await auth.api.getSession();
 
   if (!session) return null;
   const user = session.user;

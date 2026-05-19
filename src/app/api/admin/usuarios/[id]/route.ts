@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth/auth";
-import { headers } from "next/headers";
 import { db } from "@/db";
 import { user, member } from "@/db/schema";
 import { and, eq, or, ne } from "drizzle-orm";
@@ -9,9 +8,7 @@ export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await auth.api.getSession();
 
   if (!session) {
     return new NextResponse("Unauthorized", { status: 401 });

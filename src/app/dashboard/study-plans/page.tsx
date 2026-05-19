@@ -1,4 +1,3 @@
-import { headers } from "next/headers";
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/db";
 import { studyPlans, universityCourses, organization, semesters } from "@/db/schema";
@@ -7,9 +6,7 @@ import { CreatePlanDialog } from "./_components/create-plan-dialog";
 import { TeacherPlansTable } from "./_components/teacher-plans-table";
 
 export default async function StudyPlansPage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await auth.api.getSession();
 
   if (!session) return null;
 

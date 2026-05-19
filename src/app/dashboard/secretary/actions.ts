@@ -4,13 +4,10 @@ import { db } from "@/db";
 import { studyPlans } from "@/db/schema";
 import { eq, inArray } from "drizzle-orm";
 import { auth } from "@/lib/auth/auth";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 
 async function verifyAdmin() {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
+    const session = await auth.api.getSession();
 
     if (!session) throw new Error("Não autenticado");
 

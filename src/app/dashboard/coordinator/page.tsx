@@ -1,4 +1,3 @@
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/db";
@@ -7,9 +6,7 @@ import { eq, desc } from "drizzle-orm";
 import { CoordinatorPlansTable } from "./_components/coordinator-plans-table";
 
 export default async function CoordinatorDashboardPage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await auth.api.getSession();
 
   if (!session) redirect("/login");
 
@@ -17,9 +14,7 @@ export default async function CoordinatorDashboardPage() {
   let activeMember = null;
   try {
       // getActiveMember might throw 400 if none active, or return null
-      activeMember = await auth.api.getActiveMember({
-          headers: await headers()
-      });
+      activeMember = await auth.api.getActiveMember();
       console.log("Active member from API:", activeMember?.id);
   } catch (e) {
       const error = e as { status?: number; message?: string };
@@ -29,9 +24,7 @@ export default async function CoordinatorDashboardPage() {
   // Fallback if not active in session
   if (!activeMember) {
       try {
-          const memberships = await auth.api.listOrganizations({
-              headers: await headers()
-          });
+          const memberships = await auth.api.listOrganizations();
           console.log("Found memberships for user:", memberships?.length);
           
           if (memberships && memberships.length > 0 && session.user.id) {

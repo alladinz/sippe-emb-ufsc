@@ -1,7 +1,6 @@
 "use server";
 
 import { auth } from "@/lib/auth/auth";
-import { headers } from "next/headers";
 import { db } from "@/db";
 import { studyPlans, courses, bibliography } from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -12,9 +11,7 @@ import { createNotification } from "@/lib/notifications";
 
 export async function saveStudyPlanAction(id: string, data: StudyPlanFormValues) {
   console.log("Saving Study Plan:", id, "Data semester:", data.semester);
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await auth.api.getSession();
 
   if (!session) {
     throw new Error("Não autorizado");
@@ -105,9 +102,7 @@ export async function saveStudyPlanAction(id: string, data: StudyPlanFormValues)
 }
 
 export async function submitStudyPlanAction(id: string) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
+    const session = await auth.api.getSession();
 
     if (!session) {
         redirect("/login");

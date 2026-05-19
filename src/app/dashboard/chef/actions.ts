@@ -1,7 +1,6 @@
 "use server";
 
 import { auth } from "@/lib/auth/auth";
-import { headers } from "next/headers";
 import { db } from "@/db";
 import { universityCourses, studyPlans, courses, bibliography, member, semesters, organization, user, session, account, invitation, notifications } from "@/db/schema";
 import { eq, inArray } from "drizzle-orm";
@@ -34,9 +33,7 @@ interface RawCourse {
 }
 
 async function verifyChef() {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
+    const session = await auth.api.getSession();
 
     if (!session) throw new Error("Não autenticado");
 

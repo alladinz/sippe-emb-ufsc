@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth/auth";
-import { headers } from "next/headers";
 import { db } from "@/db";
 import { member, semesters } from "@/db/schema";
 import { and, eq, or } from "drizzle-orm";
@@ -10,9 +9,7 @@ import { importProfessoresEPlanos } from "@/services/professorPlanImportService"
 import { createNotification } from "@/lib/notifications";
 
 export async function POST(request: Request) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await auth.api.getSession();
 
   if (!session) {
     return new NextResponse("Unauthorized", { status: 401 });

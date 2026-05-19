@@ -11,9 +11,7 @@ export async function GET(
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
+    const session = await auth.api.getSession();
 
     if (!session) {
         return new NextResponse("Não autorizado", { status: 401 });

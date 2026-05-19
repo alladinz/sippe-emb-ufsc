@@ -1,4 +1,3 @@
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/db";
@@ -33,9 +32,7 @@ interface ChefDashboardPageProps {
 }
 
 export default async function ChefDashboardPage({ searchParams }: ChefDashboardPageProps) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await auth.api.getSession();
 
   if (!session) redirect("/login");
 

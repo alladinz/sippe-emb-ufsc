@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth/auth";
-import { headers } from "next/headers";
 import { db } from "@/db";
 import { member, semesters, studyPlans, turmas, disciplinas as disciplinasTable, universityCourses } from "@/db/schema";
 import { and, eq, or, inArray } from "drizzle-orm";
@@ -9,9 +8,7 @@ import { parseSheetRows, getImportSummary } from "@/services/sheetsParser";
 import { namesMatch } from "@/utils/nameUtils";
 
 export async function GET() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await auth.api.getSession();
 
   if (!session) {
     return new NextResponse("Unauthorized", { status: 401 });

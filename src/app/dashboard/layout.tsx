@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/db";
 import { semesters } from "@/db/schema";
@@ -15,9 +14,7 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await auth.api.getSession();
 
   if (!session) {
     redirect("/login");
@@ -48,9 +45,7 @@ export default async function DashboardLayout({
   // For the header display, try to find an active one or just use the first
   let activeMember = null;
   try {
-      activeMember = await auth.api.getActiveMember({
-          headers: await headers()
-      });
+      activeMember = await auth.api.getActiveMember();
   } catch {
       // Ignore
   }

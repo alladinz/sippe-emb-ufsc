@@ -1,6 +1,5 @@
 "use server";
 
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/db";
@@ -14,9 +13,7 @@ export async function createStudyPlanFromSelectionAction(
   semester: string,
   organizationIds: string[]
 ) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await auth.api.getSession();
 
   if (!session) redirect("/login");
 
@@ -141,9 +138,7 @@ Os(as) alunos(as) que eventualmente faltarem em alguma avaliação que foram per
   return { id: createdPlanIds[0], count: createdPlanIds.length };
 }
 export async function createStudyPlanAction() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await auth.api.getSession();
 
   if (!session) {
     console.error("No session found in createStudyPlanAction");
@@ -153,16 +148,12 @@ export async function createStudyPlanAction() {
   // Safely fetch organization
   let organizationId = null;
   try {
-      const activeMember = await auth.api.getActiveMember({
-          headers: await headers()
-      });
+      const activeMember = await auth.api.getActiveMember();
       organizationId = activeMember?.organizationId;
       console.log("Active member orgId:", organizationId);
   } catch (e) {
       console.warn("getActiveMember failed, trying listOrganizations:", e);
-      const memberships = await auth.api.listOrganizations({
-          headers: await headers()
-      });
+      const memberships = await auth.api.listOrganizations();
       if (memberships && memberships.length > 0) {
           organizationId = memberships[0].id;
           console.log("Fallback orgId from listOrganizations:", organizationId);
@@ -200,9 +191,7 @@ Os(as) alunos(as) que eventualmente faltarem em alguma avaliação que foram per
 }
 
 export async function deleteStudyPlanAction(id: string, shouldRedirect = false) {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
+    const session = await auth.api.getSession();
 
     if (!session) redirect("/login");
 
