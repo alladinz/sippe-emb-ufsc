@@ -65,7 +65,7 @@ export async function POST(request: Request) {
     }
 
     // 3. Run import
-    const result = await importProfessoresEPlanos(valid, activeSemester.id, userMember.organizationId);
+    const result = await importProfessoresEPlanos(valid, activeSemester.id);
 
     // 4. Create notification if needed
     if (result.pendentesEmail.length > 0) {
