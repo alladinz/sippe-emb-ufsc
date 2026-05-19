@@ -176,8 +176,8 @@ async function processCoursesBatch(coursesList: RawCourse[], graduation: string,
                 // We group by (code, name) as requested
                 const existing = await db.query.universityCourses.findFirst({
                     where: (c, { and, eq, sql }) => and(
-                        eq(c.code, code),
-                        sql`LOWER(${c.name}) = LOWER(${name})`
+                        eq(c.code, code as string),
+                        sql`LOWER(${c.name}) = LOWER(${name as string})`
                     )
                 });
 
