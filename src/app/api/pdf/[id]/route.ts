@@ -89,7 +89,7 @@ export async function GET(
 
         await browser.close();
 
-        return new NextResponse(pdfBuffer, {
+        return new NextResponse(Buffer.from(pdfBuffer), {
             headers: {
                 "Content-Type": "application/pdf",
                 "Content-Disposition": `attachment; filename="${filename}"`,
