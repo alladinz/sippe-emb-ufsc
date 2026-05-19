@@ -88,7 +88,7 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
     weeklySchedule: initialWeeklySchedule
   }), [initialData, initialSchedule, initialWeeklySchedule]);
 
-  const lastSavedDataRef = useRef(fullDefaultValues);
+  const lastSavedDataRef = useRef<StudyPlanFormValues>(fullDefaultValues);
   
   const {
     register,
@@ -161,9 +161,9 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
       const dataToValidate = { ...formData, courses: filteredCourses, bibliography: filteredBib };
       const result = studyPlanSchema.safeParse(dataToValidate);
       if (!result.success) {
-          const errorMsg = result.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join('\n');
+          const errorMsg = result.error.issues.map((e: any) => `${e.path.join('.')}: ${e.message}`).join('\n');
           console.log("SUBMISSION VALIDATION FAILED:", errorMsg);
-          toastError(`Erro de validação: ${result.error.errors[0].message}`);
+          toastError(`Erro de validação: ${result.error.issues[0].message}`);
           return;
       }
       setValue("courses", filteredCourses);

@@ -25,7 +25,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 interface Plan {
     id: string;
     status: string;
-    semester: string;
+    semester: string | null;
     updatedAt: string | Date;
     user: { name: string };
     organization: { name: string };

@@ -44,7 +44,7 @@ export function validateRows(rows: unknown[]): ValidationReport {
     } else {
       invalid.push({
         row: index + 2, // +2 because index 0 = row 2 in spreadsheet
-        issues: result.error.errors.map(e => 
+        issues: result.error.issues.map((e: any) => 
           `${e.path.join('.')}: ${e.message}`)
       });
     }

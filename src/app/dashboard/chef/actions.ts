@@ -173,8 +173,8 @@ async function processCoursesBatch(coursesList: RawCourse[], graduation: string,
                 : [...currentCurriculums, year];
 
             await db.update(universityCourses).set({
-                phase: isNaN(phase) ? existing.phase : phase,
-                workloadHours: isNaN(workload) ? existing.workloadHours : workload,
+                phase: (typeof phase !== 'number' || isNaN(phase)) ? existing.phase : phase,
+                workloadHours: (typeof workload !== 'number' || isNaN(workload)) ? existing.workloadHours : workload,
                 syllabus: rawCourse.description || rawCourse.syllabus || existing.syllabus,
                 bibliography: normalizedBib.basic.length > 0 ? normalizedBib : existing.bibliography,
                 graduation: newGrads.sort().join(", "),
@@ -186,8 +186,8 @@ async function processCoursesBatch(coursesList: RawCourse[], graduation: string,
                 code,
                 name,
                 curriculum: year,
-                phase: isNaN(phase) ? null : phase,
-                workloadHours: isNaN(workload) ? null : workload,
+                phase: (typeof phase !== 'number' || isNaN(phase)) ? null : phase,
+                workloadHours: (typeof workload !== 'number' || isNaN(workload)) ? null : workload,
                 syllabus: rawCourse.description || rawCourse.syllabus,
                 bibliography: normalizedBib,
                 graduation: graduation,
@@ -199,11 +199,26 @@ async function processCoursesBatch(coursesList: RawCourse[], graduation: string,
 
 export async function updateUniversityCourseAction(id: string, data: Partial<RawCourse>) {
     await verifyChef();
+    
+    // Normalize data
+    const normalizedData: any = {
+        ...data,
+        updatedAt: new Date()
+    };
+
+    if (typeof data.phase === 'string') {
+        normalizedData.phase = parseInt(data.phase.replace(/\D/g, ""));
+    }
+
+    if (data.workload_hours !== undefined) {
+        normalizedData.workloadHours = typeof data.workload_hours === 'string'
+            ? parseInt(data.workload_hours)
+            : data.workload_hours;
+        delete normalizedData.workload_hours;
+    }
+
     await db.update(universityCourses)
-        .set({
-            ...data,
-            updatedAt: new Date()
-        })
+        .set(normalizedData)
         .where(eq(universityCourses.id, id));
     revalidatePath("/dashboard/chef");
 }

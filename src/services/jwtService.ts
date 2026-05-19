@@ -4,7 +4,7 @@ export function gerarAccessToken(payload: {
   id: string; papel: string; email: string;
 }): string {
   return jwt.sign(payload, process.env.JWT_SECRET!, {
-    expiresIn: process.env.JWT_EXPIRY ?? '15m',
+    expiresIn: (process.env.JWT_EXPIRY || '15m') as any,
     issuer: 'sippe-ufsc',
     audience: 'sippe-client'
   });

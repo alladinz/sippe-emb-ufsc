@@ -26,7 +26,7 @@ interface CoordinatorPlan {
     semester: string | null;
     updatedAt: string | Date;
     user: { name: string };
-    courses: { name: string; code: string; classIdentifier?: string }[];
+    courses: { name: string; code: string; classIdentifier?: string | null }[];
 }
 
 interface CoordinatorPlansTableProps {

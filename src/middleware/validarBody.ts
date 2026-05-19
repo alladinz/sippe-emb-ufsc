@@ -13,7 +13,7 @@ export async function validarBody<T>(req: NextRequest, schema: ZodSchema<T>): Pr
         success: false,
         response: NextResponse.json({
           error: 'Dados inválidos',
-          detalhes: result.error.errors.map(e => ({
+          detalhes: result.error.issues.map((e: any) => ({
             campo: e.path.join('.'),
             mensagem: e.message
           }))

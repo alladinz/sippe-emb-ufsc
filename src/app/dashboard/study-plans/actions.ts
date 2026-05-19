@@ -102,7 +102,7 @@ Os(as) alunos(as) que eventualmente faltarem em alguma avaliação que foram per
       // 4. Add Bibliography
       const bib = metadata.bibliography as unknown as { basic: (string | { authors: string, details: string })[], complementary: (string | { authors: string, details: string })[] };
       if (bib) {
-          const bibItems: { type: "basic" | "complementary", author: string, title: string }[] = [];
+          const bibItems: { studyPlanId: string, type: "basic" | "complementary", author: string, title: string }[] = [];
           const prepareItems = (items: (string | { authors: string, details: string })[], type: "basic" | "complementary") => {
               if (!items || !Array.isArray(items)) return;
               for (const item of items) {

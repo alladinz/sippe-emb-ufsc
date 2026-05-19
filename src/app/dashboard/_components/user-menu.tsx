@@ -19,7 +19,7 @@ import { swalLoading, MySwal } from "@/lib/swal";
 interface UserMenuProps {
     user: {
         name: string;
-        email: string;
+        email: string | null;
         image?: string | null;
     };
     roleLabel: string;

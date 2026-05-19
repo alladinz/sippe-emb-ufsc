@@ -25,7 +25,7 @@ interface TeacherPlan {
     status: string;
     semester: string | null;
     updatedAt: string | Date;
-    courses: { name: string; classIdentifier?: string }[];
+    courses: { name: string; classIdentifier?: string | null }[];
 }
 
 interface TeacherPlansTableProps {
