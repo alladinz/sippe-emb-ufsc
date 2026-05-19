@@ -95,7 +95,7 @@ export function UserManagement({ members: initialMembers, organizations }: UserM
             const params = new URLSearchParams();
             params.set("page", page.toString());
             params.set("limit", limit.toString());
-            if (filters.status) params.set("status", filters.status);
+            if (filters.status) params.set("status", (filters.status as string));
 
             const res = await fetch(`/api/admin/usuarios?${params.toString()}`);
             if (!res.ok) throw new Error("Failed to fetch");
@@ -418,7 +418,7 @@ export function UserManagement({ members: initialMembers, organizations }: UserM
                     <div className="space-y-1">
                         <Label className="text-[10px] uppercase text-slate-500 font-bold">Status da Conta</Label>
                         <Select 
-                            value={filters.status || "all"} 
+                            value={(filters.status as string) || "all"} 
                             onValueChange={(val) => setFilters({ ...filters, status: val === "all" ? undefined : val })}
                         >
                             <SelectTrigger className="h-9">
@@ -556,8 +556,8 @@ export function UserManagement({ members: initialMembers, organizations }: UserM
                                         </TableCell>
                                         <TableCell>
                                             <Select 
-                                                value={m.organizationId} 
-                                                onValueChange={(val) => handleRoleChange(m.id, m.role, m.user.name, val)}
+                                                value={(m.organizationId as string) || "all"} 
+                                                onValueChange={(val) => handleRoleChange(m.id, m.role, (m.user.name as string), val)}
                                                 disabled={isPending}
                                             >
                                                 <SelectTrigger className="h-8 w-[180px] text-xs truncate">
@@ -573,8 +573,8 @@ export function UserManagement({ members: initialMembers, organizations }: UserM
                                         <TableCell>
                                             <div className="flex items-center gap-2">
                                                 <Select 
-                                                    value={m.role} 
-                                                    onValueChange={(val) => handleRoleChange(m.id, val, m.user.name, m.organizationId)}
+                                                    value={(m.role as string) || "all"} 
+                                                    onValueChange={(val) => handleRoleChange(m.id, val, (m.user.name as string), (m.organizationId as string))}
                                                     disabled={isPending}
                                                 >
                                                     <SelectTrigger className="h-8 w-[140px] text-xs truncate">
