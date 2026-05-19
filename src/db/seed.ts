@@ -14,11 +14,11 @@ async function seed() {
     "Ciência e Tecnologia",
     "Engenharia Aeroespacial",
     "Engenharia Automotiva",
-    "Engenharia Naval",
-    "Engenharia de Transportes e Logística",
     "Engenharia Ferroviária e Metroviária",
     "Engenharia Mecatrônica",
+    "Engenharia Naval",
     "Engenharia Civil de Infraestrutura",
+    "Engenharia de Transportes e Logística",
   ];
 
   const orgs = [];
