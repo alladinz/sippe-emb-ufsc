@@ -34,7 +34,7 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
 
   if (!user) {
     logger.warn('Login falhou: usuário não encontrado', { 
-      email, ip: req.ip || req.headers.get('x-forwarded-for')
+      email, ip: req.headers.get('x-forwarded-for') || 'unknown'
     });
     return NextResponse.json(
       { error: 'Credenciais inválidas' },
@@ -46,7 +46,7 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
   const lockout = user.bloqueadoAte ? new Date(user.bloqueadoAte) : null;
   if (lockout && lockout > new Date()) {
     logger.warn('Tentativa de login em conta bloqueada', {
-      email, ip: req.ip || req.headers.get('x-forwarded-for')
+      email, ip: req.headers.get('x-forwarded-for') || 'unknown'
     });
     const minutosRestantes = Math.ceil((lockout.getTime() - new Date().getTime()) / 60000);
     return NextResponse.json({
@@ -82,11 +82,11 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
 
     if (bloquear) {
       logger.warn('Conta bloqueada por tentativas excessivas', { 
-        email, ip: req.ip || req.headers.get('x-forwarded-for')
+        email, ip: req.headers.get('x-forwarded-for') || 'unknown'
       });
     } else {
       logger.warn('Senha incorreta', { 
-        email, ip: req.ip || req.headers.get('x-forwarded-for'), tentativa: tentativas 
+        email, ip: req.headers.get('x-forwarded-for') || 'unknown', tentativa: tentativas 
       });
     }
 
@@ -115,7 +115,7 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
   const papel = memberResult[0]?.role || 'professor';
 
   logger.info('Login bem-sucedido', { 
-    usuarioId: user.id, papel: papel, ip: req.ip || req.headers.get('x-forwarded-for')
+    usuarioId: user.id, papel: papel, ip: req.headers.get('x-forwarded-for') || 'unknown'
   });
 
   // Issue tokens
@@ -133,7 +133,7 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
     usuarioId: user.id,
     tokenHash: tokenHash,
     expiry: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-    ipAddress: req.ip || req.headers.get('x-forwarded-for') || null,
+    ipAddress: req.headers.get('x-forwarded-for') || 'unknown' || null,
     userAgent: req.headers.get('user-agent') || null
   });
 

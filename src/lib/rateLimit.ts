@@ -23,7 +23,7 @@ export function rateLimit(ip: string, windowMs: number, max: number) {
 }
 
 export function rateLimitMiddleware(req: NextRequest, windowMs: number, max: number, message: string) {
-  const ip = req.ip || req.headers.get('x-forwarded-for') || 'unknown';
+  const ip = req.headers.get('x-forwarded-for') || 'unknown';
   const limiter = rateLimit(ip, windowMs, max);
 
   if (!limiter.success) {

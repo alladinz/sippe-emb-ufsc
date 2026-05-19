@@ -32,7 +32,7 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
 
   if (!valido || !usuarioId) {
     logger.warn('Tentativa com token inválido', { 
-      ip: req.ip || req.headers.get('x-forwarded-for'), token: token.substring(0, 10) + '...', motivo 
+      ip: req.headers.get('x-forwarded-for') || 'unknown', token: token.substring(0, 10) + '...', motivo 
     });
     return NextResponse.json({ error: motivo }, { status: 400 });
   }

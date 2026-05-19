@@ -14,7 +14,7 @@ export function withErrorHandler(handler: ApiHandler) {
         stack: error.stack,
         path: req.nextUrl.pathname,
         method: req.method,
-        ip: req.ip || req.headers.get('x-forwarded-for')
+        ip: req.headers.get('x-forwarded-for') || 'unknown'
       });
 
       return NextResponse.json({
