@@ -46,6 +46,11 @@ function ResetPasswordForm() {
         return;
     }
 
+    if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
+        setError("A senha deve conter letras maiúsculas, minúsculas e números.");
+        return;
+    }
+
     setLoading(true);
     setError("");
 

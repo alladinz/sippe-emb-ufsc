@@ -107,7 +107,9 @@ export async function syncMasterDataFolderAction(isCli: boolean = false) {
         await processCoursesBatch(coursesList, graduationName, year);
     }
 
-    revalidatePath("/dashboard/chef");
+    if (!isCli) {
+        revalidatePath("/dashboard/chef");
+    }
 }
 
 async function processCoursesBatch(coursesList: RawCourse[], graduation: string, year: string = "2016") {
@@ -118,93 +120,112 @@ async function processCoursesBatch(coursesList: RawCourse[], graduation: string,
         
         if (!name) continue;
 
-        // If code is missing (bug in JSON), try to find by Name
-        if (!code) {
-            const matchByName = await db.query.universityCourses.findFirst({
-                where: (c, { sql }) => sql`LOWER(${c.name}) = LOWER(${name})`
-            });
-            if (matchByName) {
-                code = matchByName.code;
-            } else {
-                // If still no code, we can't reliably identify it for assignment
-                console.warn(`Skipping course without code: ${name}`);
-                continue;
+        // Small delay to prevent overwhelming the connection
+        await new Promise(resolve => setTimeout(resolve, 50));
+
+        // Retry logic for DB operations
+        let retries = 3;
+        while (retries > 0) {
+            try {
+                // If code is missing (bug in JSON), try to find by Name
+                if (!code) {
+                    const matchByName = await db.query.universityCourses.findFirst({
+                        where: (c, { sql }) => sql`LOWER(${c.name}) = LOWER(${name})`
+                    });
+                    if (matchByName) {
+                        code = matchByName.code;
+                    } else {
+                        // If still no code, we can't reliably identify it for assignment
+                        console.warn(`Skipping course without code: ${name}`);
+                        break; // Exit retry loop
+                    }
+                }
+
+                // Clean phase string ("1ª" -> 1)
+                const phase = typeof rawCourse.phase === 'string' 
+                    ? parseInt(rawCourse.phase.replace(/\D/g, "")) 
+                    : rawCourse.phase;
+                    
+                // Clean workload ("72" -> 72)
+                const workload = typeof rawCourse.workload_hours === 'string'
+                    ? parseInt(rawCourse.workload_hours)
+                    : rawCourse.workload_hours;
+
+                // Normalize Bibliography (support both string arrays and object arrays)
+                const normalizedBib = {
+                    basic: [] as { authors: string, details: string }[],
+                    complementary: [] as { authors: string, details: string }[]
+                };
+
+                if (rawCourse.bibliography && !Array.isArray(rawCourse.bibliography)) {
+                    normalizedBib.basic = (rawCourse.bibliography.basic || []).map((b) => typeof b === 'string' ? { authors: "", details: b } : { authors: b.authors || "", details: b.details || b.full || "" });
+                    normalizedBib.complementary = (rawCourse.bibliography.complementary || []).map((b) => typeof b === 'string' ? { authors: "", details: b } : { authors: b.authors || "", details: b.details || b.full || "" });
+                } else {
+                    // Support new structure: basic_bibliography: [{authors: "", details: ""}]
+                    normalizedBib.basic = (rawCourse.basic_bibliography || []).map((b) => ({
+                        authors: b.authors || "",
+                        details: b.details || b.full || ""
+                    }));
+                    normalizedBib.complementary = (rawCourse.complementary_bibliography || []).map((b) => ({
+                        authors: b.authors || "",
+                        details: b.details || b.full || ""
+                    }));
+                }
+
+                // Deduplication & Upsert
+                // We group by (code, name) as requested
+                const existing = await db.query.universityCourses.findFirst({
+                    where: (c, { and, eq, sql }) => and(
+                        eq(c.code, code),
+                        sql`LOWER(${c.name}) = LOWER(${name})`
+                    )
+                });
+
+                if (existing) {
+                    // Update and append graduation if new
+                    const currentGrads = existing.graduation?.split(", ") || [];
+                    const newGrads = currentGrads.includes(graduation) 
+                        ? currentGrads 
+                        : [...currentGrads, graduation];
+
+                    const currentCurriculums = existing.curriculum?.split(", ") || [];
+                    const newCurriculums = currentCurriculums.includes(year)
+                        ? currentCurriculums
+                        : [...currentCurriculums, year];
+
+                    await db.update(universityCourses).set({
+                        phase: (typeof phase !== 'number' || isNaN(phase)) ? existing.phase : phase,
+                        workloadHours: (typeof workload !== 'number' || isNaN(workload)) ? existing.workloadHours : workload,
+                        syllabus: rawCourse.description || rawCourse.syllabus || existing.syllabus,
+                        bibliography: normalizedBib.basic.length > 0 ? normalizedBib : existing.bibliography,
+                        graduation: newGrads.sort().join(", "),
+                        curriculum: newCurriculums.sort().join(", "),
+                        updatedAt: new Date(),
+                    }).where(eq(universityCourses.id, existing.id));
+                } else {
+                    await db.insert(universityCourses).values({
+                        code,
+                        name,
+                        curriculum: year,
+                        phase: (typeof phase !== 'number' || isNaN(phase)) ? null : phase,
+                        workloadHours: (typeof workload !== 'number' || isNaN(workload)) ? null : workload,
+                        syllabus: rawCourse.description || rawCourse.syllabus,
+                        bibliography: normalizedBib,
+                        graduation: graduation,
+                        updatedAt: new Date(),
+                    });
+                }
+                
+                break; // Success!
+            } catch (err) {
+                retries--;
+                if (retries === 0) {
+                    console.error(`Failed to process course ${code || name} after 3 retries:`, err);
+                    throw err;
+                }
+                console.warn(`Retry ${3 - retries} for course ${code || name}...`);
+                await new Promise(resolve => setTimeout(resolve, 500)); // Wait before retry
             }
-        }
-
-        // Clean phase string ("1ª" -> 1)
-        const phase = typeof rawCourse.phase === 'string' 
-            ? parseInt(rawCourse.phase.replace(/\D/g, "")) 
-            : rawCourse.phase;
-            
-        // Clean workload ("72" -> 72)
-        const workload = typeof rawCourse.workload_hours === 'string'
-            ? parseInt(rawCourse.workload_hours)
-            : rawCourse.workload_hours;
-
-        // Normalize Bibliography (support both string arrays and object arrays)
-        const normalizedBib = {
-            basic: [] as { authors: string, details: string }[],
-            complementary: [] as { authors: string, details: string }[]
-        };
-
-        if (rawCourse.bibliography && !Array.isArray(rawCourse.bibliography)) {
-            normalizedBib.basic = (rawCourse.bibliography.basic || []).map((b) => typeof b === 'string' ? { authors: "", details: b } : { authors: b.authors || "", details: b.details || b.full || "" });
-            normalizedBib.complementary = (rawCourse.bibliography.complementary || []).map((b) => typeof b === 'string' ? { authors: "", details: b } : { authors: b.authors || "", details: b.details || b.full || "" });
-        } else {
-            // Support new structure: basic_bibliography: [{authors: "", details: ""}]
-            normalizedBib.basic = (rawCourse.basic_bibliography || []).map((b) => ({
-                authors: b.authors || "",
-                details: b.details || b.full || ""
-            }));
-            normalizedBib.complementary = (rawCourse.complementary_bibliography || []).map((b) => ({
-                authors: b.authors || "",
-                details: b.details || b.full || ""
-            }));
-        }
-
-        // Deduplication & Upsert
-        // We group by (code, name) as requested
-        const existing = await db.query.universityCourses.findFirst({
-            where: (c, { and, eq, sql }) => and(
-                eq(c.code, code),
-                sql`LOWER(${c.name}) = LOWER(${name})`
-            )
-        });
-
-        if (existing) {
-            // Update and append graduation if new
-            const currentGrads = existing.graduation?.split(", ") || [];
-            const newGrads = currentGrads.includes(graduation) 
-                ? currentGrads 
-                : [...currentGrads, graduation];
-
-            const currentCurriculums = existing.curriculum?.split(", ") || [];
-            const newCurriculums = currentCurriculums.includes(year)
-                ? currentCurriculums
-                : [...currentCurriculums, year];
-
-            await db.update(universityCourses).set({
-                phase: (typeof phase !== 'number' || isNaN(phase)) ? existing.phase : phase,
-                workloadHours: (typeof workload !== 'number' || isNaN(workload)) ? existing.workloadHours : workload,
-                syllabus: rawCourse.description || rawCourse.syllabus || existing.syllabus,
-                bibliography: normalizedBib.basic.length > 0 ? normalizedBib : existing.bibliography,
-                graduation: newGrads.sort().join(", "),
-                curriculum: newCurriculums.sort().join(", "),
-                updatedAt: new Date(),
-            }).where(eq(universityCourses.id, existing.id));
-        } else {
-            await db.insert(universityCourses).values({
-                code,
-                name,
-                curriculum: year,
-                phase: (typeof phase !== 'number' || isNaN(phase)) ? null : phase,
-                workloadHours: (typeof workload !== 'number' || isNaN(workload)) ? null : workload,
-                syllabus: rawCourse.description || rawCourse.syllabus,
-                bibliography: normalizedBib,
-                graduation: graduation,
-                updatedAt: new Date(),
-            });
         }
     }
 }
