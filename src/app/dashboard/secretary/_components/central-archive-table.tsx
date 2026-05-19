@@ -51,7 +51,7 @@ interface Plan {
     updatedAt: string | Date;
     user: { name: string };
     organization: { name: string };
-    courses: { name: string; classIdentifier?: string }[];
+    courses: { name: string; classIdentifier?: string | null }[];
 }
 
 interface CentralArchiveTableProps {
@@ -80,7 +80,7 @@ export function CentralArchiveTable({ plans, initialQuery = "" }: CentralArchive
     // Get unique values for filters
     const uniqueDisciplines = useMemo(() => Array.from(new Set(plans.map(p => p.courses?.[0]?.name || "Sem Disciplina"))).sort(), [plans]);
     const uniqueTeachers = useMemo(() => Array.from(new Set(plans.map(p => p.user.name))).sort(), [plans]);
-    const uniqueSemesters = useMemo(() => Array.from(new Set(plans.map(p => p.semester))).sort(), [plans]);
+    const uniqueSemesters = useMemo(() => Array.from(new Set(plans.map(p => p.semester).filter((s): s is string => !!s))).sort(), [plans]);
 
     const statusLabels: Record<string, { label: string, color: string, icon: React.ElementType }> = {
         approved: { label: "Aprovado", color: "bg-green-100 text-green-800", icon: CheckCircle },
@@ -157,7 +157,7 @@ export function CentralArchiveTable({ plans, initialQuery = "" }: CentralArchive
                 <div className="space-y-1">
                     <Label className="text-[10px] uppercase text-slate-500 font-bold">Disciplina</Label>
                     <Select 
-                        value={filters.discipline || "all"} 
+                        value={(filters.discipline as string) || "all"} 
                         onValueChange={(val) => setFilters({ ...filters, discipline: val === "all" ? undefined : val })}
                     >
                         <SelectTrigger className="h-9">
@@ -175,7 +175,7 @@ export function CentralArchiveTable({ plans, initialQuery = "" }: CentralArchive
                 <div className="space-y-1">
                     <Label className="text-[10px] uppercase text-slate-500 font-bold">Professor</Label>
                     <Select 
-                        value={filters.teacher || "all"} 
+                        value={(filters.teacher as string) || "all"} 
                         onValueChange={(val) => setFilters({ ...filters, teacher: val === "all" ? undefined : val })}
                     >
                         <SelectTrigger className="h-9">
@@ -193,7 +193,7 @@ export function CentralArchiveTable({ plans, initialQuery = "" }: CentralArchive
                 <div className="space-y-1">
                     <Label className="text-[10px] uppercase text-slate-500 font-bold">Semestre</Label>
                     <Select 
-                        value={filters.semester || "all"} 
+                        value={(filters.semester as string) || "all"} 
                         onValueChange={(val) => setFilters({ ...filters, semester: val === "all" ? undefined : val })}
                     >
                         <SelectTrigger className="h-9">
@@ -211,7 +211,7 @@ export function CentralArchiveTable({ plans, initialQuery = "" }: CentralArchive
                 <div className="space-y-1">
                     <Label className="text-[10px] uppercase text-slate-500 font-bold">Status</Label>
                     <Select 
-                        value={filters.status || "all"} 
+                        value={(filters.status as string) || "all"} 
                         onValueChange={(val) => setFilters({ ...filters, status: val === "all" ? undefined : val })}
                     >
                         <SelectTrigger className="h-9">

@@ -4,6 +4,7 @@ import { useState, useEffect, useTransition, useRef, useMemo } from "react";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { useDebounce } from "use-debounce";
 import { studyPlanSchema, type StudyPlanFormValues } from "@/lib/schemas/study-plan";
+import { type ZodIssue } from "zod";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -161,7 +162,7 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
       const dataToValidate = { ...formData, courses: filteredCourses, bibliography: filteredBib };
       const result = studyPlanSchema.safeParse(dataToValidate);
       if (!result.success) {
-          const errorMsg = result.error.issues.map((e: any) => `${e.path.join('.')}: ${e.message}`).join('\n');
+          const errorMsg = result.error.issues.map((e: ZodIssue) => `${e.path.join('.')}: ${e.message}`).join('\n');
           console.log("SUBMISSION VALIDATION FAILED:", errorMsg);
           toastError(`Erro de validação: ${result.error.issues[0].message}`);
           return;

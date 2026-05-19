@@ -14,7 +14,7 @@ interface Semester {
     name: string;
     startDate: string | Date;
     endDate: string | Date;
-    ativo: boolean;
+    ativo: boolean | null;
 }
 
 interface SemesterManagementProps {

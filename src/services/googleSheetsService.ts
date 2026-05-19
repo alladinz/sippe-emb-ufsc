@@ -32,7 +32,6 @@ function getAuth() {
     client_email: clientEmail,
     private_key: privateKey,
   });
-  // @ts-expect-error - typing for fromJSON return can be tricky
   auth.scopes = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
 
   return auth;

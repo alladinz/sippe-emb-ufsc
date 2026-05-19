@@ -201,24 +201,30 @@ export async function updateUniversityCourseAction(id: string, data: Partial<Raw
     await verifyChef();
     
     // Normalize data
-    const normalizedData: any = {
-        ...data,
+    const updatePayload: Partial<typeof universityCourses.$inferInsert> = {
         updatedAt: new Date()
     };
 
-    if (typeof data.phase === 'string') {
-        normalizedData.phase = parseInt(data.phase.replace(/\D/g, ""));
+    if (data.code) updatePayload.code = data.code;
+    if (data.name) updatePayload.name = data.name;
+    if (data.description) updatePayload.syllabus = data.description;
+    if (data.syllabus) updatePayload.syllabus = data.syllabus;
+    if (data.bibliography) updatePayload.bibliography = data.bibliography;
+
+    if (data.phase !== undefined) {
+        updatePayload.phase = typeof data.phase === 'string' 
+            ? parseInt(data.phase.replace(/\D/g, "")) 
+            : data.phase;
     }
 
     if (data.workload_hours !== undefined) {
-        normalizedData.workloadHours = typeof data.workload_hours === 'string'
+        updatePayload.workloadHours = typeof data.workload_hours === 'string'
             ? parseInt(data.workload_hours)
             : data.workload_hours;
-        delete normalizedData.workload_hours;
     }
 
     await db.update(universityCourses)
-        .set(normalizedData)
+        .set(updatePayload)
         .where(eq(universityCourses.id, id));
     revalidatePath("/dashboard/chef");
 }

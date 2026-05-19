@@ -1,4 +1,4 @@
-import { ZodSchema } from 'zod';
+import { ZodSchema, ZodIssue } from 'zod';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function validarBody<T>(req: NextRequest, schema: ZodSchema<T>): Promise<
@@ -13,7 +13,7 @@ export async function validarBody<T>(req: NextRequest, schema: ZodSchema<T>): Pr
         success: false,
         response: NextResponse.json({
           error: 'Dados inválidos',
-          detalhes: result.error.issues.map((e: any) => ({
+          detalhes: result.error.issues.map((e: ZodIssue) => ({
             campo: e.path.join('.'),
             mensagem: e.message
           }))

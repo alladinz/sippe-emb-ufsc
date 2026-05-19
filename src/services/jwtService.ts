@@ -1,21 +1,25 @@
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 
 export function gerarAccessToken(payload: {
   id: string; papel: string; email: string;
 }): string {
-  return jwt.sign(payload, process.env.JWT_SECRET!, {
-    expiresIn: (process.env.JWT_EXPIRY || '15m') as any,
+  const options: SignOptions = {
+    expiresIn: (process.env.JWT_EXPIRY || '15m') as SignOptions['expiresIn'],
     issuer: 'sippe-ufsc',
     audience: 'sippe-client'
-  });
+  };
+  return jwt.sign(payload, process.env.JWT_SECRET as string, options);
 }
 
 export function gerarRefreshToken(usuarioId: string): string {
+  const options: SignOptions = {
+    expiresIn: (process.env.JWT_REFRESH_EXPIRY || '7d') as SignOptions['expiresIn'],
+    issuer: 'sippe-ufsc'
+  };
   return jwt.sign(
     { id: usuarioId, type: 'refresh' },
-    process.env.JWT_REFRESH_SECRET!,
-    { expiresIn: process.env.JWT_REFRESH_EXPIRY ?? '7d',
-      issuer: 'sippe-ufsc' }
+    process.env.JWT_REFRESH_SECRET as string,
+    options
   );
 }
 

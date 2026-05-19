@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z, ZodIssue } from 'zod';
 
 export const DisciplinaRowSchema = z.object({
   disciplinaNome:    z.string().min(1, 'Nome da disciplina obrigatório'),
@@ -44,7 +44,7 @@ export function validateRows(rows: unknown[]): ValidationReport {
     } else {
       invalid.push({
         row: index + 2, // +2 because index 0 = row 2 in spreadsheet
-        issues: result.error.issues.map((e: any) => 
+        issues: result.error.issues.map((e: ZodIssue) => 
           `${e.path.join('.')}: ${e.message}`)
       });
     }

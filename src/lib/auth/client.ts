@@ -31,7 +31,9 @@ export const authClient = {
           options?.onSuccess?.(data);
           return { data };
       } catch (error: unknown) {
-          options?.onError?.({ error: (error as { response?: { data?: unknown } }).response?.data || error });
+          const axiosError = error as { response?: { data?: { error?: { message?: string } } }, message?: string };
+          const errorMsg = axiosError.response?.data?.error?.message || axiosError.message || "Erro desconhecido";
+          options?.onError?.({ error: { message: errorMsg } });
           throw error;
       }
   }
