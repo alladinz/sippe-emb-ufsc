@@ -5,8 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Calendar, Save, Loader2, Plus, Trash2 } from "lucide-react";
-import { upsertSemesterAction, deleteSemesterAction, toggleActiveSemesterAction } from "../actions";
+import { Calendar, Save, Loader2, Plus, Trash2, Pencil, X } from "lucide-react";
+import { upsertSemesterAction, deleteSemesterAction, toggleActiveSemesterAction, updateSemesterAction } from "../actions";
 import { confirmDialog, toastError, toastSuccess, toastWarning } from "@/lib/swal";
 
 interface Semester {
@@ -23,6 +23,7 @@ interface SemesterManagementProps {
 
 export function SemesterManagement({ semesters }: SemesterManagementProps) {
     const [isPending, startTransition] = useTransition();
+    const [editingId, setEditingId] = useState<string | null>(null);
     const [name, setName] = useState("");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
@@ -35,15 +36,32 @@ export function SemesterManagement({ semesters }: SemesterManagementProps) {
 
         startTransition(async () => {
             try {
-                await upsertSemesterAction(name, startDate, endDate);
-                setName("");
-                setStartDate("");
-                setEndDate("");
-                toastSuccess("Semestre salvo com sucesso");
+                if (editingId) {
+                    await updateSemesterAction(editingId, name, startDate, endDate);
+                    toastSuccess("Semestre atualizado com sucesso");
+                } else {
+                    await upsertSemesterAction(name, startDate, endDate);
+                    toastSuccess("Semestre salvo com sucesso");
+                }
+                resetForm();
             } catch (error: unknown) {
                 toastError(error instanceof Error ? error.message : "Erro ao salvar semestre");
             }
         });
+    };
+
+    const resetForm = () => {
+        setEditingId(null);
+        setName("");
+        setStartDate("");
+        setEndDate("");
+    };
+
+    const handleEdit = (s: Semester) => {
+        setEditingId(s.id);
+        setName(s.name);
+        setStartDate(new Date(s.startDate).toISOString().split('T')[0]);
+        setEndDate(new Date(s.endDate).toISOString().split('T')[0]);
     };
 
     const handleDelete = async (id: string) => {
@@ -83,8 +101,8 @@ export function SemesterManagement({ semesters }: SemesterManagementProps) {
             <Card className="md:col-span-1 rounded-lg">
                 <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
-                        <Plus className="w-4 h-4 text-brand-blue" />
-                        Novo Semestre
+                        {editingId ? <Pencil className="w-4 h-4 text-brand-blue" /> : <Plus className="w-4 h-4 text-brand-blue" />}
+                        {editingId ? "Editar Semestre" : "Novo Semestre"}
                     </CardTitle>
                     <CardDescription>Defina os prazos para automação do cronograma.</CardDescription>
                 </CardHeader>
@@ -101,10 +119,18 @@ export function SemesterManagement({ semesters }: SemesterManagementProps) {
                         <Label htmlFor="sem-end">Término das Aulas</Label>
                         <Input id="sem-end" type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
                     </div>
-                    <Button className="w-full gap-2 rounded-sm" onClick={handleSave} disabled={isPending}>
-                        {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                        Salvar Semestre
-                    </Button>
+                    <div className="flex gap-2">
+                        {editingId && (
+                            <Button variant="outline" className="flex-1 gap-2 rounded-sm" onClick={resetForm} disabled={isPending}>
+                                <X className="w-4 h-4" />
+                                Cancelar
+                            </Button>
+                        )}
+                        <Button className="flex-1 gap-2 rounded-sm" onClick={handleSave} disabled={isPending}>
+                            {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                            {editingId ? "Atualizar" : "Salvar"}
+                        </Button>
+                    </div>
                 </CardContent>
             </Card>
 
@@ -136,6 +162,9 @@ export function SemesterManagement({ semesters }: SemesterManagementProps) {
                                         {!s.ativo && (
                                             <Button variant="outline" size="sm" onClick={() => handleToggleActive(s.id)}>Definir Ativo</Button>
                                         )}
+                                        <Button variant="ghost" size="sm" className="text-slate-400 hover:text-brand-blue" onClick={() => handleEdit(s)}>
+                                            <Pencil className="w-4 h-4" />
+                                        </Button>
                                         <Button variant="ghost" size="sm" className="text-slate-400 hover:text-red-600" onClick={() => handleDelete(s.id)}>
                                             <Trash2 className="w-4 h-4" />
                                         </Button>

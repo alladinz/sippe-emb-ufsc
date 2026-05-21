@@ -302,6 +302,28 @@ export async function upsertSemesterAction(name: string, startDate: string, endD
     revalidatePath("/dashboard/chef");
 }
 
+export async function updateSemesterAction(id: string, name: string, startDate: string, endDate: string) {
+    await verifyChef();
+    
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+        throw new Error("Datas inválidas");
+    }
+
+    await db.update(semesters)
+        .set({
+            name,
+            startDate: start,
+            endDate: end,
+            updatedAt: new Date(),
+        })
+        .where(eq(semesters.id, id));
+    
+    revalidatePath("/dashboard/chef");
+}
+
 export async function deleteSemesterAction(id: string) {
     await verifyChef();
     await db.delete(semesters).where(eq(semesters.id, id));
