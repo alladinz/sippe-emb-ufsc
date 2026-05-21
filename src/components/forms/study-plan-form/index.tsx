@@ -193,15 +193,15 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
         toastError("As datas do semestre não foram configuradas.");
         return;
     }
-    const selectedDays = formData.schedule?.filter(s => s.enabled).map(s => s.day) || [];
-    if (selectedDays.length === 0) {
-        toastWarning("Selecione os dias da semana.");
+    const selectedDaysList = formData.schedule?.filter(s => s.enabled).map(s => s.day) || [];
+    if (selectedDaysList.length === 0) {
+        toastWarning("Por favor, selecione os dias da semana antes de gerar o cronograma.");
         return;
     }
     
     const confirmed = await confirmDialog(
         'Gerar cronograma?',
-        'Isso irá sobrescrever o cronograma atual. Deseja continuar?',
+        'Este procedimento irá sobrescrever o cronograma atual. Deseja prosseguir?',
         'Confirmar',
         'Cancelar',
         false
@@ -210,46 +210,52 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
     if (!confirmed) return;
 
     const dayMap: Record<string, number> = { "Domingo": 0, "Segunda-feira": 1, "Terça-feira": 2, "Quarta-feira": 3, "Quinta-feira": 4, "Sexta-feira": 5, "Sábado": 6 };
-    const targetDays = selectedDays.map(d => dayMap[d]);
-    const classes: { date: Date, number: number }[] = [];
-    const currentDate = new Date(semesterDates.startDate);
-    const endDate = new Date(semesterDates.endDate);
-    let classCount = 1;
-    while (currentDate <= endDate) {
-        if (targetDays.includes(currentDate.getDay())) {
-            classes.push({ date: new Date(currentDate), number: classCount++ });
-        }
-        currentDate.setDate(currentDate.getDate() + 1);
-    }
-    const weeks: StudyPlanFormValues["weeklySchedule"] = [];
-    const groupFactor = selectedDays.length === 1 ? 1 : 2;
+    const targetDays = selectedDaysList.map(d => dayMap[d]);
+    const start = new Date(semesterDates.startDate);
+    const end = new Date(semesterDates.endDate);
     
-    for (let i = 0; i < classes.length; i += groupFactor) {
-        const weekNum = Math.floor(i / groupFactor) + 1;
-        const c1 = classes[i];
-        
-        const formatDate = (date: Date) => {
-            const d = date.getDate().toString().padStart(2, '0');
-            const m = (date.getMonth() + 1).toString().padStart(2, '0');
-            return `${d}/${m}`;
-        };
+    const weeks: StudyPlanFormValues["weeklySchedule"] = [];
+    
+    // Helper to get the Monday of the week for a given date
+    const getMonday = (d: Date) => {
+        const date = new Date(d);
+        const day = date.getDay();
+        const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+        return new Date(date.setDate(diff));
+    };
 
-        if (groupFactor === 1) {
-            weeks.push({
-                week: weekNum.toString(),
-                class1: { number: formatDate(c1.date), content: "" },
-                class2: { number: "", content: "" }
-            });
-        } else {
-            const c2 = classes[i + 1];
-            weeks.push({
-                week: weekNum.toString(),
-                class1: { number: formatDate(c1.date), content: "" },
-                class2: c2 ? { number: formatDate(c2.date), content: "" } : { number: "", content: "" }
-            });
+    const currentWeekMonday = getMonday(start);
+    let weekNum = 1;
+
+    while (currentWeekMonday <= end) {
+        const weekClasses: Date[] = [];
+        for (let i = 0; i < 7; i++) {
+            const day = new Date(currentWeekMonday);
+            day.setDate(day.getDate() + i);
+            // Only count classes that fall within the semester range and match selected days
+            if (day >= start && day <= end && targetDays.includes(day.getDay())) {
+                weekClasses.push(day);
+            }
         }
+
+        const formatDate = (d: Date) => `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}`;
+
+        // Every week in the semester range gets a row
+        weeks.push({
+            week: weekNum.toString(),
+            class1: { number: weekClasses[0] ? formatDate(weekClasses[0]) : "-", content: "" },
+            class2: { number: weekClasses[1] ? formatDate(weekClasses[1]) : "-", content: "" }
+        });
+        
+        currentWeekMonday.setDate(currentWeekMonday.getDate() + 7);
+        weekNum++;
+        
+        // Safety break
+        if (weekNum > 25) break;
     }
+
     setValue("weeklySchedule", weeks, { shouldDirty: true });
+    toastSuccess("Cronograma gerado com sucesso.");
   };
 
   const handleCopiarCampos = (campos: {
@@ -610,13 +616,29 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
                         onClick={handleGenerateSchedule}
                     >
                         <RefreshCcw className="w-4 h-4" />
-                        Gerar Cronograma Automático
+                        Gerar Cronograma
                     </Button>
                 )}
               </div>
             </CardHeader>
             <CardContent className="pt-6 space-y-6">
               {!isReadOnly && (
+                  <>
+                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-6 flex gap-3">
+                      <Info className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
+                      <div className="text-sm text-blue-800 leading-relaxed">
+                          <strong>Instruções para geração do cronograma:</strong>
+                          <p className="mt-1">
+                              Para organizar o cronograma de aulas em conformidade com o calendário acadêmico, siga estas etapas:
+                          </p>
+                          <ol className="list-decimal ml-5 mt-2 space-y-1">
+                              <li>Selecione abaixo os dias da semana em que as aulas da disciplina ocorrerão.</li>
+                              <li>Clique no botão <strong>&quot;Gerar Cronograma&quot;</strong> localizado no cabeçalho desta seção.</li>
+                              <li>O sistema distribuirá automaticamente as datas das aulas ao longo de todas as semanas do semestre letivo.</li>
+                          </ol>
+                      </div>
+                  </div>
+
                   <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
                       <Label className="text-sm font-bold text-slate-700 block mb-3">Selecione os dias da semana com aula:</Label>
                       <div className="flex flex-wrap gap-4">
@@ -637,8 +659,10 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
                           * As datas serão geradas automaticamente entre o início e fim do semestre configurado.
                       </p>
                   </div>
+                  </>
               )}
 
+              {numSelectedDays > 0 ? (
               <div className="overflow-x-auto">
                 <Table>
                 <TableHeader>
@@ -695,6 +719,12 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
                 </TableBody>
               </Table>
               </div>
+              ) : (
+                <div className="py-12 text-center bg-slate-50 rounded-lg border-2 border-dashed border-slate-200">
+                    <AlertCircle className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+                    <p className="text-slate-500 font-medium">Selecione os dias da semana para visualizar o cronograma.</p>
+                </div>
+              )}
               <div className="mt-4 flex justify-between items-center px-2">
                 <p className="text-xs text-slate-500 italic">* O cronograma está sujeito a alterações conforme o andamento da disciplina.</p>
                 <Button 
