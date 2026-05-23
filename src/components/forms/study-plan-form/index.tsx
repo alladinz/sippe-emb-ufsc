@@ -388,14 +388,14 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="bg-slate-100/50 border p-1 h-12 shadow-sm rounded-xl mb-6 flex justify-start w-full overflow-x-auto">
-                <TabsTrigger value="identificacao" className="px-6 py-2 text-sm font-semibold transition-all data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg">I. Identificação</TabsTrigger>
-                <TabsTrigger value="conteudo" className="px-6 py-2 text-sm font-semibold transition-all data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg">II, III e IV. Conteúdo</TabsTrigger>
-                <TabsTrigger value="pedagogia" className="px-6 py-2 text-sm font-semibold transition-all data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg">V, VI. Metodologia</TabsTrigger>
-                <TabsTrigger value="bibliografia" className="px-6 py-2 text-sm font-semibold transition-all data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg">VII. Bibliografia</TabsTrigger>
-                <TabsTrigger value="cronograma" className="px-6 py-2 text-sm font-semibold transition-all data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg">IX. Cronograma</TabsTrigger>
-                <TabsTrigger value="avaliacao" className="px-6 py-2 text-sm font-semibold transition-all data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg">X. Avaliação</TabsTrigger>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex flex-col">
+        <TabsList className="bg-slate-100/50 border p-1 h-12 shadow-sm rounded-xl mb-6 flex justify-start w-fit overflow-x-auto">
+                <TabsTrigger value="identificacao" className="px-6 py-2 text-sm font-semibold transition-all data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg">Identificação</TabsTrigger>
+                <TabsTrigger value="conteudo" className="px-6 py-2 text-sm font-semibold transition-all data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg">Conteúdo</TabsTrigger>
+                <TabsTrigger value="pedagogia" className="px-6 py-2 text-sm font-semibold transition-all data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg">Metodologia</TabsTrigger>
+                <TabsTrigger value="bibliografia" className="px-6 py-2 text-sm font-semibold transition-all data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg">Bibliografia</TabsTrigger>
+                <TabsTrigger value="cronograma" className="px-6 py-2 text-sm font-semibold transition-all data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg">Cronograma</TabsTrigger>
+                <TabsTrigger value="avaliacao" className="px-6 py-2 text-sm font-semibold transition-all data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg">Avaliação</TabsTrigger>
         </TabsList>
 
         <TabsContent value="identificacao" className="animate-in fade-in slide-in-from-bottom-2 duration-300 focus:outline-none">
