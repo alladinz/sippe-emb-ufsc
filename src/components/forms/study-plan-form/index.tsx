@@ -159,10 +159,6 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
     saveFormProgress(debouncedData);
   }, [debouncedData, mounted, saveFormProgress]);
 
-  const handleCellBlur = () => {
-    saveFormProgress(getValues());
-  };
-
   const onFinalSubmit = async () => {
       const filteredCourses = (formData.courses || []).filter(c => c.code?.trim() || c.name?.trim());
       const filteredBib = (formData.bibliography || []).filter(b => b.author?.trim() || b.title?.trim());
@@ -273,27 +269,12 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
     methodology?: string;
     evaluation?: string;
     evaluationFormula?: string;
-    finalEvaluationRules?: string;
-    finalConsiderations?: string;
-    syllabus?: string;
-    bibliography?: { type: "basic" | "complementary", author: string, title: string }[];
   }) => {
     if (campos.objectives) setValue("objectives", campos.objectives, { shouldDirty: true });
     if (campos.programContent) setValue("programContent", campos.programContent, { shouldDirty: true });
     if (campos.methodology) setValue("methodology", campos.methodology, { shouldDirty: true });
     if (campos.evaluation) setValue("evaluation", campos.evaluation, { shouldDirty: true });
     if (campos.evaluationFormula) setValue("evaluationFormula", campos.evaluationFormula, { shouldDirty: true });
-    if (campos.finalEvaluationRules) setValue("finalEvaluationRules", campos.finalEvaluationRules, { shouldDirty: true });
-    if (campos.finalConsiderations) setValue("finalConsiderations", campos.finalConsiderations, { shouldDirty: true });
-    if (campos.syllabus) setValue("syllabus", campos.syllabus, { shouldDirty: true });
-    
-    if (campos.bibliography && campos.bibliography.length > 0) {
-        setValue("bibliography", campos.bibliography.map(b => ({
-            author: b.author,
-            title: b.title,
-            type: b.type
-        })), { shouldDirty: true });
-    }
     
     toastSuccess("Campos copiados com sucesso!");
   };
@@ -364,7 +345,7 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
                 </Button>
             )}
             
-            <Link href={`/dashboard/study-plans/${studyPlanId}/preview`} target="_blank">
+            <Link href={`/dashboard/study-plans/${studyPlanId}/preview`}>
                 <Button variant="outline" size="sm" className="gap-2 h-9 border-slate-200">
                     <Eye className="w-4 h-4" />
                     Visualizar PDF
@@ -388,8 +369,8 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex flex-col">
-        <TabsList className="bg-slate-100/50 border p-1 h-12 shadow-sm rounded-xl mb-6 flex justify-start w-fit overflow-x-auto">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="bg-white border p-1 h-12 shadow-sm rounded-lg mb-8 flex justify-start w-fit">
                 <TabsTrigger value="identificacao" className="px-6 py-2 text-sm font-semibold transition-all data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg">Identificação</TabsTrigger>
                 <TabsTrigger value="conteudo" className="px-6 py-2 text-sm font-semibold transition-all data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg">Conteúdo</TabsTrigger>
                 <TabsTrigger value="pedagogia" className="px-6 py-2 text-sm font-semibold transition-all data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg">Metodologia</TabsTrigger>
@@ -398,7 +379,7 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
                 <TabsTrigger value="avaliacao" className="px-6 py-2 text-sm font-semibold transition-all data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg">Avaliação</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="identificacao" className="animate-in fade-in slide-in-from-bottom-2 duration-300 focus:outline-none">
+        <TabsContent value="identificacao" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
           <fieldset disabled={isReadOnly} className="contents">
           <Card className="border-slate-200 shadow-sm rounded-md">
             <CardHeader className="border-b bg-slate-50/50">
@@ -784,14 +765,20 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
                       <TableCell className="border-l">
                         <Input 
                           {...register(`weeklySchedule.${index}.class1.number`)} 
-                          onBlur={handleCellBlur}
+                          onBlur={async (e) => {
+                            await register(`weeklySchedule.${index}.class1.number`).onBlur(e);
+                            saveFormProgress(getValues());
+                          }}
                           className="h-8 text-center border-transparent focus:border-brand-blue bg-transparent"
                         />
                       </TableCell>
                       <TableCell className="border-l">
                         <Input 
                           {...register(`weeklySchedule.${index}.class1.content`)} 
-                          onBlur={handleCellBlur}
+                          onBlur={async (e) => {
+                            await register(`weeklySchedule.${index}.class1.content`).onBlur(e);
+                            saveFormProgress(getValues());
+                          }}
                           placeholder="..."
                           className="h-8 border-transparent focus:border-brand-blue bg-transparent"
                         />
@@ -801,14 +788,20 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
                           <TableCell className="border-l">
                             <Input 
                               {...register(`weeklySchedule.${index}.class2.number`)} 
-                              onBlur={handleCellBlur}
+                              onBlur={async (e) => {
+                                await register(`weeklySchedule.${index}.class2.number`).onBlur(e);
+                                saveFormProgress(getValues());
+                              }}
                               className="h-8 text-center border-transparent focus:border-brand-blue bg-transparent"
                             />
                           </TableCell>
                           <TableCell className="border-l">
                             <Input 
                               {...register(`weeklySchedule.${index}.class2.content`)} 
-                              onBlur={handleCellBlur}
+                              onBlur={async (e) => {
+                                await register(`weeklySchedule.${index}.class2.content`).onBlur(e);
+                                saveFormProgress(getValues());
+                              }}
                               placeholder="..."
                               className="h-8 border-transparent focus:border-brand-blue bg-transparent"
                             />
