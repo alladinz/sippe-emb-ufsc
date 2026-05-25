@@ -8,6 +8,7 @@ import puppeteer from "puppeteer-core";
 import chromium from "@sparticuz/chromium";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60; // Allow 60 seconds for PDF generation on Vercel
 
 export async function GET(
     request: NextRequest,
@@ -34,9 +35,7 @@ export async function GET(
 
     const courseCode = plan.courses?.[0]?.code || "S-COD";
     const rawSemester = plan.semester || "00000";
-    // Remove dots from semester (e.g., 2026.1 -> 20261)
     const cleanSemester = rawSemester.replace(/\./g, "");
-    
     const filename = `plano_ensino_${courseCode}-${cleanSemester}.pdf`;
 
     const baseUrl = process.env.FRONTEND_URL || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
@@ -54,20 +53,10 @@ export async function GET(
                 args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
             };
         } else {
-            // Production (Vercel) logic with aggressive memory saving
+            // Standard Sparticuz setup for Vercel
             launchOptions = {
-                args: [
-                    ...chromium.args,
-                    "--hide-scrollbars",
-                    "--disable-web-security",
-                    "--no-sandbox",
-                    "--disable-setuid-sandbox",
-                    "--disable-dev-shm-usage",
-                    "--disable-gpu",
-                    "--no-zygote",
-                    "--single-process", // Critical for serverless
-                ],
-                defaultViewport: chromium.defaultViewport as { width: number; height: number },
+                args: chromium.args,
+                defaultViewport: chromium.defaultViewport,
                 executablePath: await chromium.executablePath(),
                 headless: chromium.headless as (boolean | "shell"),
             };
@@ -99,14 +88,14 @@ export async function GET(
             await page.setCookie(...cookies);
         }
 
-        // Navigate with a generous timeout and wait for network to be idle
+        // Navigate with a generous timeout
         await page.goto(targetUrl, {
             waitUntil: "networkidle0",
-            timeout: 60000,
+            timeout: 50000,
         });
 
         // Small extra delay to ensure all JS/Styles are applied
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 1500));
 
         // Generate PDF
         const pdfBuffer = await page.pdf({
