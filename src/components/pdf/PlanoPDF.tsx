@@ -177,12 +177,6 @@ interface Bibliography {
   type: string;
 }
 
-interface WeeklySchedule {
-  week: number;
-  class1?: { number: number; content: string | null };
-  class2?: { number: number; content: string | null };
-}
-
 interface PlanoData {
   campus: string | null;
   center: string | null;
@@ -202,7 +196,8 @@ interface PlanoData {
   updatedAt: string | Date;
   courses: Course[];
   bibliography: Bibliography[];
-  weeklySchedule: WeeklySchedule[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  weeklySchedule: any;
 }
 
 interface PlanoPDFProps {
@@ -227,12 +222,12 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
       <Page size="A4" style={styles.page}>
         {/* Header */}
         <View style={styles.header}>
-          {/* @ts-expect-error - Image in @react-pdf doesn't have alt but accessibility rules expect it */}
+          {/* eslint-disable-next-line jsx-a11y/alt-text */}
           <Image
             src="/brasao_UFSC.svg"
             style={styles.logo}
-            alt="Brasão UFSC"
           />
+
           <View style={styles.headerText}>
             <Text style={styles.title}>UNIVERSIDADE FEDERAL DE SANTA CATARINA</Text>
             <Text style={styles.subtitle}>{plano.campus || 'JOINVILLE'}</Text>

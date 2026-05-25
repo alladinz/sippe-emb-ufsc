@@ -20,12 +20,6 @@ interface Bibliography {
   type: string;
 }
 
-interface WeeklySchedule {
-  week: number;
-  class1?: { number: number; content: string | null };
-  class2?: { number: number; content: string | null };
-}
-
 interface PlanoData {
   campus: string | null;
   center: string | null;
@@ -45,7 +39,8 @@ interface PlanoData {
   updatedAt: string | Date;
   courses: Course[];
   bibliography: Bibliography[];
-  weeklySchedule: WeeklySchedule[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  weeklySchedule: any;
 }
 
 interface DownloadPDFButtonProps {
