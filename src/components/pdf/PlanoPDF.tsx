@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   },
   headerLineBold: {
     fontSize: 10,
-    fontWeight: 'bold',
+    fontFamily: 'Times-Bold',
     textAlign: 'center',
     textTransform: 'uppercase',
     marginTop: 5,
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 10,
-    fontWeight: 'bold',
+    fontFamily: 'Times-Bold',
     marginBottom: 6,
     textTransform: 'uppercase',
   },
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   label: {
-    fontWeight: 'bold',
+    fontFamily: 'Times-Bold',
     marginRight: 4,
   },
   text: {
@@ -112,16 +112,20 @@ const styles = StyleSheet.create({
   },
   tableCellHeader: {
     fontSize: 8,
-    fontWeight: 'bold',
+    fontFamily: 'Times-Bold',
     textAlign: 'center',
     textTransform: 'uppercase',
   },
   tableCell: {
     fontSize: 8,
   },
+  tableCellBold: {
+    fontSize: 8,
+    fontFamily: 'Times-Bold',
+  },
   tableCellItalic: {
     fontSize: 8,
-    fontStyle: 'italic',
+    fontFamily: 'Times-Italic',
     textAlign: 'justify',
   },
   formulaBox: {
@@ -139,8 +143,7 @@ const styles = StyleSheet.create({
   },
   formulaText: {
     fontSize: 11,
-    fontWeight: 'bold',
-    fontFamily: 'Courier-Bold', // Use mono-ish for formulas
+    fontFamily: 'Courier-Bold', // Standard mono font
   },
   list: {
     marginLeft: 15,
@@ -156,7 +159,7 @@ const styles = StyleSheet.create({
   listBulletRoman: {
     width: 35,
     fontSize: 10,
-    fontWeight: 'bold',
+    fontFamily: 'Times-Bold',
   },
   listContent: {
     flex: 1,
@@ -292,11 +295,11 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
                 <View style={styles.gridRow}>
                   <View style={styles.gridCell}>
                     <Text style={styles.label}>Nome:</Text>
-                    <Text style={styles.text}>{course.name}</Text>
+                    <Text style={styles.text}>{course.name || '-'}</Text>
                   </View>
                   <View style={[styles.gridCell, { flex: 0.4 }]}>
                     <Text style={styles.label}>Código:</Text>
-                    <Text style={styles.text}>{course.code}</Text>
+                    <Text style={styles.text}>{course.code || '-'}</Text>
                   </View>
                 </View>
                 <View style={styles.gridRow}>
@@ -421,7 +424,7 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
               plano.weeklySchedule.map((week: any, idx: number) => (
                 <View key={idx} style={styles.tableRow} wrap={false}>
                   <View style={[styles.tableCol, { width: '10%', backgroundColor: '#f9f9f9', alignItems: 'center' }]}>
-                    <Text style={[styles.tableCell, { fontWeight: 'bold' }]}>{week.week}</Text>
+                    <Text style={styles.tableCellBold}>{week.week}</Text>
                   </View>
                   <View style={[styles.tableCol, { width: '10%', alignItems: 'center' }]}>
                     <Text style={styles.tableCell}>{week.class1?.number || ''}</Text>
@@ -449,7 +452,7 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
               </View>
             )}
           </View>
-          <Text style={{ fontSize: 7, color: '#333333', fontStyle: 'italic', marginTop: 5 }}>
+          <Text style={{ fontSize: 7, color: '#333333', fontFamily: 'Times-Italic', marginTop: 5 }}>
             * O cronograma está sujeito a alterações conforme o andamento da disciplina.
           </Text>
         </View>
@@ -467,7 +470,7 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
                 </View>
               ))
           ) : (
-            <Text style={[styles.paragraph, { fontStyle: 'italic' }]}>Nenhuma informada.</Text>
+            <Text style={[styles.paragraph, { fontFamily: 'Times-Italic' }]}>Nenhuma informada.</Text>
           )}
         </View>
 
@@ -484,7 +487,7 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
                 </View>
               ))
           ) : (
-            <Text style={[styles.paragraph, { fontStyle: 'italic' }]}>Nenhuma informada.</Text>
+            <Text style={[styles.paragraph, { fontFamily: 'Times-Italic' }]}>Nenhuma informada.</Text>
           )}
         </View>
 
