@@ -54,9 +54,19 @@ export async function GET(
                 args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
             };
         } else {
-            // Production (Vercel) logic
+            // Production (Vercel) logic with aggressive memory saving
             launchOptions = {
-                args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
+                args: [
+                    ...chromium.args,
+                    "--hide-scrollbars",
+                    "--disable-web-security",
+                    "--no-sandbox",
+                    "--disable-setuid-sandbox",
+                    "--disable-dev-shm-usage",
+                    "--disable-gpu",
+                    "--no-zygote",
+                    "--single-process", // Critical for serverless
+                ],
                 defaultViewport: chromium.defaultViewport as { width: number; height: number },
                 executablePath: await chromium.executablePath(),
                 headless: chromium.headless as (boolean | "shell"),
