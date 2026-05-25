@@ -4,7 +4,10 @@ import { headers } from "next/headers";
 import { db } from "@/db";
 import { studyPlans } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
+import chromium from "@sparticuz/chromium";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(
     request: NextRequest,
@@ -36,14 +39,17 @@ export async function GET(
     
     const filename = `plano_ensino_${courseCode}-${cleanSemester}.pdf`;
 
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const baseUrl = process.env.FRONTEND_URL || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
     const targetUrl = `${baseUrl}/dashboard/study-plans/${id}/preview?pdf=true`;
 
     let browser;
     try {
+        // Chromium options for Vercel/Serverless
         browser = await puppeteer.launch({
-            headless: true,
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
+            args: chromium.args,
+            defaultViewport: chromium.defaultViewport,
+            executablePath: await chromium.executablePath(),
+            headless: chromium.headless === 'shell' ? 'shell' : !!chromium.headless,
         });
 
         const page = await browser.newPage();
@@ -55,23 +61,26 @@ export async function GET(
         // Better Auth typically uses multiple cookies, we pass them all
         const cookies = cookieString.split(";").map(pair => {
             const [name, value] = pair.trim().split("=");
+            if (!name || !value) return null;
             return {
-                name,
-                value,
+                name: name.trim(),
+                value: value.trim(),
                 domain: new URL(baseUrl).hostname,
                 path: "/",
                 httpOnly: true,
                 secure: baseUrl.startsWith("https"),
                 sameSite: "Lax" as const
             };
-        });
+        }).filter((c): c is NonNullable<typeof c> => c !== null);
 
-        await page.setCookie(...cookies);
+        if (cookies.length > 0) {
+            await page.setCookie(...cookies);
+        }
 
         // Navigate to the preview page
         await page.goto(targetUrl, {
             waitUntil: "networkidle0",
-            timeout: 30000,
+            timeout: 60000,
         });
 
         // Generate PDF
@@ -98,7 +107,13 @@ export async function GET(
         });
     } catch (error: unknown) {
         console.error("PDF Generation Error:", error);
-        if (browser) await browser.close();
+        if (browser) {
+            try {
+                await browser.close();
+            } catch (e) {
+                console.error("Failed to close browser:", e);
+            }
+        }
         const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
         return new NextResponse(`Erro ao gerar PDF: ${errorMessage}`, { status: 500 });
     }

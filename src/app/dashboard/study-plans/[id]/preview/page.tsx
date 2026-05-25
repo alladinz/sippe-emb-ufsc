@@ -7,7 +7,6 @@ import { ArrowLeft, MessageSquare, Download } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { ReviewActions } from "./review-actions";
-import { PrintButton } from "./print-button";
 import { ArchiveButton } from "@/app/dashboard/secretary/_components/archive-button";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -124,13 +123,12 @@ export default async function PreviewStudyPlanPage({ params, searchParams }: Pre
               <Badge variant={statusLabels[plan.status]?.variant || "outline"}>
                   {statusLabels[plan.status]?.label || plan.status}
               </Badge>
-              <Link href={`/api/pdf/${id}`} target="_blank">
+              <Link href={`/api/pdf/${id}`}>
                 <Button variant="outline" size="sm" className="gap-2">
                   <Download className="w-4 h-4" />
-                  Baixar PDF (Pro)
+                  Baixar PDF
                 </Button>
               </Link>
-              <PrintButton />
           </div>
         </div>
       )}
