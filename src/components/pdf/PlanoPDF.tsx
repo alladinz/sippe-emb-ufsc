@@ -11,137 +11,167 @@ import {
 const styles = StyleSheet.create({
   page: {
     padding: 40,
-    fontFamily: 'Helvetica',
+    fontFamily: 'Times-Roman',
     fontSize: 10,
-    lineHeight: 1.5,
-    color: '#0f172a',
+    lineHeight: 1.4,
+    color: '#000000',
   },
   header: {
-    flexDirection: 'column',
+    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 30,
+    marginBottom: 25,
     borderBottomWidth: 1,
-    borderBottomColor: '#e2e8f0',
-    paddingBottom: 20,
-    position: 'relative',
+    borderBottomColor: '#000000',
+    paddingBottom: 15,
   },
   logo: {
-    width: 60,
-    height: 60,
-    position: 'absolute',
-    left: 0,
-    top: 0,
+    width: 65,
+    height: 65,
+    marginRight: 15,
   },
-  headerText: {
+  headerTextContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerLine: {
+    fontSize: 9,
     textAlign: 'center',
     textTransform: 'uppercase',
+    marginBottom: 1,
   },
-  title: {
-    fontSize: 11,
+  headerLineBold: {
+    fontSize: 10,
     fontWeight: 'bold',
-    marginBottom: 2,
-  },
-  subtitle: {
-    fontSize: 9,
-    marginBottom: 2,
-  },
-  planTitle: {
-    fontSize: 9,
-    fontWeight: 'bold',
-    marginTop: 10,
+    textAlign: 'center',
+    textTransform: 'uppercase',
+    marginTop: 5,
   },
   section: {
-    marginBottom: 20,
+    marginBottom: 15,
   },
   sectionTitle: {
     fontSize: 10,
     fontWeight: 'bold',
-    marginBottom: 8,
+    marginBottom: 6,
     textTransform: 'uppercase',
   },
-  identificationBox: {
+  identificationGrid: {
     borderWidth: 1,
-    borderColor: '#e2e8f0',
-    backgroundColor: '#f8fafc',
-    padding: 10,
+    borderColor: '#000000',
+    padding: 8,
     flexDirection: 'column',
-    gap: 4,
   },
-  row: {
+  gridRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: 4,
+    marginBottom: 3,
+  },
+  gridCell: {
+    flex: 1,
+    flexDirection: 'row',
   },
   label: {
     fontWeight: 'bold',
+    marginRight: 4,
   },
-  content: {
+  text: {
+    fontSize: 10,
+  },
+  paragraph: {
     fontSize: 10,
     textAlign: 'justify',
+    marginBottom: 8,
   },
   table: {
     width: 'auto',
     borderStyle: 'solid',
     borderWidth: 1,
-    borderColor: '#e2e8f0',
+    borderColor: '#000000',
     borderRightWidth: 0,
     borderBottomWidth: 0,
+    marginTop: 5,
   },
   tableRow: {
     flexDirection: 'row',
-    borderBottomColor: '#e2e8f0',
+    borderBottomColor: '#000000',
     borderBottomWidth: 1,
   },
   tableColHeader: {
-    backgroundColor: '#f8fafc',
-    borderRightColor: '#e2e8f0',
+    backgroundColor: '#f1f1f1',
+    borderRightColor: '#000000',
     borderRightWidth: 1,
-    padding: 5,
+    padding: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   tableCol: {
-    borderRightColor: '#e2e8f0',
+    borderRightColor: '#000000',
     borderRightWidth: 1,
-    padding: 5,
+    padding: 4,
   },
   tableCellHeader: {
     fontSize: 8,
     fontWeight: 'bold',
     textAlign: 'center',
+    textTransform: 'uppercase',
   },
   tableCell: {
     fontSize: 8,
+  },
+  tableCellItalic: {
+    fontSize: 8,
+    fontStyle: 'italic',
     textAlign: 'justify',
   },
   formulaBox: {
-    backgroundColor: '#f8fafc',
-    padding: 10,
     borderWidth: 1,
-    borderColor: '#e2e8f0',
+    borderColor: '#000000',
     borderStyle: 'dashed',
-    borderRadius: 4,
-    textAlign: 'center',
-    marginTop: 10,
+    padding: 10,
+    marginTop: 8,
+    alignItems: 'center',
   },
   formulaTitle: {
     fontSize: 8,
     textTransform: 'uppercase',
-    color: '#64748b',
     marginBottom: 4,
   },
   formulaText: {
     fontSize: 11,
     fontWeight: 'bold',
+    fontFamily: 'Courier-Bold', // Use mono-ish for formulas
+  },
+  list: {
+    marginLeft: 15,
+  },
+  listItem: {
+    flexDirection: 'row',
+    marginBottom: 2,
+  },
+  listBullet: {
+    width: 20,
+    fontSize: 10,
+  },
+  listBulletRoman: {
+    width: 35,
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
+  listContent: {
+    flex: 1,
+    fontSize: 10,
+    textAlign: 'justify',
   },
   footer: {
-    marginTop: 50,
-    paddingTop: 10,
+    marginTop: 30,
+    paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: '#e2e8f0',
+    borderTopColor: '#000000',
     textAlign: 'center',
   },
   footerText: {
     fontSize: 8,
-    color: '#94a3b8',
   },
 });
 
@@ -173,7 +203,11 @@ interface Course {
 
 interface Bibliography {
   id: string;
+  author: string;
   title: string;
+  year: number | null;
+  publisher: string | null;
+  isbn: string | null;
   type: string;
 }
 
@@ -193,6 +227,7 @@ interface PlanoData {
   evaluation: string | null;
   evaluationFormula: string | null;
   finalEvaluationRules: string | null;
+  finalConsiderations: string | null;
   updatedAt: string | Date;
   courses: Course[];
   bibliography: Bibliography[];
@@ -217,6 +252,17 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
 
   const hasMoreThanOneDay = Array.isArray(plano.weeklySchedule) && plano.weeklySchedule.length > 0 && !!plano.weeklySchedule[0].class2;
 
+  const renderBibliography = (item: Bibliography) => {
+    const parts = [
+      item.author,
+      item.title,
+      item.publisher,
+      item.year,
+      item.isbn ? `ISBN: ${item.isbn}` : null
+    ].filter(Boolean);
+    return parts.join(', ') + '.';
+  };
+
   return (
     <Document title={`Plano de Ensino - ${plano.semester || ''}`}>
       <Page size="A4" style={styles.page}>
@@ -224,51 +270,58 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
         <View style={styles.header}>
           {/* eslint-disable-next-line jsx-a11y/alt-text */}
           <Image
-            src="/brasao_UFSC.svg"
+            src="/brasao_UFSC_JOINVILLE_impressao__vertical_sigla_color.png"
             style={styles.logo}
           />
-
-          <View style={styles.headerText}>
-            <Text style={styles.title}>UNIVERSIDADE FEDERAL DE SANTA CATARINA</Text>
-            <Text style={styles.subtitle}>{plano.campus || 'JOINVILLE'}</Text>
-            <Text style={styles.subtitle}>{plano.center || 'CENTRO TECNOLÓGICO DE JOINVILLE'}</Text>
-            <Text style={styles.subtitle}>{plano.courseName || plano.organization?.name || ''}</Text>
-            <Text style={styles.planTitle}>PLANO DE ENSINO - {plano.semester || ''}</Text>
-            <Text style={styles.subtitle}>{plano.universityAcronym || 'UFSC'}</Text>
+          <View style={styles.headerTextContainer}>
+            <Text style={styles.headerLine}>Universidade Federal de Santa Catarina</Text>
+            <Text style={styles.headerLine}>{plano.campus || 'JOINVILLE'}</Text>
+            <Text style={styles.headerLine}>{plano.center || 'CENTRO TECNOLÓGICO DE JOINVILLE'}</Text>
+            <Text style={styles.headerLine}>{plano.courseName || plano.organization?.name || ''}</Text>
+            <Text style={styles.headerLineBold}>PLANO DE ENSINO - {plano.semester || ''}</Text>
+            <Text style={styles.headerLineBold}>{plano.universityAcronym || 'UFSC'}</Text>
           </View>
         </View>
 
         {/* I. IDENTIFICAÇÃO */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>I. IDENTIFICAÇÃO DA DISCIPLINA</Text>
-          <View style={styles.identificationBox}>
+          <View style={styles.identificationGrid}>
             {plano.courses?.map((course, index) => (
-              <View key={course.id || index} style={{ marginBottom: 5 }}>
-                <View style={styles.row}>
-                  <Text style={styles.label}>Nome: </Text>
-                  <Text>{course.name}</Text>
+              <React.Fragment key={course.id || index}>
+                <View style={styles.gridRow}>
+                  <View style={styles.gridCell}>
+                    <Text style={styles.label}>Nome:</Text>
+                    <Text style={styles.text}>{course.name}</Text>
+                  </View>
+                  <View style={[styles.gridCell, { flex: 0.4 }]}>
+                    <Text style={styles.label}>Código:</Text>
+                    <Text style={styles.text}>{course.code}</Text>
+                  </View>
                 </View>
-                <View style={styles.row}>
-                  <Text style={styles.label}>Código: </Text>
-                  <Text>{course.code}</Text>
+                <View style={styles.gridRow}>
+                  <View style={styles.gridCell}>
+                    <Text style={styles.label}>Carga horária:</Text>
+                    <Text style={styles.text}>{course.workload ? `${course.workload} horas` : '-'}</Text>
+                  </View>
+                  <View style={[styles.gridCell, { flex: 0.4 }]}>
+                    <Text style={styles.label}>Créditos:</Text>
+                    <Text style={styles.text}>{course.credits || '-'}</Text>
+                  </View>
                 </View>
-                <View style={styles.row}>
-                  <Text style={styles.label}>Carga horária: </Text>
-                  <Text>{course.workload ? `${course.workload} horas` : '-'}</Text>
+                <View style={styles.gridRow}>
+                  <View style={styles.gridCell}>
+                    <Text style={styles.label}>Turma(s):</Text>
+                    <Text style={styles.text}>{course.classIdentifier || '-'}</Text>
+                  </View>
                 </View>
-                <View style={styles.row}>
-                  <Text style={styles.label}>Créditos: </Text>
-                  <Text>{course.credits || '-'}</Text>
-                </View>
-                <View style={styles.row}>
-                  <Text style={styles.label}>Turma(s): </Text>
-                  <Text>{course.classIdentifier || '-'}</Text>
-                </View>
-              </View>
+              </React.Fragment>
             ))}
-            <View style={styles.row}>
-              <Text style={styles.label}>Professor(es): </Text>
-              <Text>{plano.user?.name || ''}</Text>
+            <View style={styles.gridRow}>
+              <View style={styles.gridCell}>
+                <Text style={styles.label}>Professor(es):</Text>
+                <Text style={styles.text}>{plano.user?.name || ''}</Text>
+              </View>
             </View>
           </View>
         </View>
@@ -276,7 +329,7 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
         {/* II. PRÉ-REQUISITOS */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>II. PRÉ-REQUISITOS</Text>
-          <Text style={styles.content}>
+          <Text style={styles.paragraph}>
             {plano.prerequisites || 'Não há pré-requisitos cadastrados.'}
           </Text>
         </View>
@@ -284,7 +337,7 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
         {/* III. EMENTA */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>III. EMENTA</Text>
-          <Text style={styles.content}>
+          <Text style={styles.paragraph}>
             {stripHtml(plano.syllabus) || 'Não informada.'}
           </Text>
         </View>
@@ -292,7 +345,7 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
         {/* IV. OBJETIVOS */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>IV. OBJETIVOS</Text>
-          <Text style={styles.content}>
+          <Text style={styles.paragraph}>
             {stripHtml(plano.objectives) || 'Não informados.'}
           </Text>
         </View>
@@ -300,7 +353,7 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
         {/* V. CONTEÚDO PROGRAMÁTICO */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>V. CONTEÚDO PROGRAMÁTICO</Text>
-          <Text style={styles.content}>
+          <Text style={styles.paragraph}>
             {stripHtml(plano.programContent) || 'Não informado.'}
           </Text>
         </View>
@@ -308,7 +361,7 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
         {/* VI. METODOLOGIA DE ENSINO */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>VI. METODOLOGIA DE ENSINO / DESENVOLVIMENTO DO PROGRAMA</Text>
-          <Text style={styles.content}>
+          <Text style={styles.paragraph}>
             {stripHtml(plano.methodology) || 'Não informada.'}
           </Text>
         </View>
@@ -316,10 +369,10 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
         {/* VII. METODOLOGIA DE AVALIAÇÃO */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>VII. METODOLOGIA DE AVALIAÇÃO</Text>
-          <Text style={styles.content}>{plano.evaluation || 'Não informada.'}</Text>
+          <Text style={styles.paragraph}>{plano.evaluation || 'Não informada.'}</Text>
           {plano.evaluationFormula && (
             <View style={styles.formulaBox}>
-              <Text style={styles.formulaTitle}>Fórmula de Cálculo</Text>
+              <Text style={styles.formulaTitle}>Fórmula de Cálculo da Média</Text>
               <Text style={styles.formulaText}>{plano.evaluationFormula}</Text>
             </View>
           )}
@@ -328,14 +381,19 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
         {/* VIII. AVALIAÇÃO FINAL */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>VIII. AVALIAÇÃO FINAL</Text>
-          <Text style={styles.content}>
+          <Text style={styles.paragraph}>
             {plano.finalEvaluationRules ? plano.finalEvaluationRules.replace(/\*\*/g, '') : 'Conforme resoluções vigentes da Universidade.'}
           </Text>
+          {plano.finalConsiderations && (
+            <Text style={styles.paragraph}>
+              {stripHtml(plano.finalConsiderations)}
+            </Text>
+          )}
         </View>
 
         {/* IX. CRONOGRAMA */}
         <View style={styles.section} break>
-          <Text style={[styles.sectionTitle, { textAlign: 'center' }]}>IX. CRONOGRAMA DE AULAS</Text>
+          <Text style={styles.sectionTitle}>IX. CRONOGRAMA DE AULAS</Text>
           <View style={styles.table}>
             <View style={styles.tableRow}>
               <View style={[styles.tableColHeader, { width: '10%' }]}>
@@ -359,24 +417,25 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
               )}
             </View>
             {Array.isArray(plano.weeklySchedule) && plano.weeklySchedule.length > 0 ? (
-              plano.weeklySchedule.map((week, idx) => (
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              plano.weeklySchedule.map((week: any, idx: number) => (
                 <View key={idx} style={styles.tableRow} wrap={false}>
-                  <View style={[styles.tableCol, { width: '10%', backgroundColor: '#f8fafc' }]}>
-                    <Text style={[styles.tableCell, { textAlign: 'center' }]}>{week.week}</Text>
+                  <View style={[styles.tableCol, { width: '10%', backgroundColor: '#f9f9f9', alignItems: 'center' }]}>
+                    <Text style={[styles.tableCell, { fontWeight: 'bold' }]}>{week.week}</Text>
                   </View>
-                  <View style={[styles.tableCol, { width: '10%' }]}>
-                    <Text style={[styles.tableCell, { textAlign: 'center' }]}>{week.class1?.number || ''}</Text>
+                  <View style={[styles.tableCol, { width: '10%', alignItems: 'center' }]}>
+                    <Text style={styles.tableCell}>{week.class1?.number || ''}</Text>
                   </View>
                   <View style={[styles.tableCol, { flex: 1 }]}>
-                    <Text style={[styles.tableCell, { fontStyle: 'italic' }]}>{week.class1?.content || '-'}</Text>
+                    <Text style={styles.tableCellItalic}>{week.class1?.content || '-'}</Text>
                   </View>
                   {hasMoreThanOneDay && (
                     <>
-                      <View style={[styles.tableCol, { width: '10%' }]}>
-                        <Text style={[styles.tableCell, { textAlign: 'center' }]}>{week.class2?.number || ''}</Text>
+                      <View style={[styles.tableCol, { width: '10%', alignItems: 'center' }]}>
+                        <Text style={styles.tableCell}>{week.class2?.number || ''}</Text>
                       </View>
                       <View style={[styles.tableCol, { flex: 1 }]}>
-                        <Text style={[styles.tableCell, { fontStyle: 'italic' }]}>{week.class2?.content || '-'}</Text>
+                        <Text style={styles.tableCellItalic}>{week.class2?.content || '-'}</Text>
                       </View>
                     </>
                   )}
@@ -384,45 +443,48 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
               ))
             ) : (
               <View style={styles.tableRow}>
-                <View style={[styles.tableCol, { flex: 1, padding: 20 }]}>
-                  <Text style={[styles.tableCell, { textAlign: 'center', color: '#94a3b8' }]}>Cronograma não detalhado.</Text>
+                <View style={[styles.tableCol, { flex: 1, padding: 10 }]}>
+                  <Text style={[styles.tableCell, { textAlign: 'center' }]}>Cronograma não detalhado.</Text>
                 </View>
               </View>
             )}
           </View>
-          <Text style={{ fontSize: 7, color: '#64748b', fontStyle: 'italic', marginTop: 5 }}>
+          <Text style={{ fontSize: 7, color: '#333333', fontStyle: 'italic', marginTop: 5 }}>
             * O cronograma está sujeito a alterações conforme o andamento da disciplina.
           </Text>
         </View>
 
-        {/* X & XI. BIBLIOGRAFIA */}
+        {/* X. BIBLIOGRAFIA BÁSICA */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>X. BIBLIOGRAFIA BÁSICA</Text>
           {plano.bibliography?.filter(b => b.type === 'basic').length > 0 ? (
             plano.bibliography
               .filter(b => b.type === 'basic')
               .map((b, i) => (
-                <Text key={b.id || i} style={[styles.content, { marginLeft: 10, marginBottom: 2 }]}>
-                  {i + 1}. {b.title}
-                </Text>
+                <View key={b.id || i} style={styles.listItem}>
+                  <Text style={styles.listBullet}>{i + 1}.</Text>
+                  <Text style={styles.listContent}>{renderBibliography(b)}</Text>
+                </View>
               ))
           ) : (
-            <Text style={[styles.content, { fontStyle: 'italic', color: '#94a3b8' }]}>Nenhuma informada.</Text>
+            <Text style={[styles.paragraph, { fontStyle: 'italic' }]}>Nenhuma informada.</Text>
           )}
         </View>
 
+        {/* XI. BIBLIOGRAFIA COMPLEMENTAR */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>XI. BIBLIOGRAFIA COMPLEMENTAR</Text>
           {plano.bibliography?.filter(b => b.type === 'complementary').length > 0 ? (
             plano.bibliography
               .filter(b => b.type === 'complementary')
               .map((b, i) => (
-                <Text key={b.id || i} style={[styles.content, { marginLeft: 10, marginBottom: 2 }]}>
-                  {i + 1}. {b.title}
-                </Text>
+                <View key={b.id || i} style={styles.listItem}>
+                  <Text style={styles.listBullet}>{i + 1}.</Text>
+                  <Text style={styles.listContent}>{renderBibliography(b)}</Text>
+                </View>
               ))
           ) : (
-            <Text style={[styles.content, { fontStyle: 'italic', color: '#94a3b8' }]}>Nenhuma informada.</Text>
+            <Text style={[styles.paragraph, { fontStyle: 'italic' }]}>Nenhuma informada.</Text>
           )}
         </View>
 

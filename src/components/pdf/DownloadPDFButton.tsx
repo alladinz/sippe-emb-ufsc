@@ -16,7 +16,11 @@ interface Course {
 
 interface Bibliography {
   id: string;
+  author: string;
   title: string;
+  year: number | null;
+  publisher: string | null;
+  isbn: string | null;
   type: string;
 }
 
@@ -36,6 +40,7 @@ interface PlanoData {
   evaluation: string | null;
   evaluationFormula: string | null;
   finalEvaluationRules: string | null;
+  finalConsiderations: string | null;
   updatedAt: string | Date;
   courses: Course[];
   bibliography: Bibliography[];
