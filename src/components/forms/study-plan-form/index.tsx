@@ -7,11 +7,12 @@ import { studyPlanSchema, type StudyPlanFormValues } from "@/lib/schemas/study-p
 import { type ZodIssue } from "zod";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Check, CloudUpload, Plus, Eye, Send, BookOpen, AlertCircle, Info, ArrowLeft, RefreshCcw } from "lucide-react";
+import { Check, CloudUpload, Plus, Trash2, Eye, Send, BookOpen, AlertCircle, ArrowLeft, RefreshCcw, Info } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { DeletePlanButton } from "@/app/dashboard/study-plans/_components/delete-plan-button";
 import {
@@ -24,6 +25,7 @@ import {
 } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TiptapEditor } from "@/components/ui/tiptap-editor";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { toastError, toastWarning, confirmDialog, toastSuccess } from "@/lib/swal";
 import { CopiarPlanoModal } from "@/components/planos/CopiarPlanoModal";
 
@@ -111,7 +113,7 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
     name: "weeklySchedule",
   });
 
-  const { fields: bibFields } = useFieldArray({
+  const { fields: bibFields, append: appendBib, remove: removeBib } = useFieldArray({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     control: control as any,
     name: "bibliography",
@@ -124,7 +126,19 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
   });
 
   const formData = watch();
-  const [debouncedData] = useDebounce(formData, 1000);
+  const [debouncedData] = useDebounce(formData, 2000);
+
+  useEffect(() => {
+    if (!mounted) return;
+    formData.courses?.forEach((course, index) => {
+        if (course.workload) {
+            const calculatedCredits = Math.floor(course.workload / 18);
+            if (course.credits !== calculatedCredits) {
+                setValue(`courses.${index}.credits`, calculatedCredits, { shouldDirty: true });
+            }
+        }
+    });
+  }, [formData.courses, setValue, mounted]);
 
   const saveFormProgress = useCallback(async (data: StudyPlanFormValues) => {
     const dataStr = JSON.stringify(data);
@@ -144,26 +158,22 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
 
   useEffect(() => {
     if (!mounted) return;
-    formData.courses?.forEach((course, index) => {
-        if (course.workload) {
-            const calculatedCredits = Math.floor(course.workload / 18);
-            if (course.credits !== calculatedCredits) {
-                setValue(`courses.${index}.credits`, calculatedCredits, { shouldDirty: true });
-            }
-        }
-    });
-  }, [formData.courses, setValue, mounted]);
-
-  useEffect(() => {
-    if (!mounted) return;
     saveFormProgress(debouncedData);
   }, [debouncedData, mounted, saveFormProgress]);
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    saveFormProgress(getValues());
+  };
+
+  const handlePreviewClick = () => {
+    saveFormProgress(getValues());
+  };
 
   const onFinalSubmit = async () => {
       const filteredCourses = (formData.courses || []).filter(c => c.code?.trim() || c.name?.trim());
       const filteredBib = (formData.bibliography || []).filter(b => b.author?.trim() || b.title?.trim());
       const dataToValidate = { ...formData, courses: filteredCourses, bibliography: filteredBib };
-      
       const result = studyPlanSchema.safeParse(dataToValidate);
       if (!result.success) {
           const errorMsg = result.error.issues.map((e: ZodIssue) => `${e.path.join('.')}: ${e.message}`).join('\n');
@@ -178,8 +188,7 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
           initialData.status === 'rejected' ? 'Re-submeter Plano?' : 'Submeter para Revisão?',
           'Após o envio, o plano entrará em modo de apenas leitura até que seja revisado pela coordenação.',
           'Confirmar Envio',
-          'Cancelar',
-          false
+          'Cancelar'
       );
 
       if (!confirmed) return;
@@ -275,134 +284,174 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
     if (campos.methodology) setValue("methodology", campos.methodology, { shouldDirty: true });
     if (campos.evaluation) setValue("evaluation", campos.evaluation, { shouldDirty: true });
     if (campos.evaluationFormula) setValue("evaluationFormula", campos.evaluationFormula, { shouldDirty: true });
-    
-    toastSuccess("Campos copiados com sucesso!");
+
+    setModalCopiaAberto(false);
+    toastSuccess("Campos copiados com sucesso. Revise o conteúdo antes de submeter.");
+
+    // Switch to relevant tab
+    if (campos.objectives || campos.programContent) {
+      setActiveTab("conteudo");
+    } else if (campos.methodology) {
+      setActiveTab("pedagogia");
+    } else if (campos.evaluation || campos.evaluationFormula) {
+      setActiveTab("avaliacao");
+    }
   };
 
-  const handleTabChange = (value: string) => {
-    setActiveTab(value);
-    saveFormProgress(getValues());
+  const statusLabels: Record<string, { label: string, variant: "default" | "secondary" | "destructive" | "outline" }> = {
+    draft: { label: "Rascunho", variant: "secondary" },
+    submitted: { label: "Enviado", variant: "default" },
+    pending_review: { label: "Em Revisão", variant: "default" },
+    approved: { label: "Aprovado", variant: "outline" },
+    rejected: { label: "Rejeitado", variant: "destructive" },
+    archived: { label: "Arquivado", variant: "secondary" },
   };
 
-  const handlePreviewClick = () => {
-    saveFormProgress(getValues());
-  };
+  const isReadOnly = initialData.status !== 'draft' && initialData.status !== 'rejected';
 
-  const isReadOnly = initialData.status !== "draft" && initialData.status !== "rejected";
-
-  if (!mounted) return null;
+  const currentValuesForCopy = useMemo(() => ({
+    objectives: formData.objectives || undefined,
+    programContent: formData.programContent || undefined,
+    methodology: formData.methodology || undefined,
+    evaluation: formData.evaluation || undefined,
+    evaluationFormula: formData.evaluationFormula || undefined,
+  }), [formData.objectives, formData.programContent, formData.methodology, formData.evaluation, formData.evaluationFormula]);
 
   return (
-    <div className="space-y-6">
-      <CopiarPlanoModal 
-        isOpen={modalCopiaAberto} 
-        onClose={() => setModalCopiaAberto(false)} 
-        onConfirm={handleCopiarCampos}
-        planoAtualId={studyPlanId}
-        disciplinaId={formData.courses?.[0]?.code}
-        currentValues={{
-            objectives: formData.objectives || undefined,
-            programContent: formData.programContent || undefined,
-            methodology: formData.methodology || undefined,
-            evaluation: formData.evaluation || undefined,
-            evaluationFormula: formData.evaluationFormula || undefined,
-        }}
-      />
-
-      {/* Action Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
-        <div className="flex items-center gap-3">
+    <div className="space-y-6 pb-20">
+      <div className="flex items-center justify-between bg-white p-4 border rounded-lg shadow-sm">
+        <div className="flex items-center gap-4">
           <Link href="/dashboard/study-plans">
-            <Button variant="ghost" size="sm" className="h-9 w-9 p-0 rounded-full">
+            <Button variant="ghost" size="sm" className="gap-2 text-slate-600">
               <ArrowLeft className="w-4 h-4" />
+              Voltar
             </Button>
           </Link>
-          <div>
-            <div className="flex items-center gap-2">
-                <Badge variant={isReadOnly ? "secondary" : "outline"} className="capitalize">
-                    {initialData.status === 'draft' ? 'Rascunho' : 
-                     initialData.status === 'submitted' ? 'Submetido' :
-                     initialData.status === 'approved' ? 'Aprovado' :
-                     initialData.status === 'rejected' ? 'Rejeitado' : initialData.status}
-                </Badge>
-                {lastSaved && (
-                    <span className="text-[10px] text-slate-400 flex items-center gap-1">
-                        <Check className="w-3 h-3" />
-                        Salvo às {lastSaved.toLocaleTimeString()}
-                    </span>
-                )}
-                {isPending && (
-                    <span className="text-[10px] text-brand-blue animate-pulse flex items-center gap-1">
-                        <CloudUpload className="w-3 h-3" />
-                        Salvando...
-                    </span>
-                )}
-            </div>
+          <div className="h-6 w-px bg-slate-200" />
+          <div className={cn(
+              "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold border",
+              statusLabels[initialData.status]?.variant === 'default' && "bg-blue-100 text-blue-800",
+              statusLabels[initialData.status]?.variant === 'secondary' && "bg-slate-100 text-slate-800",
+              statusLabels[initialData.status]?.variant === 'destructive' && "bg-red-100 text-red-800",
+              statusLabels[initialData.status]?.variant === 'outline' && "bg-green-100 text-green-800",
+          )}>
+            {statusLabels[initialData.status]?.label || initialData.status}
+          </div>
+          {isReadOnly && (
+              <div className="flex items-center gap-1.5 px-3 py-1 rounded-md bg-amber-50 text-amber-700 border border-amber-100 text-xs font-medium">
+                  <BookOpen className="w-3 h-3" />
+                  Modo de Apenas Leitura
+              </div>
+          )}
+          <div className="flex items-center gap-2 text-sm text-slate-500">
+            {isPending ? (
+              <>
+                <CloudUpload className="w-4 h-4 animate-pulse" />
+                <span>Salvando...</span>
+              </>
+            ) : lastSaved ? (
+              <>
+                <Check className="w-4 h-4 text-green-500" />
+                <span id="save-status">Salvo às {lastSaved.toLocaleTimeString('pt-BR')}</span>
+              </>
+            ) : (
+              <span>Todas as alterações foram salvas</span>
+            )}
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-            {!isReadOnly && (
-                <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="gap-2 h-9 border-slate-200"
-                    onClick={() => setModalCopiaAberto(true)}
-                >
-                    <BookOpen className="w-4 h-4" />
-                    Copiar de outro Plano
-                </Button>
-            )}
-            
-            <Link href={`/dashboard/study-plans/${studyPlanId}/preview`} target="_blank" onClick={handlePreviewClick}>
-                <Button variant="outline" size="sm" className="gap-2 h-9 border-slate-200">
-                    <Eye className="w-4 h-4" />
-                    Visualizar PDF
-                </Button>
-            </Link>
-
-            {!isReadOnly && (
-                <Button 
-                    size="sm" 
-                    className="gap-2 h-9 bg-brand-blue hover:bg-brand-blue/90 text-white px-4"
-                    onClick={onFinalSubmit}
-                >
-                    <Send className="w-4 h-4" />
-                    Submeter para Revisão
-                </Button>
-            )}
-            
-            {!isReadOnly && (
-                <DeletePlanButton id={studyPlanId} shouldRedirect={true} variant="full" className="h-9" />
-            )}
+        <div className="flex items-center gap-3">
+          {!isReadOnly && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setModalCopiaAberto(true)}
+                className="gap-2 text-slate-600 border-slate-200 hover:bg-slate-50 rounded-sm"
+              >
+                <RefreshCcw className="w-4 h-4" />
+                Copiar de plano anterior
+              </Button>
+          )}
+          {!isReadOnly && initialData.status !== 'submitted' && (
+              <DeletePlanButton className="rounded-sm" id={studyPlanId} variant="full" shouldRedirect={true} />
+          )}
+          <Link href={`/dashboard/study-plans/${studyPlanId}/preview`}>
+            <Button variant="outline" size="sm" className="gap-2" onClick={handlePreviewClick}>
+              <Eye className="w-4 h-4" />
+              Visualizar
+            </Button>
+          </Link>
+          {!isReadOnly && (
+              <Button 
+                size="sm" 
+                className="gap-2 bg-brand-blue hover:bg-brand-blue rounded-sm"
+                onClick={onFinalSubmit}
+                disabled={isPending}
+              >
+                <Send className="w-4 h-4" />
+                {initialData.status === 'rejected' ? 'Re-submeter para Revisão' : 'Submeter para Revisão'}
+              </Button>
+          )}
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="bg-white border p-1 h-12 shadow-sm rounded-lg mb-8 flex justify-start w-fit">
-                <TabsTrigger value="identificacao" className="px-6 py-2 text-sm font-semibold transition-all data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg">Identificação</TabsTrigger>
+      {initialData.status === 'rejected' && initialData.feedback && (
+          <div className="bg-red-50 border border-red-200 p-5 rounded-xl flex gap-4 animate-in fade-in slide-in-from-top-2 shadow-sm">
+              <div className="bg-red-100 p-2 rounded-full h-fit">
+                <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
+              </div>
+              <div>
+                  <h4 className="text-sm font-bold text-red-900">Feedback de Rejeição</h4>
+                  <p className="text-sm text-red-800 mt-1 leading-relaxed italic">&quot;{initialData.feedback}&quot;</p>
+                  <div className="mt-3 flex items-center gap-2 text-xs font-medium text-red-600 bg-white/50 w-fit px-2 py-1 rounded border border-red-100">
+                    <Check className="w-3 h-3" />
+                    Realize os ajustes e re-submeta para uma nova revisão.
+                  </div>
+              </div>
+          </div>
+      )}
+
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full flex flex-col space-y-8">
+        <div className="flex justify-center border-b bg-white mx-8 px-6 py-2 rounded-xl">
+            <TabsList className="inline-flex h-12 items-center justify-center rounded-xl bg-slate-100 p-1 text-slate-500 shadow-inner">
+                <TabsTrigger value="identificacao" className="px-6 py-2 text-sm font-semibold transition-all data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg">Identificação da Disciplina</TabsTrigger>
                 <TabsTrigger value="conteudo" className="px-6 py-2 text-sm font-semibold transition-all data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg">Conteúdo</TabsTrigger>
                 <TabsTrigger value="pedagogia" className="px-6 py-2 text-sm font-semibold transition-all data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg">Metodologia</TabsTrigger>
-                <TabsTrigger value="bibliografia" className="px-6 py-2 text-sm font-semibold transition-all data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg">Bibliografia</TabsTrigger>
-                <TabsTrigger value="cronograma" className="px-6 py-2 text-sm font-semibold transition-all data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg">Cronograma</TabsTrigger>
                 <TabsTrigger value="avaliacao" className="px-6 py-2 text-sm font-semibold transition-all data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg">Avaliação</TabsTrigger>
-        </TabsList>
+                <TabsTrigger value="cronograma" className="px-6 py-2 text-sm font-semibold transition-all data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg">Cronograma</TabsTrigger>
+                <TabsTrigger value="bibliografia" className="px-6 py-2 text-sm font-semibold transition-all data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm rounded-lg">Bibliografia</TabsTrigger>
+            </TabsList>
+        </div>
 
         <TabsContent value="identificacao" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
           <fieldset disabled={isReadOnly} className="contents">
           <Card className="border-slate-200 shadow-sm rounded-md">
             <CardHeader className="border-b bg-slate-50/50">
-              <CardTitle className="text-xl">Dados de Identificação</CardTitle>
-              <CardDescription>Informações básicas da instituição e da disciplina.</CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-xl">Identificação da Disciplina</CardTitle>
+                  <CardDescription>Informações institucionais e dados da disciplina.</CardDescription>
+                </div>
+                {!isReadOnly && (
+                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-md bg-amber-50 text-amber-700 border border-amber-100 text-[10px] font-bold uppercase tracking-wider">
+                        <Info className="w-3.5 h-3.5" />
+                        Campos Gerenciados pelo Departamento
+                    </div>
+                )}
+              </div>
             </CardHeader>
             <CardContent className="space-y-8 pt-6">
-              {/* Institutional Section */}
+              {/* Institucional Section */}
               <div className="space-y-4">
                 <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
-                    <span className="w-1 h-4 bg-brand-blue rounded-full" />
-                    Instituição
+                  <span className="w-1 h-4 bg-brand-blue rounded-full" />
+                  Institucional
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="universityAcronym">Sigla da Universidade</Label>
+                    <Input id="universityAcronym" {...register("universityAcronym")} className="bg-slate-50/50 cursor-not-allowed opacity-80" readOnly />
+                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="campus">Campus</Label>
                     <Input id="campus" {...register("campus")} className="bg-slate-50/50 cursor-not-allowed opacity-80" readOnly />
@@ -515,26 +564,20 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
                     <TiptapEditor
                       value={field.value || ""}
                       onChange={field.onChange}
-                      disabled={isReadOnly}
+                      placeholder="Objetivos gerais e específicos..."
                     />
                   )}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="programContent">Conteúdo Programático</Label>
-                <Controller
-                  name="programContent"
-                  control={control}
-                  render={({ field }) => (
-                    <TiptapEditor
-                      value={field.value || ""}
-                      onChange={field.onChange}
-                      disabled={isReadOnly}
-                    />
-                  )}
+                <RichTextEditor
+                  id="programContent"
+                  {...register("programContent")}
+                  placeholder="Lista detalhada de tópicos (1., 1.1., etc)..."
+                  className="min-h-[300px]"
                 />
-              </div>
-            </CardContent>
+              </div>            </CardContent>
           </Card>
           </fieldset>
         </TabsContent>
@@ -543,12 +586,12 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
           <fieldset disabled={isReadOnly} className="contents">
           <Card className="border-slate-200 shadow-sm rounded-md">
             <CardHeader className="border-b bg-slate-50/50">
-              <CardTitle className="text-xl">Metodologia e Avaliação</CardTitle>
-              <CardDescription>Como a disciplina será ministrada e avaliada.</CardDescription>
+              <CardTitle className="text-xl">Metodologia de Ensino</CardTitle>
+              <CardDescription>Descreva como as aulas serão conduzidas e quais recursos serão utilizados.</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6 pt-6">
+            <CardContent className="space-y-4 pt-6">
               <div className="space-y-2">
-                <Label htmlFor="methodology">Metodologia de Ensino</Label>
+                <Label htmlFor="methodology" className="text-slate-600">Descrição da Metodologia</Label>
                 <Controller
                   name="methodology"
                   control={control}
@@ -556,127 +599,11 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
                     <TiptapEditor
                       value={field.value || ""}
                       onChange={field.onChange}
-                      disabled={isReadOnly}
+                      placeholder="Descreva as técnicas e métodos que serão utilizados..."
+                      className="min-h-[300px]"
                     />
                   )}
                 />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="evaluation">Processo de Avaliação</Label>
-                <Controller
-                  name="evaluation"
-                  control={control}
-                  render={({ field }) => (
-                    <TiptapEditor
-                      value={field.value || ""}
-                      onChange={field.onChange}
-                      disabled={isReadOnly}
-                    />
-                  )}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="evaluationFormula">Fórmula de Cálculo da Média</Label>
-                <Controller
-                  name="evaluationFormula"
-                  control={control}
-                  render={({ field }) => (
-                    <TiptapEditor
-                      value={field.value || ""}
-                      onChange={field.onChange}
-                      disabled={isReadOnly}
-                      placeholder="Ex: MF = (P1 + P2) / 2"
-                    />
-                  )}
-                />
-              </div>
-            </CardContent>
-          </Card>
-          </fieldset>
-        </TabsContent>
-
-        <TabsContent value="bibliografia" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-          <fieldset disabled={isReadOnly} className="contents">
-          <Card className="border-slate-200 shadow-sm rounded-md">
-            <CardHeader className="border-b bg-slate-50/50">
-              <div className="flex items-center justify-between">
-                <div>
-                    <CardTitle className="text-xl">Bibliografia</CardTitle>
-                    <CardDescription>Referências básicas e complementares.</CardDescription>
-                </div>
-                {!isReadOnly && (
-                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-md bg-amber-50 text-amber-700 border border-amber-100 text-[10px] font-bold uppercase tracking-wider">
-                        <Info className="w-3.5 h-3.5" />
-                        Campos Gerenciados pelo Departamento
-                    </div>
-                )}
-              </div>
-            </CardHeader>
-            <CardContent className="pt-6 space-y-8">
-              {/* Basic Bib */}
-              <div className="space-y-4">
-                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
-                    <span className="w-1 h-4 bg-brand-blue rounded-full" />
-                    Básica
-                </h3>
-                <div className="space-y-3">
-                  {bibFields.filter((f) => (f as unknown as { type: string }).type === "basic").map((field, index) => (
-                    <div key={field.id} className="flex gap-4 p-3 bg-slate-50 rounded-lg border border-slate-200 group">
-                      <div className="flex-1 space-y-2">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                            <Input 
-                                {...register(`bibliography.${index}.author`)} 
-                                placeholder="Autor" 
-                                className="h-8 bg-transparent"
-                                readOnly
-                            />
-                            <Input 
-                                {...register(`bibliography.${index}.title`)} 
-                                placeholder="Título" 
-                                className="h-8 bg-transparent"
-                                readOnly
-                            />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  {bibFields.filter((f) => (f as unknown as { type: string }).type === "basic").length === 0 && (
-                      <p className="text-sm text-slate-400 italic">Nenhuma bibliografia básica cadastrada.</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Complementary Bib */}
-              <div className="space-y-4 pt-6 border-t">
-                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
-                    <span className="w-1 h-4 bg-brand-blue rounded-full" />
-                    Complementar
-                </h3>
-                <div className="space-y-3">
-                  {bibFields.filter((f) => (f as unknown as { type: string }).type === "complementary").map((field, index) => (
-                    <div key={field.id} className="flex gap-4 p-3 bg-slate-50 rounded-lg border border-slate-200 group">
-                      <div className="flex-1 space-y-2">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                            <Input 
-                                {...register(`bibliography.${index}.author`)} 
-                                placeholder="Autor" 
-                                className="h-8 bg-transparent"
-                                readOnly
-                            />
-                            <Input 
-                                {...register(`bibliography.${index}.title`)} 
-                                placeholder="Título" 
-                                className="h-8 bg-transparent"
-                                readOnly
-                            />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  {bibFields.filter((f) => (f as unknown as { type: string }).type === "complementary").length === 0 && (
-                      <p className="text-sm text-slate-400 italic">Nenhuma bibliografia complementar cadastrada.</p>
-                  )}
-                </div>
               </div>
             </CardContent>
           </Card>
@@ -774,20 +701,12 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
                       <TableCell className="border-l">
                         <Input 
                           {...register(`weeklySchedule.${index}.class1.number`)} 
-                          onBlur={async (e) => {
-                            await register(`weeklySchedule.${index}.class1.number`).onBlur(e);
-                            saveFormProgress(getValues());
-                          }}
                           className="h-8 text-center border-transparent focus:border-brand-blue bg-transparent"
                         />
                       </TableCell>
                       <TableCell className="border-l">
                         <Input 
                           {...register(`weeklySchedule.${index}.class1.content`)} 
-                          onBlur={async (e) => {
-                            await register(`weeklySchedule.${index}.class1.content`).onBlur(e);
-                            saveFormProgress(getValues());
-                          }}
                           placeholder="..."
                           className="h-8 border-transparent focus:border-brand-blue bg-transparent"
                         />
@@ -797,20 +716,12 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
                           <TableCell className="border-l">
                             <Input 
                               {...register(`weeklySchedule.${index}.class2.number`)} 
-                              onBlur={async (e) => {
-                                await register(`weeklySchedule.${index}.class2.number`).onBlur(e);
-                                saveFormProgress(getValues());
-                              }}
                               className="h-8 text-center border-transparent focus:border-brand-blue bg-transparent"
                             />
                           </TableCell>
                           <TableCell className="border-l">
                             <Input 
                               {...register(`weeklySchedule.${index}.class2.content`)} 
-                              onBlur={async (e) => {
-                                await register(`weeklySchedule.${index}.class2.content`).onBlur(e);
-                                saveFormProgress(getValues());
-                              }}
                               placeholder="..."
                               className="h-8 border-transparent focus:border-brand-blue bg-transparent"
                             />
@@ -852,43 +763,133 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
           <fieldset disabled={isReadOnly} className="contents">
           <Card className="border-slate-200 shadow-sm rounded-md">
             <CardHeader className="border-b bg-slate-50/50">
-              <CardTitle className="text-xl">Informações de Reprovação e Segunda Chamada</CardTitle>
-              <CardDescription>Regras e procedimentos padrão da universidade.</CardDescription>
+              <CardTitle className="text-xl">Avaliação</CardTitle>
+              <CardDescription>Critérios, fórmula de cálculo e regras de recuperação.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6 pt-6">
               <div className="space-y-2">
-                <Label htmlFor="finalEvaluationRules">Regras de Recuperação e Frequência</Label>
-                <Controller
-                  name="finalEvaluationRules"
-                  control={control}
-                  render={({ field }) => (
-                    <TiptapEditor
-                      value={field.value || ""}
-                      onChange={field.onChange}
-                      disabled={isReadOnly}
-                    />
-                  )}
+                <Label htmlFor="evaluation">Critérios de Avaliação</Label>
+                <Textarea 
+                  id="evaluation" 
+                  {...register("evaluation")} 
+                  placeholder="Descreva como os alunos serão avaliados..."
+                  className="min-h-[100px]"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="finalConsiderations">Considerações Finais</Label>
-                <Controller
-                  name="finalConsiderations"
-                  control={control}
-                  render={({ field }) => (
-                    <TiptapEditor
-                      value={field.value || ""}
-                      onChange={field.onChange}
-                      disabled={isReadOnly}
-                    />
-                  )}
-                />
+                <Label htmlFor="evaluationFormula">Fórmula de Cálculo da Média</Label>
+                <Input id="evaluationFormula" {...register("evaluationFormula")} placeholder="Ex: MF = 0,5*P1 + 0,5*P2" />
+                <p className="text-[10px] text-slate-500 italic">Dica: Use notação matemática simples.</p>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between mb-1">
+                    <Label htmlFor="finalEvaluationRules">Avaliação Final (Recuperação)</Label>
+                    {!isReadOnly && (
+                        <span className="text-[10px] text-brand-blue bg-brand-light/10 px-2 py-0.5 rounded border border-brand-light/20 font-medium">
+                            Conteúdo Informativo
+                        </span>
+                    )}
+                </div>
+                <div className="flex gap-3 p-4 bg-blue-50/50 border border-blue-100 rounded-lg text-slate-700 shadow-sm">
+                    <Info className="w-5 h-5 text-brand-blue shrink-0 mt-0.5" />
+                    <div className="text-xs leading-relaxed text-justify whitespace-pre-wrap font-medium opacity-90">
+                        {watch("finalEvaluationRules")}
+                    </div>
+                </div>
+                {/* Keep field in form state but hidden since it's standard text */}
+                <input type="hidden" {...register("finalEvaluationRules")} />
               </div>
             </CardContent>
           </Card>
           </fieldset>
         </TabsContent>
+
+        <TabsContent value="bibliografia" className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+          <fieldset disabled={isReadOnly} className="contents">
+          <Card className="border-slate-200 shadow-sm rounded-md">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b bg-slate-50/50">
+              <div>
+                <CardTitle className="text-xl">Referências Bibliográficas</CardTitle>
+                <CardDescription>Adicione as obras básicas e complementares para a disciplina.</CardDescription>
+              </div>
+              <div className="flex gap-2">
+                <Button 
+                    type="button" 
+                    variant="outline" 
+                    size="sm" 
+                    className="gap-2 border-brand-light text-brand-blue hover:bg-brand-light/10"
+                    onClick={() => appendBib({ type: "basic", author: "Referência", title: "" })}
+                >
+                    <Plus className="w-4 h-4" />
+                    Básica
+                </Button>
+                <Button 
+                    type="button" 
+                    variant="outline" 
+                    size="sm" 
+                    className="gap-2 border-amber-200 text-amber-700 hover:bg-amber-50"
+                    onClick={() => appendBib({ type: "complementary", author: "Referência", title: "" })}
+                >
+                    <Plus className="w-4 h-4" />
+                    Complementar
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6 pt-6">
+              {bibFields.map((field, index) => (
+                <div key={field.id} className="space-y-4 p-4 border rounded-lg bg-slate-50/50 relative group">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute top-2 right-2 text-slate-400 hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() => removeBib(index)}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                  
+                  <div className="flex items-center gap-2 mb-2">
+                      <span className={cn(
+                          "text-[10px] uppercase font-bold px-2 py-0.5 rounded-full",
+                          watch(`bibliography.${index}.type`) === 'basic' ? "bg-blue-100 text-blue-700" : "bg-amber-100 text-amber-700"
+                      )}>
+                          {watch(`bibliography.${index}.type`) === 'basic' ? 'Básica' : 'Complementar'}
+                      </span>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Referência Completa</Label>
+                    <Textarea 
+                      {...register(`bibliography.${index}.title`)} 
+                      placeholder="Ex: FLEMMING, D. M.; GONÇALVES, M. B. Cálculo A. 6. ed. São Paulo..."
+                      className="min-h-[80px] bg-white"
+                    />
+                    {/* Hidden author field to satisfy schema */}
+                    <input type="hidden" {...register(`bibliography.${index}.author`)} />
+                  </div>
+                </div>
+              ))}
+              
+              {bibFields.length === 0 && (
+                <div className="text-center py-12 border-2 border-dashed rounded-lg text-slate-400">
+                  <BookOpen className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p>Nenhuma referência adicionada.</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+          </fieldset>
+        </TabsContent>
       </Tabs>
+
+      <CopiarPlanoModal 
+        isOpen={modalCopiaAberto}
+        onClose={() => setModalCopiaAberto(false)}
+        onConfirm={handleCopiarCampos}
+        planoAtualId={studyPlanId}
+        disciplinaId={formData.courses?.[0]?.code}
+        currentValues={currentValuesForCopy}
+      />
     </div>
   );
 }
