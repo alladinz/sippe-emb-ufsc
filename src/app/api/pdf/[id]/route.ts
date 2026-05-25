@@ -46,26 +46,24 @@ export async function GET(
     try {
         const isLocal = process.env.NODE_ENV === 'development' || !process.env.VERCEL;
         
-        interface LaunchOptions {
-            args?: string[];
-            defaultViewport?: { width: number; height: number };
-            executablePath?: string;
-            headless?: boolean | "shell";
-        }
+        let launchOptions: Parameters<typeof puppeteer.launch>[0];
 
-        const launchOptions: LaunchOptions = isLocal 
-            ? {
+        if (isLocal) {
+            launchOptions = {
                 headless: true,
-                args: ["--no-sandbox", "--disable-setuid-sandbox"],
-              }
-            : {
-                args: chromium.args,
+                args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
+            };
+        } else {
+            // Production (Vercel) logic
+            launchOptions = {
+                args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
                 defaultViewport: chromium.defaultViewport as { width: number; height: number },
                 executablePath: await chromium.executablePath(),
-                headless: chromium.headless === 'shell' ? 'shell' : !!chromium.headless,
-              };
+                headless: chromium.headless as (boolean | "shell"),
+            };
+        }
 
-        browser = await puppeteer.launch(launchOptions as unknown as Parameters<typeof puppeteer.launch>[0]);
+        browser = await puppeteer.launch(launchOptions);
 
         const page = await browser.newPage();
 
@@ -73,7 +71,6 @@ export async function GET(
         const cookieStore = await headers();
         const cookieString = cookieStore.get("cookie") || "";
         
-        // Better Auth typically uses multiple cookies, we pass them all
         const cookies = cookieString.split(";").map(pair => {
             const [name, value] = pair.trim().split("=");
             if (!name || !value) return null;
@@ -83,7 +80,7 @@ export async function GET(
                 domain: new URL(baseUrl).hostname,
                 path: "/",
                 httpOnly: true,
-                secure: baseUrl.startsWith("https"),
+                secure: true,
                 sameSite: "Lax" as const
             };
         }).filter((c): c is NonNullable<typeof c> => c !== null);
@@ -92,28 +89,32 @@ export async function GET(
             await page.setCookie(...cookies);
         }
 
-        // Navigate to the preview page
+        // Navigate with a generous timeout and wait for network to be idle
         await page.goto(targetUrl, {
             waitUntil: "networkidle0",
             timeout: 60000,
         });
+
+        // Small extra delay to ensure all JS/Styles are applied
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
         // Generate PDF
         const pdfBuffer = await page.pdf({
             format: "A4",
             printBackground: true,
             margin: {
-                top: "0px",
-                right: "0px",
-                bottom: "0px",
-                left: "0px",
+                top: "10mm",
+                right: "10mm",
+                bottom: "10mm",
+                left: "10mm",
             },
             displayHeaderFooter: false,
         });
 
         await browser.close();
 
-        return new NextResponse(Buffer.from(pdfBuffer), {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return new NextResponse(pdfBuffer as any, {
             headers: {
                 "Content-Type": "application/pdf",
                 "Content-Disposition": `attachment; filename="${filename}"`,
@@ -123,11 +124,7 @@ export async function GET(
     } catch (error: unknown) {
         console.error("PDF Generation Error:", error);
         if (browser) {
-            try {
-                await browser.close();
-            } catch (e) {
-                console.error("Failed to close browser:", e);
-            }
+            try { await browser.close(); } catch { /* ignore */ }
         }
         const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
         return new NextResponse(`Erro ao gerar PDF: ${errorMessage}`, { status: 500 });
