@@ -14,6 +14,7 @@ import { Check, CloudUpload, Plus, Trash2, Eye, Send, BookOpen, AlertCircle, Arr
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { DeletePlanButton } from "@/app/dashboard/study-plans/_components/delete-plan-button";
 import {
   Table,
@@ -98,7 +99,7 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
     setValue,
     getValues,
     formState: { errors },
-  } = useForm<StudyPlanFormValues>({
+    } = useForm<StudyPlanFormValues>({
     defaultValues: fullDefaultValues,
     mode: "onChange"
   });
@@ -127,6 +128,26 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
 
   const formData = watch();
   const [debouncedData] = useDebounce(formData, 2000);
+  const router = useRouter();
+
+  const saveFormProgress = useCallback(async (data: StudyPlanFormValues, force: boolean = false) => {
+    const dataStr = JSON.stringify(data);
+    if (!force && dataStr === JSON.stringify(lastSavedDataRef.current)) return Promise.resolve();
+
+    const savePromise = onSave(data);
+
+    startTransition(async () => {
+      try {
+        await savePromise;
+        lastSavedDataRef.current = data;
+        setLastSaved(new Date());
+      } catch (error) {
+        console.error("Auto-save failed:", error);
+      }
+    });
+
+    return savePromise;
+  }, [onSave]);
 
   useEffect(() => {
     if (!mounted) return;
@@ -140,34 +161,19 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
     });
   }, [formData.courses, setValue, mounted]);
 
-  const saveFormProgress = useCallback(async (data: StudyPlanFormValues) => {
-    const dataStr = JSON.stringify(data);
-    const lastStr = JSON.stringify(lastSavedDataRef.current);
-    if (dataStr === lastStr) return;
-
-    startTransition(async () => {
-      try {
-        await onSave(data);
-        lastSavedDataRef.current = data;
-        setLastSaved(new Date());
-      } catch (error) {
-        console.error("Auto-save failed:", error);
-      }
-    });
-  }, [onSave]);
-
   useEffect(() => {
     if (!mounted) return;
     saveFormProgress(debouncedData);
   }, [debouncedData, mounted, saveFormProgress]);
 
-  const handleTabChange = (value: string) => {
+  const handleTabChange = async (value: string) => {
     setActiveTab(value);
-    saveFormProgress(getValues());
+    await saveFormProgress(getValues(), true);
   };
 
-  const handlePreviewClick = () => {
-    saveFormProgress(getValues());
+  const handlePreviewClick = async () => {
+    await saveFormProgress(getValues(), true);
+    router.push(`/dashboard/study-plans/${studyPlanId}/preview`);
   };
 
   const onFinalSubmit = async () => {
@@ -375,12 +381,16 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
           {!isReadOnly && initialData.status !== 'submitted' && (
               <DeletePlanButton className="rounded-sm" id={studyPlanId} variant="full" shouldRedirect={true} />
           )}
-          <Link href={`/dashboard/study-plans/${studyPlanId}/preview`}>
-            <Button variant="outline" size="sm" className="gap-2" onClick={handlePreviewClick}>
-              <Eye className="w-4 h-4" />
-              Visualizar
-            </Button>
-          </Link>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="gap-2 rounded-sm"
+            onClick={handlePreviewClick}
+            disabled={isPending}
+          >
+            <Eye className="w-4 h-4" />
+            Visualizar
+          </Button>
           {!isReadOnly && (
               <Button 
                 size="sm" 
@@ -701,12 +711,20 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
                       <TableCell className="border-l">
                         <Input 
                           {...register(`weeklySchedule.${index}.class1.number`)} 
+                          onBlur={async (e) => {
+                            await register(`weeklySchedule.${index}.class1.number`).onBlur(e);
+                            saveFormProgress(getValues());
+                          }}
                           className="h-8 text-center border-transparent focus:border-brand-blue bg-transparent"
                         />
                       </TableCell>
                       <TableCell className="border-l">
                         <Input 
                           {...register(`weeklySchedule.${index}.class1.content`)} 
+                          onBlur={async (e) => {
+                            await register(`weeklySchedule.${index}.class1.content`).onBlur(e);
+                            saveFormProgress(getValues());
+                          }}
                           placeholder="..."
                           className="h-8 border-transparent focus:border-brand-blue bg-transparent"
                         />
@@ -716,12 +734,20 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
                           <TableCell className="border-l">
                             <Input 
                               {...register(`weeklySchedule.${index}.class2.number`)} 
+                              onBlur={async (e) => {
+                                await register(`weeklySchedule.${index}.class2.number`).onBlur(e);
+                                saveFormProgress(getValues());
+                              }}
                               className="h-8 text-center border-transparent focus:border-brand-blue bg-transparent"
                             />
                           </TableCell>
                           <TableCell className="border-l">
                             <Input 
                               {...register(`weeklySchedule.${index}.class2.content`)} 
+                              onBlur={async (e) => {
+                                await register(`weeklySchedule.${index}.class2.content`).onBlur(e);
+                                saveFormProgress(getValues());
+                              }}
                               placeholder="..."
                               className="h-8 border-transparent focus:border-brand-blue bg-transparent"
                             />
