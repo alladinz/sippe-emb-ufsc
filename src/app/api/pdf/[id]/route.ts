@@ -46,19 +46,26 @@ export async function GET(
     try {
         const isLocal = process.env.NODE_ENV === 'development' || !process.env.VERCEL;
         
-        const launchOptions: any = isLocal 
+        interface LaunchOptions {
+            args?: string[];
+            defaultViewport?: { width: number; height: number };
+            executablePath?: string;
+            headless?: boolean | "shell";
+        }
+
+        const launchOptions: LaunchOptions = isLocal 
             ? {
                 headless: true,
                 args: ["--no-sandbox", "--disable-setuid-sandbox"],
               }
             : {
                 args: chromium.args,
-                defaultViewport: chromium.defaultViewport,
+                defaultViewport: chromium.defaultViewport as { width: number; height: number },
                 executablePath: await chromium.executablePath(),
                 headless: chromium.headless === 'shell' ? 'shell' : !!chromium.headless,
               };
 
-        browser = await puppeteer.launch(launchOptions);
+        browser = await puppeteer.launch(launchOptions as unknown as Parameters<typeof puppeteer.launch>[0]);
 
         const page = await browser.newPage();
 
