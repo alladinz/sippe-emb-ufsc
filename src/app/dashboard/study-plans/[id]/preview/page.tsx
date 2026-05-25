@@ -8,9 +8,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { ReviewActions } from "./review-actions";
 import { ArchiveButton } from "@/app/dashboard/secretary/_components/archive-button";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+
+import { DownloadPDFButton } from "@/components/pdf/DownloadPDFButton";
 import { StudyPlanStatus } from "@/lib/schemas/study-plan";
+
 import { cn } from "@/lib/utils";
 import { ScheduleItem } from "@/types/study-plan";
 
@@ -123,12 +125,14 @@ export default async function PreviewStudyPlanPage({ params, searchParams }: Pre
               <Badge variant={statusLabels[plan.status]?.variant || "outline"}>
                   {statusLabels[plan.status]?.label || plan.status}
               </Badge>
-              <Link href={`/api/pdf/${id}`}>
-                <Button variant="outline" size="sm" className="gap-2">
-                  <Download className="w-4 h-4" />
-                  Baixar PDF
-                </Button>
-              </Link>
+              <DownloadPDFButton
+                plano={plan}
+                className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium border rounded-md hover:bg-slate-50 transition-colors"
+              >
+                <Download className="w-4 h-4" />
+                Baixar PDF
+              </DownloadPDFButton>
+
           </div>
         </div>
       )}

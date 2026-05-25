@@ -4,6 +4,9 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
+  optimizeDeps: {
+    include: ['@react-pdf/renderer'],
+  },
   test: {
     environment: 'jsdom',
     globals: true,
