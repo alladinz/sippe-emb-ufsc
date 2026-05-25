@@ -44,13 +44,21 @@ export async function GET(
 
     let browser;
     try {
-        // Chromium options for Vercel/Serverless
-        browser = await puppeteer.launch({
-            args: chromium.args,
-            defaultViewport: chromium.defaultViewport,
-            executablePath: await chromium.executablePath(),
-            headless: chromium.headless === 'shell' ? 'shell' : !!chromium.headless,
-        });
+        const isLocal = process.env.NODE_ENV === 'development' || !process.env.VERCEL;
+        
+        const launchOptions: any = isLocal 
+            ? {
+                headless: true,
+                args: ["--no-sandbox", "--disable-setuid-sandbox"],
+              }
+            : {
+                args: chromium.args,
+                defaultViewport: chromium.defaultViewport,
+                executablePath: await chromium.executablePath(),
+                headless: chromium.headless === 'shell' ? 'shell' : !!chromium.headless,
+              };
+
+        browser = await puppeteer.launch(launchOptions);
 
         const page = await browser.newPage();
 
