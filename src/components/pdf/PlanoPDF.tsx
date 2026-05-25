@@ -8,10 +8,11 @@ import {
   Image,
 } from '@react-pdf/renderer';
 
+// Use Helvetica (standard built-in font) for maximum compatibility
 const styles = StyleSheet.create({
   page: {
     padding: 40,
-    fontFamily: 'Times-Roman',
+    fontFamily: 'Helvetica',
     fontSize: 10,
     lineHeight: 1.4,
     color: '#000000',
@@ -25,8 +26,8 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
   },
   logo: {
-    width: 65,
-    height: 65,
+    width: 60,
+    height: 60,
     marginRight: 15,
   },
   headerTextContainer: {
@@ -43,7 +44,7 @@ const styles = StyleSheet.create({
   },
   headerLineBold: {
     fontSize: 10,
-    fontFamily: 'Times-Bold',
+    fontFamily: 'Helvetica-Bold',
     textAlign: 'center',
     textTransform: 'uppercase',
     marginTop: 5,
@@ -53,7 +54,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 10,
-    fontFamily: 'Times-Bold',
+    fontFamily: 'Helvetica-Bold',
     marginBottom: 6,
     textTransform: 'uppercase',
   },
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   label: {
-    fontFamily: 'Times-Bold',
+    fontFamily: 'Helvetica-Bold',
     marginRight: 4,
   },
   text: {
@@ -112,7 +113,7 @@ const styles = StyleSheet.create({
   },
   tableCellHeader: {
     fontSize: 8,
-    fontFamily: 'Times-Bold',
+    fontFamily: 'Helvetica-Bold',
     textAlign: 'center',
     textTransform: 'uppercase',
   },
@@ -121,11 +122,11 @@ const styles = StyleSheet.create({
   },
   tableCellBold: {
     fontSize: 8,
-    fontFamily: 'Times-Bold',
+    fontFamily: 'Helvetica-Bold',
   },
   tableCellItalic: {
     fontSize: 8,
-    fontFamily: 'Times-Italic',
+    fontFamily: 'Helvetica-Oblique',
     textAlign: 'justify',
   },
   formulaBox: {
@@ -143,7 +144,7 @@ const styles = StyleSheet.create({
   },
   formulaText: {
     fontSize: 11,
-    fontFamily: 'Courier-Bold', // Standard mono font
+    fontFamily: 'Courier-Bold', 
   },
   list: {
     marginLeft: 15,
@@ -155,11 +156,6 @@ const styles = StyleSheet.create({
   listBullet: {
     width: 20,
     fontSize: 10,
-  },
-  listBulletRoman: {
-    width: 35,
-    fontSize: 10,
-    fontFamily: 'Times-Bold',
   },
   listContent: {
     flex: 1,
@@ -266,11 +262,20 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
     return parts.join(', ') + '.';
   };
 
+  const formatDate = (date: string | Date) => {
+    try {
+      return new Date(date).toLocaleDateString('pt-BR') + ' às ' + new Date(date).toLocaleTimeString('pt-BR');
+    } catch {
+      return '';
+    }
+  };
+
   return (
     <Document title={`Plano de Ensino - ${plano.semester || ''}`}>
       <Page size="A4" style={styles.page}>
         {/* Header */}
         <View style={styles.header}>
+          {/* Using PNG logo as requested, but ensuring absolute-ish path */}
           {/* eslint-disable-next-line jsx-a11y/alt-text */}
           <Image
             src="/brasao_UFSC_JOINVILLE_impressao__vertical_sigla_color.png"
@@ -291,15 +296,15 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
           <Text style={styles.sectionTitle}>I. IDENTIFICAÇÃO DA DISCIPLINA</Text>
           <View style={styles.identificationGrid}>
             {plano.courses?.map((course, index) => (
-              <React.Fragment key={course.id || index}>
+              <View key={course.id || index} style={{ marginBottom: 5 }}>
                 <View style={styles.gridRow}>
                   <View style={styles.gridCell}>
                     <Text style={styles.label}>Nome:</Text>
-                    <Text style={styles.text}>{course.name || '-'}</Text>
+                    <Text style={styles.text}>{String(course.name || '-')}</Text>
                   </View>
                   <View style={[styles.gridCell, { flex: 0.4 }]}>
                     <Text style={styles.label}>Código:</Text>
-                    <Text style={styles.text}>{course.code || '-'}</Text>
+                    <Text style={styles.text}>{String(course.code || '-')}</Text>
                   </View>
                 </View>
                 <View style={styles.gridRow}>
@@ -309,21 +314,21 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
                   </View>
                   <View style={[styles.gridCell, { flex: 0.4 }]}>
                     <Text style={styles.label}>Créditos:</Text>
-                    <Text style={styles.text}>{course.credits || '-'}</Text>
+                    <Text style={styles.text}>{String(course.credits || '-')}</Text>
                   </View>
                 </View>
                 <View style={styles.gridRow}>
                   <View style={styles.gridCell}>
                     <Text style={styles.label}>Turma(s):</Text>
-                    <Text style={styles.text}>{course.classIdentifier || '-'}</Text>
+                    <Text style={styles.text}>{String(course.classIdentifier || '-')}</Text>
                   </View>
                 </View>
-              </React.Fragment>
+              </View>
             ))}
             <View style={styles.gridRow}>
               <View style={styles.gridCell}>
                 <Text style={styles.label}>Professor(es):</Text>
-                <Text style={styles.text}>{plano.user?.name || ''}</Text>
+                <Text style={styles.text}>{String(plano.user?.name || '')}</Text>
               </View>
             </View>
           </View>
@@ -333,7 +338,7 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>II. PRÉ-REQUISITOS</Text>
           <Text style={styles.paragraph}>
-            {plano.prerequisites || 'Não há pré-requisitos cadastrados.'}
+            {String(plano.prerequisites || 'Não há pré-requisitos cadastrados.')}
           </Text>
         </View>
 
@@ -341,7 +346,7 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>III. EMENTA</Text>
           <Text style={styles.paragraph}>
-            {stripHtml(plano.syllabus) || 'Não informada.'}
+            {String(stripHtml(plano.syllabus) || 'Não informada.')}
           </Text>
         </View>
 
@@ -349,7 +354,7 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>IV. OBJETIVOS</Text>
           <Text style={styles.paragraph}>
-            {stripHtml(plano.objectives) || 'Não informados.'}
+            {String(stripHtml(plano.objectives) || 'Não informados.')}
           </Text>
         </View>
 
@@ -357,7 +362,7 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>V. CONTEÚDO PROGRAMÁTICO</Text>
           <Text style={styles.paragraph}>
-            {stripHtml(plano.programContent) || 'Não informado.'}
+            {String(stripHtml(plano.programContent) || 'Não informado.')}
           </Text>
         </View>
 
@@ -365,18 +370,18 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>VI. METODOLOGIA DE ENSINO / DESENVOLVIMENTO DO PROGRAMA</Text>
           <Text style={styles.paragraph}>
-            {stripHtml(plano.methodology) || 'Não informada.'}
+            {String(stripHtml(plano.methodology) || 'Não informada.')}
           </Text>
         </View>
 
         {/* VII. METODOLOGIA DE AVALIAÇÃO */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>VII. METODOLOGIA DE AVALIAÇÃO</Text>
-          <Text style={styles.paragraph}>{plano.evaluation || 'Não informada.'}</Text>
+          <Text style={styles.paragraph}>{String(plano.evaluation || 'Não informada.')}</Text>
           {plano.evaluationFormula && (
             <View style={styles.formulaBox}>
               <Text style={styles.formulaTitle}>Fórmula de Cálculo da Média</Text>
-              <Text style={styles.formulaText}>{plano.evaluationFormula}</Text>
+              <Text style={styles.formulaText}>{String(plano.evaluationFormula)}</Text>
             </View>
           )}
         </View>
@@ -385,7 +390,7 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>VIII. AVALIAÇÃO FINAL</Text>
           <Text style={styles.paragraph}>
-            {plano.finalEvaluationRules ? plano.finalEvaluationRules.replace(/\*\*/g, '') : 'Conforme resoluções vigentes da Universidade.'}
+            {plano.finalEvaluationRules ? String(plano.finalEvaluationRules).replace(/\*\*/g, '') : 'Conforme resoluções vigentes da Universidade.'}
           </Text>
           {plano.finalConsiderations && (
             <Text style={styles.paragraph}>
@@ -424,21 +429,21 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
               plano.weeklySchedule.map((week: any, idx: number) => (
                 <View key={idx} style={styles.tableRow} wrap={false}>
                   <View style={[styles.tableCol, { width: '10%', backgroundColor: '#f9f9f9', alignItems: 'center' }]}>
-                    <Text style={styles.tableCellBold}>{week.week}</Text>
+                    <Text style={styles.tableCellBold}>{String(week.week)}</Text>
                   </View>
                   <View style={[styles.tableCol, { width: '10%', alignItems: 'center' }]}>
-                    <Text style={styles.tableCell}>{week.class1?.number || ''}</Text>
+                    <Text style={styles.tableCell}>{String(week.class1?.number || '')}</Text>
                   </View>
                   <View style={[styles.tableCol, { flex: 1 }]}>
-                    <Text style={styles.tableCellItalic}>{week.class1?.content || '-'}</Text>
+                    <Text style={styles.tableCellItalic}>{String(week.class1?.content || '-')}</Text>
                   </View>
                   {hasMoreThanOneDay && (
                     <>
                       <View style={[styles.tableCol, { width: '10%', alignItems: 'center' }]}>
-                        <Text style={styles.tableCell}>{week.class2?.number || ''}</Text>
+                        <Text style={styles.tableCell}>{String(week.class2?.number || '')}</Text>
                       </View>
                       <View style={[styles.tableCol, { flex: 1 }]}>
-                        <Text style={styles.tableCellItalic}>{week.class2?.content || '-'}</Text>
+                        <Text style={styles.tableCellItalic}>{String(week.class2?.content || '-')}</Text>
                       </View>
                     </>
                   )}
@@ -452,7 +457,7 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
               </View>
             )}
           </View>
-          <Text style={{ fontSize: 7, color: '#333333', fontFamily: 'Times-Italic', marginTop: 5 }}>
+          <Text style={{ fontSize: 7, color: '#333333', fontFamily: 'Helvetica-Oblique', marginTop: 5 }}>
             * O cronograma está sujeito a alterações conforme o andamento da disciplina.
           </Text>
         </View>
@@ -466,11 +471,11 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
               .map((b, i) => (
                 <View key={b.id || i} style={styles.listItem}>
                   <Text style={styles.listBullet}>{i + 1}.</Text>
-                  <Text style={styles.listContent}>{renderBibliography(b)}</Text>
+                  <Text style={styles.listContent}>{String(renderBibliography(b))}</Text>
                 </View>
               ))
           ) : (
-            <Text style={[styles.paragraph, { fontFamily: 'Times-Italic' }]}>Nenhuma informada.</Text>
+            <Text style={[styles.paragraph, { fontFamily: 'Helvetica-Oblique' }]}>Nenhuma informada.</Text>
           )}
         </View>
 
@@ -483,18 +488,18 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
               .map((b, i) => (
                 <View key={b.id || i} style={styles.listItem}>
                   <Text style={styles.listBullet}>{i + 1}.</Text>
-                  <Text style={styles.listContent}>{renderBibliography(b)}</Text>
+                  <Text style={styles.listContent}>{String(renderBibliography(b))}</Text>
                 </View>
               ))
           ) : (
-            <Text style={[styles.paragraph, { fontFamily: 'Times-Italic' }]}>Nenhuma informada.</Text>
+            <Text style={[styles.paragraph, { fontFamily: 'Helvetica-Oblique' }]}>Nenhuma informada.</Text>
           )}
         </View>
 
         {/* Footer */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>
-            Atualizado em: {new Date(plano.updatedAt).toLocaleDateString('pt-BR')} às {new Date(plano.updatedAt).toLocaleTimeString('pt-BR')}
+            Atualizado em: {formatDate(plano.updatedAt)}
           </Text>
         </View>
       </Page>
