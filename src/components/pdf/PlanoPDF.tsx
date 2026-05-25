@@ -11,31 +11,198 @@ const styles = StyleSheet.create({
   page: {
     padding: 40,
     fontFamily: 'Helvetica',
-    fontSize: 12,
+    fontSize: 10,
+    lineHeight: 1.4,
+    color: '#000000',
   },
-  title: {
-    fontSize: 18,
-    marginBottom: 20,
-    fontWeight: 'bold',
+  headerContainer: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginBottom: 25,
+    borderBottomWidth: 1,
+    borderBottomColor: '#000000',
+    paddingBottom: 15,
+  },
+  headerLine: {
+    fontSize: 9,
+    textAlign: 'center',
+    textTransform: 'uppercase',
+    marginBottom: 1,
+  },
+  headerLineBold: {
+    fontSize: 10,
+    fontFamily: 'Helvetica-Bold',
+    textAlign: 'center',
+    textTransform: 'uppercase',
+    marginTop: 5,
+  },
+  section: {
+    marginBottom: 15,
+  },
+  sectionTitle: {
+    fontSize: 10,
+    fontFamily: 'Helvetica-Bold',
+    marginBottom: 6,
+    textTransform: 'uppercase',
+  },
+  identificationGrid: {
+    borderWidth: 1,
+    borderColor: '#000000',
+    padding: 8,
+    flexDirection: 'column',
+  },
+  gridRow: {
+    flexDirection: 'row',
+    marginBottom: 3,
+  },
+  gridCell: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  label: {
+    fontFamily: 'Helvetica-Bold',
+    marginRight: 4,
+  },
+  text: {
+    fontSize: 10,
   },
 });
 
-interface PlanoPDFProps {
+function stripHtml(html: string | null | undefined): string {
+  if (!html) return '';
+  return html
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/p>/gi, '\n')
+    .replace(/<\/li>/gi, '\n')
+    .replace(/<li>/gi, '• ')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n\s*\n/g, '\n')
+    .trim();
+}
+
+interface Course {
+  id: string;
+  name: string;
+  code: string;
+  workload: number | null;
+  credits: number | null;
+  classIdentifier: string | null;
+}
+
+interface Bibliography {
+  id: string;
+  author: string;
+  title: string;
+  year: number | null;
+  publisher: string | null;
+  isbn: string | null;
+  type: string;
+}
+
+interface PlanoData {
+  campus: string | null;
+  center: string | null;
+  courseName: string | null;
+  semester: string | null;
+  universityAcronym: string | null;
+  organization?: { name: string };
+  user?: { name: string };
+  prerequisites: string | null;
+  syllabus: string | null;
+  objectives: string | null;
+  programContent: string | null;
+  methodology: string | null;
+  evaluation: string | null;
+  evaluationFormula: string | null;
+  finalEvaluationRules: string | null;
+  finalConsiderations: string | null;
+  updatedAt: string | Date;
+  courses: Course[];
+  bibliography: Bibliography[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  plano: any;
+  weeklySchedule: any;
+}
+
+interface PlanoPDFProps {
+  plano: PlanoData;
 }
 
 export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
+  if (!plano) {
+    return (
+      <Document title="Plano de Ensino">
+        <Page size="A4" style={styles.page}>
+          <Text>Dados do plano não disponíveis.</Text>
+        </Page>
+      </Document>
+    );
+  }
+
   return (
-    <Document title="Teste de Geração">
+    <Document title={`Plano de Ensino - ${plano.semester || ''}`}>
       <Page size="A4" style={styles.page}>
+        {/* Header */}
+        <View style={styles.headerContainer}>
+          <Text style={styles.headerLine}>Universidade Federal de Santa Catarina</Text>
+          <Text style={styles.headerLine}>{String(plano.campus || 'JOINVILLE')}</Text>
+          <Text style={styles.headerLine}>{String(plano.center || 'CENTRO TECNOLÓGICO DE JOINVILLE')}</Text>
+          <Text style={styles.headerLine}>{String(plano.courseName || plano.organization?.name || '')}</Text>
+          <Text style={styles.headerLineBold}>PLANO DE ENSINO - {String(plano.semester || '')}</Text>
+          <Text style={styles.headerLineBold}>{String(plano.universityAcronym || 'UFSC')}</Text>
+        </View>
+
+        {/* I. IDENTIFICAÇÃO */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>I. IDENTIFICAÇÃO DA DISCIPLINA</Text>
+          <View style={styles.identificationGrid}>
+            {plano.courses?.map((course, index) => (
+              <View key={course.id || index}>
+                <View style={styles.gridRow}>
+                  <View style={styles.gridCell}>
+                    <Text style={styles.label}>Nome:</Text>
+                    <Text style={styles.text}>{String(course.name || '-')}</Text>
+                  </View>
+                  <View style={[styles.gridCell, { flex: 0.4 }]}>
+                    <Text style={styles.label}>Código:</Text>
+                    <Text style={styles.text}>{String(course.code || '-')}</Text>
+                  </View>
+                </View>
+                <View style={styles.gridRow}>
+                  <View style={styles.gridCell}>
+                    <Text style={styles.label}>Carga horária:</Text>
+                    <Text style={styles.text}>{course.workload ? `${course.workload} horas` : '-'}</Text>
+                  </View>
+                  <View style={[styles.gridCell, { flex: 0.4 }]}>
+                    <Text style={styles.label}>Créditos:</Text>
+                    <Text style={styles.text}>{String(course.credits || '-')}</Text>
+                  </View>
+                </View>
+                <View style={styles.gridRow}>
+                  <View style={styles.gridCell}>
+                    <Text style={styles.label}>Turma(s):</Text>
+                    <Text style={styles.text}>{String(course.classIdentifier || '-')}</Text>
+                  </View>
+                </View>
+              </View>
+            ))}
+            <View style={styles.gridRow}>
+              <View style={styles.gridCell}>
+                <Text style={styles.label}>Professor(es):</Text>
+                <Text style={styles.text}>{String(plano.user?.name || '')}</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+
         <View>
-          <Text style={styles.title}>Plano de Ensino - Teste</Text>
-          <Text>Disciplina: {plano?.courseName || 'N/A'}</Text>
-          <Text>Semestre: {plano?.semester || 'N/A'}</Text>
-          <Text style={{ marginTop: 20 }}>
-            Se você está vendo este texto, o motor de geração de PDF está funcionando corretamente.
-          </Text>
+            <Text style={{ marginTop: 20, color: 'gray', fontSize: 8 }}>
+                Fim do teste de restauração parcial (Cabeçalho e Identificação).
+            </Text>
         </View>
       </Page>
     </Document>
