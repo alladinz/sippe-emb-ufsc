@@ -53,10 +53,20 @@ export async function GET(
                 args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
             };
         } else {
-            // Standard Sparticuz setup for Vercel
+            // Production (Vercel) logic - Maximum Compatibility Mode
             launchOptions = {
-                args: chromium.args,
-                defaultViewport: chromium.defaultViewport,
+                args: [
+                    ...chromium.args,
+                    "--disable-gpu",
+                    "--disable-dev-shm-usage",
+                    "--disable-setuid-sandbox",
+                    "--no-first-run",
+                    "--no-sandbox",
+                    "--no-zygote",
+                    "--single-process",
+                    "--hide-scrollbars",
+                ],
+                defaultViewport: chromium.defaultViewport as { width: number; height: number },
                 executablePath: await chromium.executablePath(),
                 headless: chromium.headless as (boolean | "shell"),
             };
