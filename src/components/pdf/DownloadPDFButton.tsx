@@ -72,7 +72,7 @@ export function DownloadPDFButton({
       // Usamos o JPEG que criamos por ser mais leve e compatível
       let logoBlob: Blob | null = null;
       try {
-        const response = await fetch('/brasao.jpg');
+        const response = await fetch('/brasao_UFSC.jpg');
         if (response.ok) {
           logoBlob = await response.blob();
         }
