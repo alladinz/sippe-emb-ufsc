@@ -441,7 +441,7 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
                   </View>
                   <View style={[styles.tableColHeader, { flex: 1 }]}>
                     <Text style={[styles.tableCellHeader, { textAlign: 'left' }]}>Conteúdo</Text>
-                  </Text>
+                  </View>
                 </>
               )}
             </View>
