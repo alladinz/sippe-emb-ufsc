@@ -66,6 +66,28 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 10,
   },
+  paragraph: {
+    fontSize: 10,
+    textAlign: 'justify',
+    marginBottom: 8,
+  },
+  formulaBox: {
+    borderWidth: 1,
+    borderColor: '#000000',
+    borderStyle: 'dashed',
+    padding: 10,
+    marginTop: 8,
+    alignItems: 'center',
+  },
+  formulaTitle: {
+    fontSize: 8,
+    textTransform: 'uppercase',
+    marginBottom: 4,
+  },
+  formulaText: {
+    fontSize: 11,
+    fontFamily: 'Courier-Bold',
+  },
 });
 
 function stripHtml(html: string | null | undefined): string {
@@ -199,9 +221,74 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
           </View>
         </View>
 
+        {/* II. PRÉ-REQUISITOS */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>II. PRÉ-REQUISITOS</Text>
+          <Text style={styles.paragraph}>
+            {String(plano.prerequisites || 'Não há pré-requisitos cadastrados.')}
+          </Text>
+        </View>
+
+        {/* III. EMENTA */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>III. EMENTA</Text>
+          <Text style={styles.paragraph}>
+            {String(stripHtml(plano.syllabus) || 'Não informada.')}
+          </Text>
+        </View>
+
+        {/* IV. OBJETIVOS */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>IV. OBJETIVOS</Text>
+          <Text style={styles.paragraph}>
+            {String(stripHtml(plano.objectives) || 'Não informados.')}
+          </Text>
+        </View>
+
+        {/* V. CONTEÚDO PROGRAMÁTICO */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>V. CONTEÚDO PROGRAMÁTICO</Text>
+          <Text style={styles.paragraph}>
+            {String(stripHtml(plano.programContent) || 'Não informado.')}
+          </Text>
+        </View>
+
+        {/* VI. METODOLOGIA DE ENSINO */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>VI. METODOLOGIA DE ENSINO / DESENVOLVIMENTO DO PROGRAMA</Text>
+          <Text style={styles.paragraph}>
+            {String(stripHtml(plano.methodology) || 'Não informada.')}
+          </Text>
+        </View>
+
+        {/* VII. METODOLOGIA DE AVALIAÇÃO */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>VII. METODOLOGIA DE AVALIAÇÃO</Text>
+          <Text style={styles.paragraph}>{String(plano.evaluation || 'Não informada.')}</Text>
+          {plano.evaluationFormula && (
+            <View style={styles.formulaBox}>
+              <Text style={styles.formulaTitle}>Fórmula de Cálculo da Média</Text>
+              <Text style={styles.formulaText}>{String(plano.evaluationFormula)}</Text>
+            </View>
+          )}
+        </View>
+
+        {/* VIII. AVALIAÇÃO FINAL */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>VIII. AVALIAÇÃO FINAL</Text>
+          <Text style={styles.paragraph}>
+            {plano.finalEvaluationRules ? String(plano.finalEvaluationRules).replace(/\*\*/g, '') : 'Conforme resoluções vigentes da Universidade.'}
+          </Text>
+          {plano.finalConsiderations && (
+            <Text style={styles.paragraph}>
+              {String(stripHtml(plano.finalConsiderations))}
+            </Text>
+          )}
+        </View>
+
         <View>
             <Text style={{ marginTop: 20, color: 'gray', fontSize: 8 }}>
-                Fim do teste de restauração parcial (Cabeçalho e Identificação).
+                Fim do teste de restauração parcial (Seções II - VIII).
             </Text>
         </View>
       </Page>
