@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 25,
-    borderBottomWidth: 1,
+    borderBottomWidth: 1.5,
     borderBottomColor: '#e5e5e5',
     paddingBottom: 15,
   },
@@ -58,8 +58,9 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   identificationGrid: {
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: '#e5e5e5',
+    borderRadius: 4,
     padding: 8,
     flexDirection: 'column',
   },
@@ -86,7 +87,8 @@ const styles = StyleSheet.create({
   table: {
     width: 'auto',
     borderStyle: 'solid',
-    borderWidth: 1,
+    borderWidth: 1.5,
+    borderRadius: 4,
     borderColor: '#e5e5e5',
     borderRightWidth: 0,
     borderBottomWidth: 0,
@@ -94,20 +96,21 @@ const styles = StyleSheet.create({
   },
   tableRow: {
     flexDirection: 'row',
-    borderBottomColor: '#000000',
-    borderBottomWidth: 1,
+    borderBottomColor: '#e5e5e5',
+    borderBottomWidth: 1.5,
   },
   tableColHeader: {
     backgroundColor: '#f1f1f1',
-    borderRightColor: '#000000',
-    borderRightWidth: 1,
+    borderRightColor: '#e5e5e5',
+    borderRightWidth: 1.5,
+    borderRadius: 4,
     padding: 4,
     justifyContent: 'center',
     alignItems: 'center',
   },
   tableCol: {
-    borderRightColor: '#000000',
-    borderRightWidth: 1,
+    borderRightColor: '#e5e5e5',
+    borderRightWidth: 1.5,
     padding: 4,
   },
   tableCellHeader: {
@@ -129,9 +132,10 @@ const styles = StyleSheet.create({
     textAlign: 'justify',
   },
   formulaBox: {
-    borderWidth: 1,
-    borderColor: '#000000',
+    borderWidth: 1.5,
+    borderColor: '#e5e5e5',
     borderStyle: 'dashed',
+    borderRadius: 4,
     padding: 10,
     marginTop: 8,
     alignItems: 'center',
@@ -143,7 +147,7 @@ const styles = StyleSheet.create({
   },
   formulaText: {
     fontSize: 11,
-    fontFamily: 'Courier-Bold',
+    fontFamily: 'Helvetica-Bold',
   },
   list: {
     marginLeft: 15,
@@ -164,8 +168,8 @@ const styles = StyleSheet.create({
   footer: {
     marginTop: 30,
     paddingTop: 8,
-    borderTopWidth: 1,
-    borderTopColor: '#000000',
+    borderTopWidth: 1.5,
+    borderTopColor: '#e5e5e5',
     textAlign: 'center',
   },
   footerText: {
