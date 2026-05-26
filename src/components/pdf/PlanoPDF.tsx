@@ -5,7 +5,6 @@ import {
   Text,
   View,
   StyleSheet,
-  Image,
 } from '@react-pdf/renderer';
 
 const styles = StyleSheet.create({
@@ -23,14 +22,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#000000',
     paddingBottom: 15,
-  },
-  logo: {
-    width: 65,
-    height: 65,
-    marginRight: 15,
+    justifyContent: 'center',
   },
   headerTextContainer: {
-    flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
@@ -263,31 +257,18 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
 
   const formatDate = (date: string | Date) => {
     try {
+      if (!date) return '';
       return new Date(date).toLocaleDateString('pt-BR') + ' às ' + new Date(date).toLocaleTimeString('pt-BR');
     } catch {
       return '';
     }
   };
 
-  const renderTextWithBold = (text: string) => {
-    if (!text) return null;
-    return text.split('**').map((part, i) => (
-      <Text key={i} style={i % 2 === 1 ? { fontFamily: 'Helvetica-Bold' } : {}}>
-        {part}
-      </Text>
-    ));
-  };
-
   return (
     <Document title={`Plano de Ensino - ${plano.semester || ''}`}>
       <Page size="A4" style={styles.page}>
-        {/* Header */}
+        {/* Header - Logo removed for troubleshooting */}
         <View style={styles.header}>
-          {/* eslint-disable-next-line jsx-a11y/alt-text */}
-          <Image
-            src="/brasao_UFSC_JOINVILLE_impressao__vertical_sigla_color.png"
-            style={styles.logo}
-          />
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerLine}>Universidade Federal de Santa Catarina</Text>
             <Text style={styles.headerLine}>{String(plano.campus || 'JOINVILLE')}</Text>
@@ -397,7 +378,8 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>VIII. AVALIAÇÃO FINAL</Text>
           <Text style={styles.paragraph}>
-            {renderTextWithBold(plano.finalEvaluationRules || 'Conforme resoluções vigentes da Universidade.')}
+            {/* Simple text rendering for troubleshooting - avoiding split/nesting */}
+            {String(plano.finalEvaluationRules || 'Conforme resoluções vigentes da Universidade.').replace(/\*\*/g, '')}
           </Text>
           {plano.finalConsiderations && (
             <Text style={styles.paragraph}>
