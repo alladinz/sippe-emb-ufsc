@@ -293,6 +293,7 @@ export const PlanoPDF = ({ plano, logoBlob }: PlanoPDFProps) => {
           {logoBlob ? (
             /* eslint-disable-next-line jsx-a11y/alt-text */
             <Image
+              cache
               src={logoBlob}
               style={styles.logo}
             />
