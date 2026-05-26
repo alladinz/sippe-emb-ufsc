@@ -178,11 +178,10 @@ export default async function PreviewStudyPlanPage({ params, searchParams }: Pre
           </div>
           <div className="text-center space-y-1">
             <h1 className="text-sm font-bold uppercase">Universidade Federal de Santa Catarina</h1>
-            <p className="text-xs font-semibold uppercase">{plan.campus || "Joinville"}</p>
-            <p className="text-xs uppercase">{plan.center || "Centro Tecnológico de Joinville"}</p>
+            <p className="text-xs font-semibold uppercase">{plan.campus || "CAMPUS Joinville"}</p>
+            <p className="text-xs uppercase">{plan.center || "Centro Tecnológico de Joinville - CTJ"}</p>
             <p className="text-xs uppercase">{plan.courseName || plan.organization.name}</p>
-            <p className="text-xs font-bold mt-4 uppercase">PLANO DE ENSINO - {plan.semester}</p>
-            <p className="text-xs font-bold">{plan.universityAcronym || "UFSC"}</p>
+            <p className="text-xs font-bold mt-4 uppercase">SEMESTRE - {plan.semester}</p>
           </div>
         </header>
 

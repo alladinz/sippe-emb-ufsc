@@ -301,12 +301,11 @@ export const PlanoPDF = ({ plano, logoBlob }: PlanoPDFProps) => {
              <View style={styles.logo} />
           )}
           <View style={styles.headerTextContainer}>
-            <Text style={styles.headerLine}>Universidade Federal de Santa Catarina</Text>
-            <Text style={styles.headerLine}>{String(plano.campus || 'JOINVILLE')}</Text>
-            <Text style={styles.headerLine}>{String(plano.center || 'CENTRO TECNOLÓGICO DE JOINVILLE')}</Text>
+            <Text style={styles.headerLineBold}>Universidade Federal de Santa Catarina</Text>
+            <Text style={styles.headerLine}>CAMPUS JOINVILLE</Text>
+            <Text style={styles.headerLine}>{String(plano.center || 'CENTRO TECNOLÓGICO DE JOINVILLE - CTJ')}</Text>
             <Text style={styles.headerLine}>{String(plano.courseName || plano.organization?.name || '')}</Text>
-            <Text style={styles.headerLineBold}>PLANO DE ENSINO - {String(plano.semester || '')}</Text>
-            <Text style={styles.headerLineBold}>{String(plano.universityAcronym || 'UFSC')}</Text>
+            <Text style={styles.headerLine}>SEMESTRE - {String(plano.semester || '')}</Text>
           </View>
         </View>
 
