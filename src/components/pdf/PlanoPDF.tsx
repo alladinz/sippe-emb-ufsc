@@ -7,7 +7,6 @@ import {
   StyleSheet,
   Image,
 } from '@react-pdf/renderer';
-import { logoBase64 } from '@/lib/logoBase64';
 
 const styles = StyleSheet.create({
   page: {
@@ -236,9 +235,10 @@ interface PlanoData {
 
 interface PlanoPDFProps {
   plano: PlanoData;
+  logoBlob: Blob | null;
 }
 
-export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
+export const PlanoPDF = ({ plano, logoBlob }: PlanoPDFProps) => {
   if (!plano) {
     return (
       <Document title="Plano de Ensino">
@@ -290,11 +290,15 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
       <Page size="A4" style={styles.page}>
         {/* Header */}
         <View style={styles.header}>
-          {/* eslint-disable-next-line jsx-a11y/alt-text */}
-          <Image
-            src={logoBase64}
-            style={styles.logo}
-          />
+          {logoBlob ? (
+            /* eslint-disable-next-line jsx-a11y/alt-text */
+            <Image
+              src={logoBlob}
+              style={styles.logo}
+            />
+          ) : (
+             <View style={styles.logo} />
+          )}
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerLine}>Universidade Federal de Santa Catarina</Text>
             <Text style={styles.headerLine}>{String(plano.campus || 'JOINVILLE')}</Text>

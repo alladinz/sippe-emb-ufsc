@@ -68,11 +68,24 @@ export function DownloadPDFButton({
     setIsGenerating(true);
 
     try {
-      // O logo agora é carregado via Base64 importado no próprio PlanoPDF
+      // 1. Carrega a imagem como BLOB (Abordagem sugerida no Reddit/Docs)
+      // Usamos o JPEG que criamos por ser mais leve e compatível
+      let logoBlob: Blob | null = null;
+      try {
+        const response = await fetch('/brasao.jpg');
+        if (response.ok) {
+          logoBlob = await response.blob();
+        }
+      } catch (e) {
+        console.warn('Não foi possível carregar o brasão binário:', e);
+      }
+
+      // 2. Gera o PDF passando o Blob diretamente
       const blob = await pdf(
-        <PlanoPDF plano={plano} />
+        <PlanoPDF plano={plano} logoBlob={logoBlob} />
       ).toBlob();
 
+      // Build filename
       const firstCourse = plano.courses?.[0];
       const codigo = firstCourse?.code ?? 'PLANO';
       const turma  = firstCourse?.classIdentifier ?? '';
@@ -83,6 +96,7 @@ export function DownloadPDFButton({
           .replace(/\s+/g, '_')
           .replace(/[^a-zA-Z0-9_.-]/g, '');
 
+      // Trigger browser download
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -91,6 +105,7 @@ export function DownloadPDFButton({
       link.click();
       document.body.removeChild(link);
 
+      // Release blob URL after download starts
       setTimeout(() => URL.revokeObjectURL(url), 5000);
 
       toastSuccess('PDF gerado com sucesso.');
