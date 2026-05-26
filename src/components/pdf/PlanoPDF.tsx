@@ -296,14 +296,15 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
     <Document title={`Plano de Ensino - ${plano.semester || ''}`}>
       <Page size="A4" style={styles.page}>
         {/* Header */}
-        <View style={styles.header}>
-          
-          {/* eslint-disable-next-line jsx-a11y/alt-text */}
+        {/* eslint-disable-next-line jsx-a11y/alt-text */}
           <Image 
           cache
-          src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Brasao_UFSC_vertical_extenso.svg/1280px-Brasao_UFSC_vertical_extenso.svg.png" 
+          src='https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Brasao_UFSC_vertical_extenso.svg/1280px-Brasao_UFSC_vertical_extenso.svg.png'
           style={{width: 100, height: 100}} 
           />
+          
+        <View style={styles.header}>
+        
           
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerLine}>Universidade Federal de Santa Catarina</Text>
