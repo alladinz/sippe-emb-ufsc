@@ -291,9 +291,6 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
   };
 
   // Get absolute URL for the logo to avoid load errors in browser PDF rendering
-  const getAbsoluteUrl = (relativeUrl: string) => {
-    return `${window.location.origin}${relativeUrl}`;
-  };
 
   return (
     <Document title={`Plano de Ensino - ${plano.semester || ''}`}>
@@ -302,7 +299,7 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
         <View style={styles.header}>
           
           {/* eslint-disable-next-line jsx-a11y/alt-text */}
-          <Image src={getAbsoluteUrl('public/brasao_UFSC.svg')} style={styles.brasao} />
+          <Image src="https://sippe-emb-ufsc.vercel.app/brasao_UFSC_JOINVILLE_impressao__vertical_sigla_color.png" style={styles.logo} />
           
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerLine}>Universidade Federal de Santa Catarina</Text>
