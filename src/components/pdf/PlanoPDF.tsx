@@ -5,7 +5,9 @@ import {
   Text,
   View,
   StyleSheet,
+  Image
 } from '@react-pdf/renderer';
+import { BRASAO_UFSC } from '@/assets/brasaoUFSC';
 
 const styles = StyleSheet.create({
   page: {
@@ -27,6 +29,12 @@ const styles = StyleSheet.create({
     width: 65,
     height: 65,
     marginRight: 15,
+  },
+  brasao:{
+    width: 52,
+    height: 60,
+    marginRight: 12,
+    objectFit: 'contain',
   },
   headerTextContainer: {
     flex: 1,
@@ -291,6 +299,9 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
       <Page size="A4" style={styles.page}>
         {/* Header */}
         <View style={styles.header}>
+          
+          {/* eslint-disable-next-line jsx-a11y/alt-text */}
+          <Image src={BRASAO_UFSC} style={styles.brasao} />
           
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerLine}>Universidade Federal de Santa Catarina</Text>
