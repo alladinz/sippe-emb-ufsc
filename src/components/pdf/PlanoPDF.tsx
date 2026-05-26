@@ -7,7 +7,6 @@ import {
   StyleSheet,
   Image
 } from '@react-pdf/renderer';
-import { BRASAO_UFSC } from '@/assets/brasaoUFSC';
 
 const styles = StyleSheet.create({
   page: {
@@ -292,7 +291,9 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
   };
 
   // Get absolute URL for the logo to avoid load errors in browser PDF rendering
-  
+  const getAbsoluteUrl = (relativeUrl: string) => {
+    return `${window.location.origin}${relativeUrl}`;
+  };
 
   return (
     <Document title={`Plano de Ensino - ${plano.semester || ''}`}>
@@ -301,7 +302,7 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
         <View style={styles.header}>
           
           {/* eslint-disable-next-line jsx-a11y/alt-text */}
-          <Image src={BRASAO_UFSC} style={styles.brasao} />
+          <Image src={getAbsoluteUrl('public/brasao_UFSC.svg')} style={styles.brasao} />
           
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerLine}>Universidade Federal de Santa Catarina</Text>
