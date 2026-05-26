@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 25,
     borderBottomWidth: 1,
-    borderBottomColor: '#000000',
+    borderBottomColor: '#e5e5e5',
     paddingBottom: 15,
   },
   logo: {
@@ -36,13 +36,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   headerLine: {
-    fontSize: 9,
+    fontSize: 10,
     textAlign: 'center',
     textTransform: 'uppercase',
     marginBottom: 1,
   },
   headerLineBold: {
-    fontSize: 10,
+    fontSize: 11,
     fontFamily: 'Times-Bold',
     textAlign: 'center',
     textTransform: 'uppercase',
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
   },
   identificationGrid: {
     borderWidth: 1,
-    borderColor: '#000000',
+    borderColor: '#e5e5e5',
     padding: 8,
     flexDirection: 'column',
   },
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     width: 'auto',
     borderStyle: 'solid',
     borderWidth: 1,
-    borderColor: '#000000',
+    borderColor: '#e5e5e5',
     borderRightWidth: 0,
     borderBottomWidth: 0,
     marginTop: 5,
