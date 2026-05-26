@@ -5,8 +5,8 @@ import {
   Text,
   View,
   StyleSheet,
-  Image
 } from '@react-pdf/renderer';
+import { Image as PDFImage } from '@react-pdf/renderer';
 
 const styles = StyleSheet.create({
   page: {
@@ -296,15 +296,13 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
     <Document title={`Plano de Ensino - ${plano.semester || ''}`}>
       <Page size="A4" style={styles.page}>
         {/* Header */}
-        {/* eslint-disable-next-line jsx-a11y/alt-text */}
-          <Image 
+        <View style={styles.header}>
+          
+          <PDFImage 
           cache
           src='https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Brasao_UFSC_vertical_extenso.svg/1280px-Brasao_UFSC_vertical_extenso.svg.png'
-          style={{width: 100, height: 100}} 
+          style={{width: 100, height: 100}}
           />
-          
-        <View style={styles.header}>
-        
           
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerLine}>Universidade Federal de Santa Catarina</Text>
