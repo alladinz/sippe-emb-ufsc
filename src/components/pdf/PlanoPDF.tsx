@@ -5,13 +5,12 @@ import {
   Text,
   View,
   StyleSheet,
-  Image,
 } from '@react-pdf/renderer';
 
 const styles = StyleSheet.create({
   page: {
     padding: 40,
-    fontFamily: 'Helvetica',
+    fontFamily: 'Times-Roman',
     fontSize: 10,
     lineHeight: 1.4,
     color: '#000000',
@@ -43,7 +42,7 @@ const styles = StyleSheet.create({
   },
   headerLineBold: {
     fontSize: 10,
-    fontFamily: 'Helvetica-Bold',
+    fontFamily: 'Times-Bold',
     textAlign: 'center',
     textTransform: 'uppercase',
     marginTop: 5,
@@ -53,7 +52,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 10,
-    fontFamily: 'Helvetica-Bold',
+    fontFamily: 'Times-Bold',
     marginBottom: 6,
     textTransform: 'uppercase',
   },
@@ -72,7 +71,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   label: {
-    fontFamily: 'Helvetica-Bold',
+    fontFamily: 'Times-Bold',
     marginRight: 4,
   },
   text: {
@@ -112,7 +111,7 @@ const styles = StyleSheet.create({
   },
   tableCellHeader: {
     fontSize: 8,
-    fontFamily: 'Helvetica-Bold',
+    fontFamily: 'Times-Bold',
     textAlign: 'center',
     textTransform: 'uppercase',
   },
@@ -121,11 +120,11 @@ const styles = StyleSheet.create({
   },
   tableCellBold: {
     fontSize: 8,
-    fontFamily: 'Helvetica-Bold',
+    fontFamily: 'Times-Bold',
   },
   tableCellItalic: {
     fontSize: 8,
-    fontFamily: 'Helvetica-Oblique',
+    fontFamily: 'Times-Italic',
     textAlign: 'justify',
   },
   formulaBox: {
@@ -276,7 +275,7 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
     return (
       <Text>
         {parts.map((part, i) => (
-          <Text key={i} style={i % 2 === 1 ? { fontFamily: 'Helvetica-Bold' } : {}}>
+          <Text key={i} style={i % 2 === 1 ? { fontFamily: 'Times-Bold' } : {}}>
             {part}
           </Text>
         ))}
@@ -285,23 +284,14 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
   };
 
   // Get absolute URL for the logo to avoid load errors in browser PDF rendering
-  const getLogoUrl = () => {
-    if (typeof window !== 'undefined') {
-      return `${window.location.origin}/brasao_UFSC_JOINVILLE_impressao__vertical_sigla_color.png`;
-    }
-    return '/brasao_UFSC_JOINVILLE_impressao__vertical_sigla_color.png';
-  };
+  
 
   return (
     <Document title={`Plano de Ensino - ${plano.semester || ''}`}>
       <Page size="A4" style={styles.page}>
         {/* Header */}
         <View style={styles.header}>
-          {/* eslint-disable-next-line jsx-a11y/alt-text */}
-          <Image
-            src={getLogoUrl()}
-            style={styles.logo}
-          />
+          
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerLine}>Universidade Federal de Santa Catarina</Text>
             <Text style={styles.headerLine}>{String(plano.campus || 'JOINVILLE')}</Text>
@@ -478,7 +468,7 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
               </View>
             )}
           </View>
-          <Text style={{ fontSize: 7, color: '#333333', fontFamily: 'Helvetica-Oblique', marginTop: 5 }}>
+          <Text style={{ fontSize: 7, color: '#333333', fontFamily: 'Times-Italic', marginTop: 5 }}>
             * O cronograma está sujeito a alterações conforme o andamento da disciplina.
           </Text>
         </View>
@@ -496,7 +486,7 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
                 </View>
               ))
           ) : (
-            <Text style={[styles.paragraph, { fontFamily: 'Helvetica-Oblique' }]}>Nenhuma informada.</Text>
+            <Text style={[styles.paragraph, { fontFamily: 'Times-Italic' }]}>Nenhuma informada.</Text>
           )}
         </View>
 
@@ -513,7 +503,7 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
                 </View>
               ))
           ) : (
-            <Text style={[styles.paragraph, { fontFamily: 'Helvetica-Oblique' }]}>Nenhuma informada.</Text>
+            <Text style={[styles.paragraph, { fontFamily: 'Times-Italic' }]}>Nenhuma informada.</Text>
           )}
         </View>
 
