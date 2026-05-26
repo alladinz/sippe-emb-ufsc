@@ -5,6 +5,7 @@ import {
   Text,
   View,
   StyleSheet,
+  Image,
 } from '@react-pdf/renderer';
 
 const styles = StyleSheet.create({
@@ -15,13 +16,24 @@ const styles = StyleSheet.create({
     lineHeight: 1.4,
     color: '#000000',
   },
-  headerContainer: {
-    flexDirection: 'column',
+  header: {
+    flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 25,
     borderBottomWidth: 1,
     borderBottomColor: '#000000',
     paddingBottom: 15,
+  },
+  logo: {
+    width: 65,
+    height: 65,
+    marginRight: 15,
+  },
+  headerTextContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   headerLine: {
     fontSize: 9,
@@ -71,6 +83,51 @@ const styles = StyleSheet.create({
     textAlign: 'justify',
     marginBottom: 8,
   },
+  table: {
+    width: 'auto',
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderColor: '#000000',
+    borderRightWidth: 0,
+    borderBottomWidth: 0,
+    marginTop: 5,
+  },
+  tableRow: {
+    flexDirection: 'row',
+    borderBottomColor: '#000000',
+    borderBottomWidth: 1,
+  },
+  tableColHeader: {
+    backgroundColor: '#f1f1f1',
+    borderRightColor: '#000000',
+    borderRightWidth: 1,
+    padding: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  tableCol: {
+    borderRightColor: '#000000',
+    borderRightWidth: 1,
+    padding: 4,
+  },
+  tableCellHeader: {
+    fontSize: 8,
+    fontFamily: 'Helvetica-Bold',
+    textAlign: 'center',
+    textTransform: 'uppercase',
+  },
+  tableCell: {
+    fontSize: 8,
+  },
+  tableCellBold: {
+    fontSize: 8,
+    fontFamily: 'Helvetica-Bold',
+  },
+  tableCellItalic: {
+    fontSize: 8,
+    fontFamily: 'Helvetica-Oblique',
+    textAlign: 'justify',
+  },
   formulaBox: {
     borderWidth: 1,
     borderColor: '#000000',
@@ -87,6 +144,32 @@ const styles = StyleSheet.create({
   formulaText: {
     fontSize: 11,
     fontFamily: 'Courier-Bold',
+  },
+  list: {
+    marginLeft: 15,
+  },
+  listItem: {
+    flexDirection: 'row',
+    marginBottom: 2,
+  },
+  listBullet: {
+    width: 20,
+    fontSize: 10,
+  },
+  listContent: {
+    flex: 1,
+    fontSize: 10,
+    textAlign: 'justify',
+  },
+  footer: {
+    marginTop: 30,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#000000',
+    textAlign: 'center',
+  },
+  footerText: {
+    fontSize: 8,
   },
 });
 
@@ -165,17 +248,54 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
     );
   }
 
+  const hasMoreThanOneDay = Array.isArray(plano.weeklySchedule) && plano.weeklySchedule.length > 0 && !!plano.weeklySchedule[0].class2;
+
+  const renderBibliography = (item: Bibliography) => {
+    const parts = [
+      item.author,
+      item.title,
+      item.publisher,
+      item.year,
+      item.isbn ? `ISBN: ${item.isbn}` : null
+    ].filter(Boolean);
+    return parts.join(', ') + '.';
+  };
+
+  const formatDate = (date: string | Date) => {
+    try {
+      return new Date(date).toLocaleDateString('pt-BR') + ' às ' + new Date(date).toLocaleTimeString('pt-BR');
+    } catch {
+      return '';
+    }
+  };
+
+  const renderTextWithBold = (text: string) => {
+    if (!text) return null;
+    return text.split('**').map((part, i) => (
+      <Text key={i} style={i % 2 === 1 ? { fontFamily: 'Helvetica-Bold' } : {}}>
+        {part}
+      </Text>
+    ));
+  };
+
   return (
     <Document title={`Plano de Ensino - ${plano.semester || ''}`}>
       <Page size="A4" style={styles.page}>
         {/* Header */}
-        <View style={styles.headerContainer}>
-          <Text style={styles.headerLine}>Universidade Federal de Santa Catarina</Text>
-          <Text style={styles.headerLine}>{String(plano.campus || 'JOINVILLE')}</Text>
-          <Text style={styles.headerLine}>{String(plano.center || 'CENTRO TECNOLÓGICO DE JOINVILLE')}</Text>
-          <Text style={styles.headerLine}>{String(plano.courseName || plano.organization?.name || '')}</Text>
-          <Text style={styles.headerLineBold}>PLANO DE ENSINO - {String(plano.semester || '')}</Text>
-          <Text style={styles.headerLineBold}>{String(plano.universityAcronym || 'UFSC')}</Text>
+        <View style={styles.header}>
+          {/* eslint-disable-next-line jsx-a11y/alt-text */}
+          <Image
+            src="/brasao_UFSC_JOINVILLE_impressao__vertical_sigla_color.png"
+            style={styles.logo}
+          />
+          <View style={styles.headerTextContainer}>
+            <Text style={styles.headerLine}>Universidade Federal de Santa Catarina</Text>
+            <Text style={styles.headerLine}>{String(plano.campus || 'JOINVILLE')}</Text>
+            <Text style={styles.headerLine}>{String(plano.center || 'CENTRO TECNOLÓGICO DE JOINVILLE')}</Text>
+            <Text style={styles.headerLine}>{String(plano.courseName || plano.organization?.name || '')}</Text>
+            <Text style={styles.headerLineBold}>PLANO DE ENSINO - {String(plano.semester || '')}</Text>
+            <Text style={styles.headerLineBold}>{String(plano.universityAcronym || 'UFSC')}</Text>
+          </View>
         </View>
 
         {/* I. IDENTIFICAÇÃO */}
@@ -183,7 +303,7 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
           <Text style={styles.sectionTitle}>I. IDENTIFICAÇÃO DA DISCIPLINA</Text>
           <View style={styles.identificationGrid}>
             {plano.courses?.map((course, index) => (
-              <View key={course.id || index}>
+              <View key={course.id || index} style={{ marginBottom: 5 }}>
                 <View style={styles.gridRow}>
                   <View style={styles.gridCell}>
                     <Text style={styles.label}>Nome:</Text>
@@ -277,7 +397,7 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>VIII. AVALIAÇÃO FINAL</Text>
           <Text style={styles.paragraph}>
-            {plano.finalEvaluationRules ? String(plano.finalEvaluationRules).replace(/\*\*/g, '') : 'Conforme resoluções vigentes da Universidade.'}
+            {renderTextWithBold(plano.finalEvaluationRules || 'Conforme resoluções vigentes da Universidade.')}
           </Text>
           {plano.finalConsiderations && (
             <Text style={styles.paragraph}>
@@ -286,10 +406,108 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
           )}
         </View>
 
-        <View>
-            <Text style={{ marginTop: 20, color: 'gray', fontSize: 8 }}>
-                Fim do teste de restauração parcial (Seções II - VIII).
-            </Text>
+        {/* IX. CRONOGRAMA */}
+        <View style={styles.section} break>
+          <Text style={styles.sectionTitle}>IX. CRONOGRAMA DE AULAS</Text>
+          <View style={styles.table}>
+            <View style={styles.tableRow}>
+              <View style={[styles.tableColHeader, { width: '10%' }]}>
+                <Text style={styles.tableCellHeader}>Semana</Text>
+              </View>
+              <View style={[styles.tableColHeader, { width: '10%' }]}>
+                <Text style={styles.tableCellHeader}>Aula</Text>
+              </View>
+              <View style={[styles.tableColHeader, { flex: 1 }]}>
+                <Text style={[styles.tableCellHeader, { textAlign: 'left' }]}>Conteúdo</Text>
+              </View>
+              {hasMoreThanOneDay && (
+                <>
+                  <View style={[styles.tableColHeader, { width: '10%' }]}>
+                    <Text style={styles.tableCellHeader}>Aula</Text>
+                  </View>
+                  <View style={[styles.tableColHeader, { flex: 1 }]}>
+                    <Text style={[styles.tableCellHeader, { textAlign: 'left' }]}>Conteúdo</Text>
+                  </View>
+                </>
+              )}
+            </View>
+            {Array.isArray(plano.weeklySchedule) && plano.weeklySchedule.length > 0 ? (
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              plano.weeklySchedule.map((week: any, idx: number) => (
+                <View key={idx} style={styles.tableRow} wrap={false}>
+                  <View style={[styles.tableCol, { width: '10%', backgroundColor: '#f9f9f9', alignItems: 'center' }]}>
+                    <Text style={styles.tableCellBold}>{String(week.week)}</Text>
+                  </View>
+                  <View style={[styles.tableCol, { width: '10%', alignItems: 'center' }]}>
+                    <Text style={styles.tableCell}>{String(week.class1?.number || '')}</Text>
+                  </View>
+                  <View style={[styles.tableCol, { flex: 1 }]}>
+                    <Text style={styles.tableCellItalic}>{String(week.class1?.content || '-')}</Text>
+                  </View>
+                  {hasMoreThanOneDay && (
+                    <>
+                      <View style={[styles.tableCol, { width: '10%', alignItems: 'center' }]}>
+                        <Text style={styles.tableCell}>{String(week.class2?.number || '')}</Text>
+                      </View>
+                      <View style={[styles.tableCol, { flex: 1 }]}>
+                        <Text style={styles.tableCellItalic}>{String(week.class2?.content || '-')}</Text>
+                      </View>
+                    </>
+                  )}
+                </View>
+              ))
+            ) : (
+              <View style={styles.tableRow}>
+                <View style={[styles.tableCol, { flex: 1, padding: 10 }]}>
+                  <Text style={[styles.tableCell, { textAlign: 'center' }]}>Cronograma não detalhado.</Text>
+                </View>
+              </View>
+            )}
+          </View>
+          <Text style={{ fontSize: 7, color: '#333333', fontFamily: 'Helvetica-Oblique', marginTop: 5 }}>
+            * O cronograma está sujeito a alterações conforme o andamento da disciplina.
+          </Text>
+        </View>
+
+        {/* X. BIBLIOGRAFIA BÁSICA */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>X. BIBLIOGRAFIA BÁSICA</Text>
+          {plano.bibliography?.filter(b => b.type === 'basic').length > 0 ? (
+            plano.bibliography
+              .filter(b => b.type === 'basic')
+              .map((b, i) => (
+                <View key={b.id || i} style={styles.listItem}>
+                  <Text style={styles.listBullet}>{i + 1}.</Text>
+                  <Text style={styles.listContent}>{String(renderBibliography(b))}</Text>
+                </View>
+              ))
+          ) : (
+            <Text style={[styles.paragraph, { fontFamily: 'Helvetica-Oblique' }]}>Nenhuma informada.</Text>
+          )}
+        </View>
+
+        {/* XI. BIBLIOGRAFIA COMPLEMENTAR */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>XI. BIBLIOGRAFIA COMPLEMENTAR</Text>
+          {plano.bibliography?.filter(b => b.type === 'complementary').length > 0 ? (
+            plano.bibliography
+              .filter(b => b.type === 'complementary')
+              .map((b, i) => (
+                <View key={b.id || i} style={styles.listItem}>
+                  <Text style={styles.listBullet}>{i + 1}.</Text>
+                  <Text style={styles.listContent}>{String(renderBibliography(b))}</Text>
+                </View>
+              ))
+          ) : (
+            <Text style={[styles.paragraph, { fontFamily: 'Helvetica-Oblique' }]}>Nenhuma informada.</Text>
+          )}
+        </View>
+
+        {/* Footer */}
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>
+            Atualizado em: {formatDate(plano.updatedAt)}
+          </Text>
         </View>
       </Page>
     </Document>
