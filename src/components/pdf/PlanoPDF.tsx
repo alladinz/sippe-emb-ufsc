@@ -5,6 +5,7 @@ import {
   Text,
   View,
   StyleSheet,
+  Image,
 } from '@react-pdf/renderer';
 
 const styles = StyleSheet.create({
@@ -22,9 +23,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#000000',
     paddingBottom: 15,
-    justifyContent: 'center',
+  },
+  logo: {
+    width: 65,
+    height: 65,
+    marginRight: 15,
   },
   headerTextContainer: {
+    flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
@@ -264,11 +270,38 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
     }
   };
 
+  const renderTextWithBold = (text: string) => {
+    if (!text) return null;
+    const parts = String(text).split('**');
+    return (
+      <Text>
+        {parts.map((part, i) => (
+          <Text key={i} style={i % 2 === 1 ? { fontFamily: 'Helvetica-Bold' } : {}}>
+            {part}
+          </Text>
+        ))}
+      </Text>
+    );
+  };
+
+  // Get absolute URL for the logo to avoid load errors in browser PDF rendering
+  const getLogoUrl = () => {
+    if (typeof window !== 'undefined') {
+      return `${window.location.origin}/brasao_UFSC_JOINVILLE_impressao__vertical_sigla_color.png`;
+    }
+    return '/brasao_UFSC_JOINVILLE_impressao__vertical_sigla_color.png';
+  };
+
   return (
     <Document title={`Plano de Ensino - ${plano.semester || ''}`}>
       <Page size="A4" style={styles.page}>
-        {/* Header - Logo removed for troubleshooting */}
+        {/* Header */}
         <View style={styles.header}>
+          {/* eslint-disable-next-line jsx-a11y/alt-text */}
+          <Image
+            src={getLogoUrl()}
+            style={styles.logo}
+          />
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerLine}>Universidade Federal de Santa Catarina</Text>
             <Text style={styles.headerLine}>{String(plano.campus || 'JOINVILLE')}</Text>
@@ -377,10 +410,9 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
         {/* VIII. AVALIAÇÃO FINAL */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>VIII. AVALIAÇÃO FINAL</Text>
-          <Text style={styles.paragraph}>
-            {/* Simple text rendering for troubleshooting - avoiding split/nesting */}
-            {String(plano.finalEvaluationRules || 'Conforme resoluções vigentes da Universidade.').replace(/\*\*/g, '')}
-          </Text>
+          <View style={styles.paragraph}>
+            {renderTextWithBold(plano.finalEvaluationRules || 'Conforme resoluções vigentes da Universidade.')}
+          </View>
           {plano.finalConsiderations && (
             <Text style={styles.paragraph}>
               {String(stripHtml(plano.finalConsiderations))}
@@ -409,7 +441,7 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
                   </View>
                   <View style={[styles.tableColHeader, { flex: 1 }]}>
                     <Text style={[styles.tableCellHeader, { textAlign: 'left' }]}>Conteúdo</Text>
-                  </View>
+                  </Text>
                 </>
               )}
             </View>
