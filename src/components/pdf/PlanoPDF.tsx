@@ -5,8 +5,9 @@ import {
   Text,
   View,
   StyleSheet,
+  Image,
 } from '@react-pdf/renderer';
-import { Image as PDFImage } from '@react-pdf/renderer';
+import { logoBase64 } from '@/lib/logoBase64';
 
 const styles = StyleSheet.create({
   page: {
@@ -28,12 +29,6 @@ const styles = StyleSheet.create({
     width: 65,
     height: 65,
     marginRight: 15,
-  },
-  brasao:{
-    width: 52,
-    height: 60,
-    marginRight: 12,
-    objectFit: 'contain',
   },
   headerTextContainer: {
     flex: 1,
@@ -290,20 +285,16 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
     );
   };
 
-  // Get absolute URL for the logo to avoid load errors in browser PDF rendering
-
   return (
     <Document title={`Plano de Ensino - ${plano.semester || ''}`}>
       <Page size="A4" style={styles.page}>
         {/* Header */}
         <View style={styles.header}>
-          
-          <PDFImage 
-          cache
-          src='https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Brasao_UFSC_vertical_extenso.svg/1280px-Brasao_UFSC_vertical_extenso.svg.png'
-          style={{width: 100, height: 100}}
+          {/* eslint-disable-next-line jsx-a11y/alt-text */}
+          <Image
+            src={logoBase64}
+            style={styles.logo}
           />
-          
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerLine}>Universidade Federal de Santa Catarina</Text>
             <Text style={styles.headerLine}>{String(plano.campus || 'JOINVILLE')}</Text>
@@ -489,14 +480,12 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>X. BIBLIOGRAFIA BÁSICA</Text>
           {plano.bibliography?.filter(b => b.type === 'basic').length > 0 ? (
-            plano.bibliography
-              .filter(b => b.type === 'basic')
-              .map((b, i) => (
-                <View key={b.id || i} style={styles.listItem}>
-                  <Text style={styles.listBullet}>{i + 1}.</Text>
-                  <Text style={styles.listContent}>{String(renderBibliography(b))}</Text>
-                </View>
-              ))
+            plano.bibliography.filter(b => b.type === 'basic').map((b, i) => (
+              <View key={b.id || i} style={styles.listItem}>
+                <Text style={styles.listBullet}>{i + 1}.</Text>
+                <Text style={styles.listContent}>{String(renderBibliography(b))}</Text>
+              </View>
+            ))
           ) : (
             <Text style={[styles.paragraph, { fontFamily: 'Times-Italic' }]}>Nenhuma informada.</Text>
           )}
@@ -506,14 +495,12 @@ export const PlanoPDF = ({ plano }: PlanoPDFProps) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>XI. BIBLIOGRAFIA COMPLEMENTAR</Text>
           {plano.bibliography?.filter(b => b.type === 'complementary').length > 0 ? (
-            plano.bibliography
-              .filter(b => b.type === 'complementary')
-              .map((b, i) => (
-                <View key={b.id || i} style={styles.listItem}>
-                  <Text style={styles.listBullet}>{i + 1}.</Text>
-                  <Text style={styles.listContent}>{String(renderBibliography(b))}</Text>
-                </View>
-              ))
+            plano.bibliography.filter(b => b.type === 'complementary').map((b, i) => (
+              <View key={b.id || i} style={styles.listItem}>
+                <Text style={styles.listBullet}>{i + 1}.</Text>
+                <Text style={styles.listContent}>{String(renderBibliography(b))}</Text>
+              </View>
+            ))
           ) : (
             <Text style={[styles.paragraph, { fontFamily: 'Times-Italic' }]}>Nenhuma informada.</Text>
           )}

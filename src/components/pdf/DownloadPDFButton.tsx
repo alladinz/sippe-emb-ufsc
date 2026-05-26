@@ -68,12 +68,11 @@ export function DownloadPDFButton({
     setIsGenerating(true);
 
     try {
-      // Generate PDF blob in the browser — no backend needed
+      // O logo agora é carregado via Base64 importado no próprio PlanoPDF
       const blob = await pdf(
         <PlanoPDF plano={plano} />
       ).toBlob();
 
-      // Build filename
       const firstCourse = plano.courses?.[0];
       const codigo = firstCourse?.code ?? 'PLANO';
       const turma  = firstCourse?.classIdentifier ?? '';
@@ -84,7 +83,6 @@ export function DownloadPDFButton({
           .replace(/\s+/g, '_')
           .replace(/[^a-zA-Z0-9_.-]/g, '');
 
-      // Trigger browser download
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -93,7 +91,6 @@ export function DownloadPDFButton({
       link.click();
       document.body.removeChild(link);
 
-      // Release blob URL after download starts
       setTimeout(() => URL.revokeObjectURL(url), 5000);
 
       toastSuccess('PDF gerado com sucesso.');
