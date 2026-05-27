@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/db";
 import { studyPlans, organization, universityCourses, user, member, semesters, courses } from "@/db/schema";
-import { eq, desc, and, ilike, or, inArray, sql } from "drizzle-orm";
+import { eq, desc, and, or, inArray, sql } from "drizzle-orm";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
@@ -80,10 +80,10 @@ export default async function ChefDashboardPage({ searchParams }: ChefDashboardP
           .leftJoin(user, eq(studyPlans.userId, user.id))
           .leftJoin(courses, eq(studyPlans.id, courses.studyPlanId))
           .where(or(
-              ilike(user.name, `%${searchTerm}%`),
-              ilike(courses.code, `%${searchTerm}%`),
-              ilike(courses.name, `%${searchTerm}%`),
-              ilike(studyPlans.courseName, `%${searchTerm}%`)
+              sql`unaccent(${user.name}) ilike unaccent(${`%${searchTerm}%`})`,
+              sql`unaccent(${courses.code}) ilike unaccent(${`%${searchTerm}%`})`,
+              sql`unaccent(${courses.name}) ilike unaccent(${`%${searchTerm}%`})`,
+              sql`unaccent(${studyPlans.courseName}) ilike unaccent(${`%${searchTerm}%`})`
           ))
           .groupBy(studyPlans.id);
       

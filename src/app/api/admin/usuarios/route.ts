@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/db";
 import { user, member } from "@/db/schema";
-import { and, eq, or, ilike } from "drizzle-orm";
+import { and, eq, or, sql } from "drizzle-orm";
 
 export async function GET(request: Request) {
   const session = await auth.api.getSession();
@@ -34,8 +34,8 @@ export async function GET(request: Request) {
   const whereClause = and(
     status ? eq(user.status, status) : undefined,
     search ? or(
-        ilike(user.name, `%${search}%`),
-        ilike(user.email, `%${search}%`)
+        sql`unaccent(${user.name}) ilike unaccent(${`%${search}%`})`,
+        sql`unaccent(${user.email}) ilike unaccent(${`%${search}%`})`
     ) : undefined
   );
 

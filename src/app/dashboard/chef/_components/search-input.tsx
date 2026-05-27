@@ -16,13 +16,18 @@ export function SearchInput({ placeholder = "Buscar..." }: { placeholder?: strin
   const [query] = useDebounce(text, 500);
 
   useEffect(() => {
-    const params = new URLSearchParams(searchParams);
+    const currentSearch = searchParams.get("search") || "";
+    
+    // Only update if the query has changed and is different from the URL
+    if (query === currentSearch) return;
+
+    const params = new URLSearchParams(searchParams.toString());
     if (query) {
       params.set("search", query);
     } else {
       params.delete("search");
     }
-    params.set("page", "1"); // Reset to page 1 on search
+    params.set("page", "1"); // Reset to page 1 on search change
 
     startTransition(() => {
       router.push(`${pathname}?${params.toString()}`);

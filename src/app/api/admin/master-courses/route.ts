@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/db";
 import { universityCourses, member } from "@/db/schema";
-import { and, eq, or, ilike, sql, asc } from "drizzle-orm";
+import { and, eq, or, sql, asc } from "drizzle-orm";
 
 export async function GET(request: Request) {
   const session = await auth.api.getSession();
@@ -39,8 +39,8 @@ export async function GET(request: Request) {
     
     if (search) {
         conditions.push(or(
-            ilike(universityCourses.code, `%${search}%`),
-            ilike(universityCourses.name, `%${search}%`)
+            sql`unaccent(${universityCourses.code}) ilike unaccent(${`%${search}%`})`,
+            sql`unaccent(${universityCourses.name}) ilike unaccent(${`%${search}%`})`
         ));
     }
     
@@ -49,11 +49,11 @@ export async function GET(request: Request) {
     }
     
     if (graduation !== "all") {
-        conditions.push(ilike(universityCourses.graduation, `%${graduation}%`));
+        conditions.push(sql`unaccent(${universityCourses.graduation}) ilike unaccent(${`%${graduation}%`})`);
     }
 
     if (curriculum !== "all") {
-        conditions.push(ilike(universityCourses.curriculum, `%${curriculum}%`));
+        conditions.push(sql`unaccent(${universityCourses.curriculum}) ilike unaccent(${`%${curriculum}%`})`);
     }
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
