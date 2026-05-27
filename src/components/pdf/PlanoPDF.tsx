@@ -255,8 +255,11 @@ export const PlanoPDF = ({ plano, logoBlob }: PlanoPDFProps) => {
   const hasMoreThanOneDay = Array.isArray(plano.weeklySchedule) && plano.weeklySchedule.length > 0 && !!plano.weeklySchedule[0].class2;
 
   const renderBibliography = (item: Bibliography) => {
+    // If author is 'Referência', it's a placeholder from import, so we skip it to avoid "Referência, ..."
+    const author = item.author === 'Referência' ? null : item.author;
+    
     const parts = [
-      item.author,
+      author,
       item.title,
       item.publisher,
       item.year,
@@ -280,7 +283,7 @@ export const PlanoPDF = ({ plano, logoBlob }: PlanoPDFProps) => {
     return (
       <Text>
         {parts.map((part, i) => (
-          <Text key={i} style={i % 2 === 1 ? { fontFamily: 'Times-Bold' } : {}}>
+          <Text key={i} style={{ fontFamily: i % 2 === 1 ? 'Times-Bold' : 'Times-Roman' }}>
             {part}
           </Text>
         ))}
