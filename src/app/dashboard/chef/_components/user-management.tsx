@@ -95,6 +95,7 @@ export function UserManagement({ members: initialMembers, organizations }: UserM
             const params = new URLSearchParams();
             params.set("page", page.toString());
             params.set("limit", limit.toString());
+            if (search) params.set("search", search);
             if (filters.status) params.set("status", (filters.status as string));
 
             const res = await fetch(`/api/admin/usuarios?${params.toString()}`);
@@ -139,7 +140,7 @@ export function UserManagement({ members: initialMembers, organizations }: UserM
         } finally {
             setIsLoading(false);
         }
-    }, [page, limit, filters.status]);
+    }, [page, limit, search, filters.status]);
 
     useEffect(() => {
         fetchUsers();
@@ -167,14 +168,6 @@ export function UserManagement({ members: initialMembers, organizations }: UserM
             setNewOrgId(""); // Optional
         }
     };
-
-    const filteredMembers = members.filter(m => {
-        const matchesSearch = 
-            m.user.name?.toLowerCase().includes(search.toLowerCase()) ||
-            m.user.email?.toLowerCase().includes(search.toLowerCase());
-        
-        return matchesSearch;
-    });
 
     useEffect(() => {
         fetch('/api/admin/usuarios?count=true&status=pending_email')
@@ -470,8 +463,8 @@ export function UserManagement({ members: initialMembers, organizations }: UserM
                             <TableRow>
                                 <TableHead className="w-12">
                                     <Checkbox 
-                                        checked={filteredMembers.length > 0 && selectedIds.length === filteredMembers.length}
-                                        onCheckedChange={() => toggleSelectAll(filteredMembers.map(m => m.user.id))}
+                                        checked={members.length > 0 && selectedIds.length === members.length}
+                                        onCheckedChange={() => toggleSelectAll(members.map(m => m.user.id))}
                                     />
                                 </TableHead>
                                 <TableHead>Usuário</TableHead>
@@ -490,7 +483,7 @@ export function UserManagement({ members: initialMembers, organizations }: UserM
                                         </div>
                                     </TableCell>
                                 </TableRow>
-                            ) : filteredMembers.length === 0 ? (
+                            ) : members.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={5} className="p-0">
                                         <TableEmptyState 
@@ -502,7 +495,7 @@ export function UserManagement({ members: initialMembers, organizations }: UserM
                                     </TableCell>
                                 </TableRow>
                             ) : (
-                                filteredMembers.map((m) => (
+                                members.map((m) => (
                                     <TableRow key={m.id} className={cn("transition-colors", selectedIds.includes(m.user.id) ? "bg-slate-50" : "hover:bg-slate-50/50")}>
                                         <TableCell>
                                             <Checkbox 
