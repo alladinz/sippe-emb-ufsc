@@ -103,7 +103,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#f1f1f1',
     borderRightColor: '#e5e5e5',
     borderRightWidth: 1.5,
-    borderRadius: 4,
     padding: 4,
     justifyContent: 'center',
     alignItems: 'center',
@@ -318,13 +317,13 @@ export const PlanoPDF = ({ plano, logoBlob }: PlanoPDFProps) => {
           <Text style={styles.sectionTitle}>I. IDENTIFICAÇÃO DA DISCIPLINA</Text>
           <View style={styles.identificationGrid}>
             {plano.courses?.map((course, index) => (
-              <View key={course.id || index} style={{ marginBottom: 5 }}>
+              <View key={course.id || index} style={{ marginBottom: 3 }}>
                 <View style={styles.gridRow}>
                   <View style={styles.gridCell}>
                     <Text style={styles.label}>Nome:</Text>
                     <Text style={styles.text}>{String(course.name || '-')}</Text>
                   </View>
-                  <View style={[styles.gridCell, { flex: 0.4 }]}>
+                  <View style={[styles.gridCell, { flex: 0.6 }]}>
                     <Text style={styles.label}>Código:</Text>
                     <Text style={styles.text}>{String(course.code || '-')}</Text>
                   </View>
@@ -334,7 +333,7 @@ export const PlanoPDF = ({ plano, logoBlob }: PlanoPDFProps) => {
                     <Text style={styles.label}>Carga horária:</Text>
                     <Text style={styles.text}>{course.workload ? `${course.workload} horas` : '-'}</Text>
                   </View>
-                  <View style={[styles.gridCell, { flex: 0.4 }]}>
+                  <View style={[styles.gridCell, { flex: 0.6 }]}>
                     <Text style={styles.label}>Créditos:</Text>
                     <Text style={styles.text}>{String(course.credits || '-')}</Text>
                   </View>
