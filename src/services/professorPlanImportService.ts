@@ -18,6 +18,31 @@ const GRADUATION_MAP: Record<string, string> = {
   "Engenharia de Transporte e Logística": "608",
 };
 
+/**
+ * Resolves a course name from either a name or a code (e.g. "608" -> "Engenharia de Transportes e Logística")
+ */
+function resolveCourseName(input: string): string {
+    if (!input) return "Geral";
+    const trimmed = input.trim();
+    // If it's already a known name, return it
+    if (GRADUATION_MAP[trimmed]) return trimmed;
+    
+    // If it's a code, find the first matching name
+    const nameByCode = Object.keys(GRADUATION_MAP).find(name => GRADUATION_MAP[name] === trimmed);
+    return nameByCode || trimmed;
+}
+
+/**
+ * Resolves a course code from either a name or a code (e.g. "Engenharia Naval" -> "606")
+ */
+function resolveCourseCode(input: string): string {
+    if (!input) return "000";
+    const trimmed = input.trim();
+    if (GRADUATION_MAP[trimmed]) return GRADUATION_MAP[trimmed];
+    if (Object.values(GRADUATION_MAP).includes(trimmed)) return trimmed;
+    return "000";
+}
+
 export interface ImportResult {
   totalLinhasLidas:      number;
   totalLinhasValidas:    number;
@@ -100,6 +125,9 @@ export async function importProfessoresEPlanos(
       const rowIndex = i + 2;
 
       try {
+        const fullCourseName = resolveCourseName(row.curso);
+        const fullCourseCode = resolveCourseCode(row.curso);
+
         // --- STEP 0: Resolve Discipline Code (Handle "CODE1/CODE2") ---
         const codes = row.disciplinaCodigo.split(/[/,]/).map(c => c.trim()).filter(Boolean);
         let resolvedCodigo = row.disciplinaCodigo;
@@ -183,7 +211,7 @@ export async function importProfessoresEPlanos(
           await tx.update(disciplinas)
             .set({
               nome: row.disciplinaNome,
-              curso: row.curso,
+              curso: fullCourseName,
               creditosTeorico: row.creditosTeorico,
               creditosPratico: row.creditosPratico,
               ambienteTeorico: row.ambienteTeorico,
@@ -199,7 +227,7 @@ export async function importProfessoresEPlanos(
             id: disciplinaId,
             codigo: resolvedCodigo,
             nome: row.disciplinaNome,
-            curso: row.curso,
+            curso: fullCourseName,
             creditosTeorico: row.creditosTeorico,
             creditosPratico: row.creditosPratico,
             ambienteTeorico: row.ambienteTeorico,
@@ -271,13 +299,13 @@ export async function importProfessoresEPlanos(
               where: eq(universityCourses.code, resolvedCodigo)
           });
 
-          const matchedOrg = allOrgs.find(o => o.name === row.curso);
+          const matchedOrg = allOrgs.find(o => o.name === fullCourseName);
           const planOrgId = matchedOrg?.id || targetOrgId;
 
           const planId = uuidv4();
           
           if (metadata) {
-              const gradCode = GRADUATION_MAP[row.curso] || "000";
+              const gradCode = fullCourseCode;
               const phaseStr = metadata.phase ? metadata.phase.toString().padStart(2, '0') : "00";
               const classIdentifier = row.agrupamentoPratico || `${phaseStr}${gradCode}`;
 
@@ -302,7 +330,7 @@ export async function importProfessoresEPlanos(
                   semestreId: semestreId,
                   status: 'draft',
                   semester: semesterName,
-                  courseName: row.curso,
+                  courseName: fullCourseName,
                   syllabus: metadata.syllabus,
                   prerequisites: formattedPrerequisites,
                   campus: "Campus de Joinville",
@@ -312,7 +340,7 @@ export async function importProfessoresEPlanos(
 
 Caso o(a) aluno(a) **não compareça a 75% da carga horária** da disciplina estará **automaticamente reprovado com nota 0,0(zero)**, independentemente da sua média nas avaliações individuais, conforme dispõem no **Art. 69 § 2º da Resolução 017/CUn/97**.
 
-Os(as) alunos(as) que eventualmente faltarem em alguma avaliação que foram perdidas por motivos extremos, mediante justificativa; dentro do prazo de **3 (três) dias úteis** após a avaliação conforme o que dispõe o **Art. 74, da Resolução 017/CUn/97**, poderão solicitar na secretaria acadêmica do Centro de Engenharias da Mobilidade o pedido de **segunda chamada**. Após a análise do pedido e seu deferimento, os(as) alunos(as) poderão realizar a avaliação de segunda chamada na data, no local e horário definido no cronograma.`,
+Os(as) alunos(as) que eventualmente faltarem em alguma avaliação que foram perdidas por motivos extremos, mediante justificativa; dentro do prazo de **3 (três) dias úteis** após a avaliação conforme o que dispõe o **Art. 74, da Resolução 017/CUn/97**, poderão solicitar na secretaria acadêmica do Centro de Engenharias da Mobilidade o pedido de **segunda chamada**. Após a análise do pedido e seu deferimento, los(as) alunos(as) poderão realizar a avaliação de segunda chamada na data, no local e horário definido no cronograma.`,
                   createdAt: new Date(),
                   updatedAt: new Date(),
               });
@@ -362,7 +390,7 @@ Os(as) alunos(as) que eventualmente faltarem em alguma avaliação que foram per
                 semestreId: semestreId,
                 semester: semesterName,
                 status: 'draft',
-                courseName: row.disciplinaNome,
+                courseName: fullCourseName,
                 syllabus: row.disciplinaNome, 
                 createdAt: new Date(),
                 updatedAt: new Date(),
