@@ -307,7 +307,8 @@ export async function importProfessoresEPlanos(
           if (metadata) {
               const gradCode = fullCourseCode;
               const phaseStr = metadata.phase ? metadata.phase.toString().padStart(2, '0') : "00";
-              const classIdentifier = row.agrupamentoPratico || `${phaseStr}${gradCode}`;
+              // Priority: Column C (row.turma) is the source of truth for the class code
+              const classIdentifier = row.turma || `${phaseStr}${gradCode}`;
 
               let formattedPrerequisites = "";
               if (metadata.prerequisites && Array.isArray(metadata.prerequisites) && metadata.prerequisites.length > 0) {
@@ -392,6 +393,18 @@ Os(as) alunos(as) que eventualmente faltarem em alguma avaliação que foram per
                 status: 'draft',
                 courseName: fullCourseName,
                 syllabus: row.disciplinaNome, 
+                createdAt: new Date(),
+                updatedAt: new Date(),
+              });
+
+              // Also create the course record for the plan even if no master metadata exists
+              await tx.insert(courses).values({
+                id: uuidv4(),
+                studyPlanId: planId,
+                code: resolvedCodigo,
+                name: row.disciplinaNome,
+                classType: "Teórica",
+                classIdentifier: row.turma,
                 createdAt: new Date(),
                 updatedAt: new Date(),
               });
