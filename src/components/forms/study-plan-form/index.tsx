@@ -26,7 +26,6 @@ import {
 } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TiptapEditor } from "@/components/ui/tiptap-editor";
-import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { toastError, toastWarning, confirmDialog, toastSuccess } from "@/lib/swal";
 import { CopiarPlanoModal } from "@/components/planos/CopiarPlanoModal";
 
@@ -581,11 +580,17 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
               </div>
               <div className="space-y-2">
                 <Label htmlFor="programContent">Conteúdo Programático</Label>
-                <RichTextEditor
-                  id="programContent"
-                  {...register("programContent")}
-                  placeholder="Lista detalhada de tópicos (1., 1.1., etc)..."
-                  className="min-h-[300px]"
+                <Controller
+                  name="programContent"
+                  control={control}
+                  render={({ field }) => (
+                    <TiptapEditor
+                      value={field.value || ""}
+                      onChange={field.onChange}
+                      placeholder="Lista detalhada de tópicos (1., 1.1., etc)..."
+                      className="min-h-[300px]"
+                    />
+                  )}
                 />
               </div>            </CardContent>
           </Card>
