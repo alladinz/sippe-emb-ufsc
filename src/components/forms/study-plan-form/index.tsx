@@ -263,7 +263,11 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
         // Helper to check if a date is a holiday
         const getHoliday = (d: Date) => {
             if (!holidays) return null;
-            const dStr = d.toISOString().split('T')[0];
+            // Use local date components to avoid UTC timezone shifts
+            const year = d.getFullYear();
+            const month = (d.getMonth() + 1).toString().padStart(2, '0');
+            const day = d.getDate().toString().padStart(2, '0');
+            const dStr = `${year}-${month}-${day}`;
             return holidays.find((h: { date: string, description: string }) => h.date === dStr);
         };
 
