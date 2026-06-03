@@ -15,6 +15,7 @@ interface Semester {
     startDate: string | Date;
     endDate: string | Date;
     ativo: boolean | null;
+    holidays?: { date: string, description: string }[] | null;
 }
 
 interface SemesterManagementProps {
@@ -27,6 +28,22 @@ export function SemesterManagement({ semesters }: SemesterManagementProps) {
     const [name, setName] = useState("");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
+    const [holidays, setHolidays] = useState<{ date: string, description: string }[]>([]);
+    
+    // Holiday form state
+    const [newHolidayDate, setNewHolidayDate] = useState("");
+    const [newHolidayDesc, setNewHolidayDesc] = useState("");
+
+    const handleAddHoliday = () => {
+        if (!newHolidayDate || !newHolidayDesc) return;
+        setHolidays([...holidays, { date: newHolidayDate, description: newHolidayDesc }]);
+        setNewHolidayDate("");
+        setNewHolidayDesc("");
+    };
+
+    const handleRemoveHoliday = (index: number) => {
+        setHolidays(holidays.filter((_, i) => i !== index));
+    };
 
     const handleSave = () => {
         if (!name || !startDate || !endDate) {
@@ -37,10 +54,10 @@ export function SemesterManagement({ semesters }: SemesterManagementProps) {
         startTransition(async () => {
             try {
                 if (editingId) {
-                    await updateSemesterAction(editingId, name, startDate, endDate);
+                    await updateSemesterAction(editingId, name, startDate, endDate, holidays);
                     toastSuccess("Semestre atualizado com sucesso");
                 } else {
-                    await upsertSemesterAction(name, startDate, endDate);
+                    await upsertSemesterAction(name, startDate, endDate, holidays);
                     toastSuccess("Semestre salvo com sucesso");
                 }
                 resetForm();
@@ -55,6 +72,9 @@ export function SemesterManagement({ semesters }: SemesterManagementProps) {
         setName("");
         setStartDate("");
         setEndDate("");
+        setHolidays([]);
+        setNewHolidayDate("");
+        setNewHolidayDesc("");
     };
 
     const handleEdit = (s: Semester) => {
@@ -62,6 +82,7 @@ export function SemesterManagement({ semesters }: SemesterManagementProps) {
         setName(s.name);
         setStartDate(new Date(s.startDate).toISOString().split('T')[0]);
         setEndDate(new Date(s.endDate).toISOString().split('T')[0]);
+        setHolidays(s.holidays || []);
     };
 
     const handleDelete = async (id: string) => {
@@ -119,7 +140,66 @@ export function SemesterManagement({ semesters }: SemesterManagementProps) {
                         <Label htmlFor="sem-end">Término das Aulas</Label>
                         <Input id="sem-end" type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
                     </div>
-                    <div className="flex gap-2">
+
+                    <div className="pt-4 border-t space-y-4">
+                        <div className="flex items-center justify-between">
+                            <Label className="text-sm font-bold text-slate-700">Dias Não Letivos / Feriados</Label>
+                        </div>
+                        
+                        <div className="flex gap-2">
+                            <div className="flex-1 space-y-1">
+                                <Input 
+                                    type="date" 
+                                    value={newHolidayDate} 
+                                    onChange={(e) => setNewHolidayDate(e.target.value)} 
+                                    className="h-8 text-xs"
+                                />
+                            </div>
+                            <div className="flex-[2] space-y-1">
+                                <Input 
+                                    placeholder="Descrição (ex: Tiradentes)" 
+                                    value={newHolidayDesc} 
+                                    onChange={(e) => setNewHolidayDesc(e.target.value)} 
+                                    className="h-8 text-xs"
+                                />
+                            </div>
+                            <Button 
+                                type="button" 
+                                size="sm" 
+                                variant="outline" 
+                                className="h-8 w-8 p-0" 
+                                onClick={handleAddHoliday}
+                            >
+                                <Plus className="w-3 h-3" />
+                            </Button>
+                        </div>
+
+                        <div className="space-y-2 max-h-[200px] overflow-y-auto pr-1">
+                            {holidays.length === 0 ? (
+                                <p className="text-[10px] text-slate-400 italic">Nenhum feriado adicionado.</p>
+                            ) : (
+                                holidays.map((h, i) => (
+                                    <div key={i} className="flex items-center justify-between p-2 bg-slate-50 rounded border text-[10px]">
+                                        <div className="flex gap-2">
+                                            <span className="font-bold text-brand-blue">
+                                                {new Date(h.date).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}
+                                            </span>
+                                            <span className="text-slate-600">{h.description}</span>
+                                        </div>
+                                        <button 
+                                            type="button" 
+                                            onClick={() => handleRemoveHoliday(i)}
+                                            className="text-slate-400 hover:text-red-500 transition-colors"
+                                        >
+                                            <X className="w-3 h-3" />
+                                        </button>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="flex gap-2 pt-2">
                         {editingId && (
                             <Button variant="outline" className="flex-1 gap-2 rounded-sm" onClick={resetForm} disabled={isPending}>
                                 <X className="w-4 h-4" />

@@ -38,6 +38,7 @@ interface StudyPlanFormProps {
       startDate: Date;
       endDate: Date;
   };
+  holidays?: { date: string, description: string }[];
 }
 
 const DAYS_OF_WEEK = [
@@ -52,7 +53,7 @@ const DAYS_OF_WEEK = [
 
 const DEFAULT_FINAL_EVALUATION = "O(a) aluno(a) com frequência suficiente e média das notas entre três (3,0) e cinco vírgula cinco (5,5) terá direito a uma nova avaliação no final do semestre que versará sobre todo o conteúdo da disciplina, conforme o que dispõe o § 2º do Art. 70 e § 3º do Art. 71 da Resolução nº 17/Cun/97. Neste caso, a média final será calculada através da média aritmética simples entre a média das notas das avaliações feitas durante o semestre e a nota obtida na nova avaliação. A nota mínima de aprovação é seis (6,0).\n\nCaso o(a) aluno(a) não compareça a 75% da carga horária da disciplina estará automaticamente reprovado com nota 0,0(zero), independentemente da sua média nas avaliações individuais, conforme dispõem no Art. 69 § 2º da Resolução 017/CUn/97.\n\nOs(as) alunos(as) que eventualmente faltarem em alguma avaliação que foram perdidas por motivos extremos, mediante justificativa; dentro do prazo de 3 (três) dias úteis após a avaliação conforme o que dispõe o Art. 74, da Resolução 017/CUn/97, poderão solicitar na secretaria acadêmica do Centro de Engenharias da Mobilidade o pedido de segunda chamada. Após a análise do pedido e seu deferimento, os(as) alunos(as) poderão realizar a avaliação de segunda chamada na data, no local e horário definido no cronograma.";
 
-export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, semesterDates }: StudyPlanFormProps) {
+export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, semesterDates, holidays }: StudyPlanFormProps) {
   const [isPending, startTransition] = useTransition();
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [modalCopiaAberto, setModalCopiaAberto] = useState(false);
@@ -258,13 +259,37 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
         }
 
         const formatDate = (d: Date) => `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}`;
+        
+        // Helper to check if a date is a holiday
+        const getHoliday = (d: Date) => {
+            if (!holidays) return null;
+            const dStr = d.toISOString().split('T')[0];
+            return holidays.find((h: { date: string, description: string }) => h.date === dStr);
+        };
 
-        // Every week in the semester range gets a row
-        weeks.push({
+        const weekEntry = {
             week: weekNum.toString(),
-            class1: { number: weekClasses[0] ? formatDate(weekClasses[0]) : "-", content: "" },
-            class2: { number: weekClasses[1] ? formatDate(weekClasses[1]) : "-", content: "" }
-        });
+            class1: { number: "-", content: "" },
+            class2: { number: "-", content: "" }
+        };
+
+        if (weekClasses[0]) {
+            weekEntry.class1.number = formatDate(weekClasses[0]);
+            const h = getHoliday(weekClasses[0]);
+            if (h) {
+                weekEntry.class1.content = `[DIA NÃO LETIVO] ${h.description.toUpperCase()}`;
+            }
+        }
+
+        if (weekClasses[1]) {
+            weekEntry.class2.number = formatDate(weekClasses[1]);
+            const h = getHoliday(weekClasses[1]);
+            if (h) {
+                weekEntry.class2.content = `[DIA NÃO LETIVO] ${h.description.toUpperCase()}`;
+            }
+        }
+
+        weeks.push(weekEntry);
         
         currentWeekMonday.setDate(currentWeekMonday.getDate() + 7);
         weekNum++;

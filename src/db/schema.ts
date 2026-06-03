@@ -121,6 +121,7 @@ export const semesters = pgTable("semesters", {
   endDate: timestamp("end_date").notNull(),
   ativo: boolean("ativo").default(false),
   dataLimiteSubmissao: timestamp("data_limite_submissao"),
+  holidays: jsonb("holidays").$type<{ date: string; description: string }[]>().default([]),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

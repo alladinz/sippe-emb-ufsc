@@ -61,6 +61,7 @@ export default async function EditStudyPlanPage({ params }: EditStudyPlanPagePro
             startDate: semesterData.startDate,
             endDate: semesterData.endDate
         } : undefined}
+        holidays={semesterData?.holidays || []}
       />
     </div>
   );

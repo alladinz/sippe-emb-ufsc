@@ -274,7 +274,7 @@ export async function clearMasterDatabaseAction() {
     revalidatePath("/dashboard/chef");
 }
 
-export async function upsertSemesterAction(name: string, startDate: string, endDate: string) {
+export async function upsertSemesterAction(name: string, startDate: string, endDate: string, holidays: { date: string, description: string }[] = []) {
     await verifyChef();
     
     const start = new Date(startDate);
@@ -288,6 +288,7 @@ export async function upsertSemesterAction(name: string, startDate: string, endD
         name,
         startDate: start,
         endDate: end,
+        holidays,
         updatedAt: new Date(),
     })
     .onConflictDoUpdate({
@@ -295,6 +296,7 @@ export async function upsertSemesterAction(name: string, startDate: string, endD
         set: {
             startDate: start,
             endDate: end,
+            holidays,
             updatedAt: new Date(),
         }
     });
@@ -302,7 +304,7 @@ export async function upsertSemesterAction(name: string, startDate: string, endD
     revalidatePath("/dashboard/chef");
 }
 
-export async function updateSemesterAction(id: string, name: string, startDate: string, endDate: string) {
+export async function updateSemesterAction(id: string, name: string, startDate: string, endDate: string, holidays: { date: string, description: string }[] = []) {
     await verifyChef();
     
     const start = new Date(startDate);
@@ -317,6 +319,7 @@ export async function updateSemesterAction(id: string, name: string, startDate: 
             name,
             startDate: start,
             endDate: end,
+            holidays,
             updatedAt: new Date(),
         })
         .where(eq(semesters.id, id));
