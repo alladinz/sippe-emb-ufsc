@@ -167,9 +167,8 @@ export async function getProgramaById(id: string): Promise<ProgramaEnsino | null
 
 export async function deletePrograma(id: string) {
   // Must be 'draft' to be deleted
-  const programa = await db.query.programasEnsino.findFirst({
-    where: eq(programasEnsino.id, id)
-  });
+  const result = await db.select().from(programasEnsino).where(eq(programasEnsino.id, id)).limit(1);
+  const programa = result[0];
 
   if (!programa) throw new Error("Programa not found");
   if (programa.status !== "draft") throw new Error("Only draft programs can be deleted");

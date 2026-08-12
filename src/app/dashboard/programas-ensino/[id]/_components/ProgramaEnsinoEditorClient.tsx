@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { programasEnsinoApi } from "@/services/programasEnsinoApi";
 import { toastError, toastSuccess, toastWarning, confirmDialog } from "@/lib/swal";
-import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { ProgramaActionBar } from "@/components/programas/ProgramaActionBar";
 import { SubmitProgramaModal } from "@/components/programas/SubmitProgramaModal";
 import { HistoricoDrawer } from "@/components/programas/HistoricoDrawer";
@@ -301,11 +301,21 @@ export function ProgramaEnsinoEditorClient({ id }: Props) {
   return (
     <div className="max-w-5xl mx-auto pb-20">
       <div className="mb-6">
-        <Breadcrumb items={[
-          { label: 'Dashboard', href: '/dashboard' },
-          { label: 'Programas de Ensino', href: '/dashboard/programas-ensino' },
-          { label: programa.nome_disciplina || 'Editor', href: '#' },
-        ]} />
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/dashboard/programas-ensino">Programas de Ensino</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{programa.nome_disciplina || 'Editor'}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
       </div>
 
       <div className="mb-6">
