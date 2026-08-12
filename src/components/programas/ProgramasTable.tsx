@@ -91,7 +91,7 @@ export function ProgramasTable({ programas, isLoading, hasError, onRetry, hasFil
                                         <TableCell>
                                             <p className="font-medium text-slate-900">{programa.nome_disciplina}</p>
                                             <p className="text-xs text-slate-400">{programa.codigo_disciplina}</p>
-                                            {programa.cursos_vinculados.length > 0 && (
+                                            {programa.cursos_vinculados && programa.cursos_vinculados.length > 0 && (
                                                 <div className="flex gap-1 mt-1">
                                                     {programa.cursos_vinculados.slice(0, 2).map(c => (
                                                         <span key={c} className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
