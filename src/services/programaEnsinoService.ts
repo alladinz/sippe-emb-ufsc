@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { db } from "@/db";
 import { programasEnsino, historicoProgramas } from "../db/schema_programas";
 import { disciplinas, user } from "@/db/schema";
