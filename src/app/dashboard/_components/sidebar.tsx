@@ -9,7 +9,8 @@ import {
     Archive, 
     ChevronLeft, 
     ChevronRight,
-    LucideIcon
+    LucideIcon,
+    GraduationCap
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -37,6 +38,7 @@ export function Sidebar({ isReviewer, isChef, isAdmin }: SidebarProps) {
     const navItems: NavItem[] = [
         { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, show: true },
         { href: "/dashboard/study-plans", label: "Planos de ensino", icon: FileText, show: true },
+        { href: "/dashboard/programas-ensino", label: "Programas de ensino", icon: GraduationCap, show: isChef || isReviewer },
         { href: "/dashboard/coordinator", label: "Revisão de planos", icon: ClipboardCheck, show: isReviewer },
         { href: "/dashboard/chef", label: "Visão geral", icon: School, show: isChef },
         { href: "/dashboard/secretary", label: "Arquivo Central", icon: Archive, show: isAdmin },
