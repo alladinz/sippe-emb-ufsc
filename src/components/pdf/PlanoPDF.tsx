@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Image,
 } from '@react-pdf/renderer';
-
+import { resolveContent } from './pdfHelpers';
 const styles = StyleSheet.create({
   page: {
     padding: 40,
@@ -176,22 +176,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function stripHtml(html: string | null | undefined): string {
-  if (!html) return '';
-  return html
-    .replace(/<br\s*\/?>/gi, '\n')
-    .replace(/<\/p>/gi, '\n')
-    .replace(/<\/li>/gi, '\n')
-    .replace(/<li>/gi, '• ')
-    .replace(/<[^>]+>/g, '')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/\n\s*\n/g, '\n')
-    .trim();
-}
+
 
 interface Course {
   id: string;
@@ -370,7 +355,7 @@ export const PlanoPDF = ({ plano, logoBlob }: PlanoPDFProps) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>III. EMENTA</Text>
           <Text style={styles.paragraph}>
-            {String(stripHtml(plano.syllabus) || 'Não informada.')}
+            {String(resolveContent(plano.syllabus) || 'Não informada.')}
           </Text>
         </View>
 
@@ -378,7 +363,7 @@ export const PlanoPDF = ({ plano, logoBlob }: PlanoPDFProps) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>IV. OBJETIVOS</Text>
           <Text style={styles.paragraph}>
-            {String(stripHtml(plano.objectives) || 'Não informados.')}
+            {String(resolveContent(plano.objectives) || 'Não informados.')}
           </Text>
         </View>
 
@@ -386,7 +371,7 @@ export const PlanoPDF = ({ plano, logoBlob }: PlanoPDFProps) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>V. CONTEÚDO PROGRAMÁTICO</Text>
           <Text style={styles.paragraph}>
-            {String(stripHtml(plano.programContent) || 'Não informado.')}
+            {String(resolveContent(plano.programContent) || 'Não informado.')}
           </Text>
         </View>
 
@@ -394,7 +379,7 @@ export const PlanoPDF = ({ plano, logoBlob }: PlanoPDFProps) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>VI. METODOLOGIA DE ENSINO / DESENVOLVIMENTO DO PROGRAMA</Text>
           <Text style={styles.paragraph}>
-            {String(stripHtml(plano.methodology) || 'Não informada.')}
+            {String(resolveContent(plano.methodology) || 'Não informada.')}
           </Text>
         </View>
 
@@ -418,7 +403,7 @@ export const PlanoPDF = ({ plano, logoBlob }: PlanoPDFProps) => {
           </View>
           {plano.finalConsiderations && (
             <Text style={styles.paragraph}>
-              {String(stripHtml(plano.finalConsiderations))}
+              {String(resolveContent(plano.finalConsiderations))}
             </Text>
           )}
         </View>

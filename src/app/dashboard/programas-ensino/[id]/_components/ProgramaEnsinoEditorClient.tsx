@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { programasEnsinoApi } from "@/services/programasEnsinoApi";
-import { toastError, toastSuccess, toastWarning, confirmDialog } from "@/lib/swal";
+import { toastError, toastSuccess, confirmDialog } from "@/lib/swal";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { ProgramaActionBar } from "@/components/programas/ProgramaActionBar";
 import { SubmitProgramaModal } from "@/components/programas/SubmitProgramaModal";
@@ -186,6 +186,11 @@ export function ProgramaEnsinoEditorClient({ id }: Props) {
     }
   };
 
+  const handleVisualizar = () => {
+    if (!programa) return;
+    router.push(`/dashboard/programas-ensino/${programa.id}/visualizar`);
+  };
+
   const handlePreSubmit = () => {
     if (!formState.ementa?.trim()) {
       toastError('Preencha a Ementa antes de submeter.');
@@ -330,7 +335,7 @@ export function ProgramaEnsinoEditorClient({ id }: Props) {
         onSubmit={handlePreSubmit}
         onArchive={handleArchive}
         onHistory={() => setShowHistorico(true)}
-        onVisualizar={() => toastWarning('Visualização disponível na próxima etapa')}
+        onVisualizar={handleVisualizar}
       />
 
       <div className="mt-6 border-b border-gray-200 overflow-x-auto">
