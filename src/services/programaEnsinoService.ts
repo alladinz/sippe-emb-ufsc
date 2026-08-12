@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { db } from "@/db";
 import { programasEnsino, historicoProgramas } from "../db/schema_programas";
-import { disciplinas, user } from "@/db/schema";
+import { disciplinas, user, universityCourses } from "@/db/schema";
 import { eq, and, ilike, or, desc, sql, ne } from "drizzle-orm";
 import { 
   ProgramaEnsino, 
@@ -207,6 +207,50 @@ export async function createPrograma(disciplinaId: string, userId: string): Prom
   }
   const disc = discResult[0];
 
+  const pccs = await db.select().from(universityCourses).where(eq(universityCourses.code, disc.codigo));
+  let ementaToSave = null;
+  const bibToSave: any[] = [];
+  
+  if (pccs.length > 0) {
+    const getPriority = (p: any) => {
+      const grad = (p.graduation || '').toLowerCase();
+      if (grad.includes('isolada')) return 3;
+      if (grad.includes('básico') || grad.includes('basico') || grad.includes('geral')) return 2;
+      return 1;
+    };
+    
+    pccs.sort((a, b) => getPriority(b) - getPriority(a));
+    const bestPcc = pccs[0];
+    
+    ementaToSave = bestPcc.syllabus || null;
+    
+    const bibData = bestPcc.bibliography as any;
+    if (bibData) {
+      const processItems = (items: any[], tipo: 'basica' | 'complementar') => {
+        if (!Array.isArray(items)) return;
+        items.forEach((item) => {
+          let ref = "";
+          if (typeof item === 'object' && item !== null) {
+            ref = `${item.authors || ''} ${item.details || ''}`.trim();
+          } else if (typeof item === 'string') {
+            ref = item;
+          }
+          if (ref) {
+            bibToSave.push({
+              id: crypto.randomUUID(),
+              tipo,
+              referencia: ref,
+              ordem: bibToSave.length
+            });
+          }
+        });
+      };
+      
+      processItems(bibData.basic || bibData.basica || [], 'basica');
+      processItems(bibData.complementary || bibData.complementar || [], 'complementar');
+    }
+  }
+
   const [newProgram] = await db.insert(programasEnsino).values({
     disciplinaId,
     criadoPor: userId,
@@ -216,6 +260,8 @@ export async function createPrograma(disciplinaId: string, userId: string): Prom
     cursosVinculados: disc.curso ? [disc.curso] : [],
     creditosTeoricos: disc.creditosTeorico,
     creditosPraticos: disc.creditosPratico,
+    ementa: ementaToSave,
+    bibliografia: bibToSave.length > 0 ? bibToSave : null,
   }).returning();
 
   await db.insert(historicoProgramas).values({

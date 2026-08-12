@@ -256,10 +256,6 @@ export function ProgramaEnsinoEditorClient({ id }: Props) {
     }
   }
 
-  const allTabs = TABS.map(t => getTabStatus(t.id));
-  const completeTabs = allTabs.filter(s => s === 'complete').length;
-  const overallPct = Math.round((completeTabs / TABS.length) * 100);
-
   if (isLoading) {
     return (
       <div className="max-w-5xl mx-auto space-y-6">
@@ -330,7 +326,6 @@ export function ProgramaEnsinoEditorClient({ id }: Props) {
       <ProgramaActionBar
         programa={programa}
         saveStatus={saveStatus}
-        overallCompletude={overallPct}
         onDelete={handleDelete}
         onSubmit={handlePreSubmit}
         onArchive={handleArchive}

@@ -31,6 +31,13 @@ export function DynamicBreadcrumb() {
         return null;
     }
 
+    // Don't show on study-plans detail/edit pages or programas-ensino detail/edit pages 
+    // because they implement their own or user asked to keep the custom one.
+    // Wait, study-plans doesn't implement its own? Actually we shouldn't touch study-plans if user just complained about programas-ensino.
+    if (pathSegments.length >= 3 && pathSegments[1] === "programas-ensino") {
+        return null;
+    }
+
     return (
         <Breadcrumb className="mb-4">
             <BreadcrumbList>

@@ -3,14 +3,12 @@
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Check, AlertCircle, Clock, Trash2, Send, Archive, Eye } from "lucide-react";
 import Link from "next/link";
-import { CompletudeBadge } from "./CompletudeBadge";
 import { getProgramaStatusBadge, isProgramaEditable } from "../../utils/programaStatus";
 import type { ProgramaEnsino } from "../../types/programaEnsino";
 
 interface ProgramaActionBarProps {
     programa: ProgramaEnsino;
     saveStatus: 'saved' | 'saving' | 'error';
-    overallCompletude: number;
     onDelete: () => void;
     onSubmit: () => void;
     onArchive: () => void;
@@ -21,7 +19,6 @@ interface ProgramaActionBarProps {
 export function ProgramaActionBar({
     programa,
     saveStatus,
-    overallCompletude,
     onDelete,
     onSubmit,
     onArchive,
@@ -73,10 +70,6 @@ export function ProgramaActionBar({
                     )}
                 </div>
 
-                <div className="w-64">
-                    <CompletudeBadge value={overallCompletude} size="sm" showLabel={false} />
-                    <p className="text-xs text-slate-500 mt-1">{overallCompletude}% preenchido</p>
-                </div>
                 
                 {isRejected && programa.feedback_aprovacao && (
                     <p className="text-xs text-red-600 mt-1 border border-red-100 bg-red-50 p-2 rounded w-fit">

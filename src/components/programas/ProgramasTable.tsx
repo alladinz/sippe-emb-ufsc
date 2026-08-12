@@ -18,7 +18,6 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, GraduationCap, Search } from "lucide-react";
 import Link from "next/link";
 import { getProgramaStatusBadge } from "../../utils/programaStatus";
-import { CompletudeBadge } from "./CompletudeBadge";
 import type { ProgramaListItem } from "../../types/programaEnsino";
 
 interface ProgramasTableProps {
@@ -40,7 +39,6 @@ export function ProgramasTable({ programas, isLoading, hasError, onRetry, hasFil
                         <TableRow className="bg-slate-50/50">
                             <TableHead>Disciplina</TableHead>
                             <TableHead>Status</TableHead>
-                            <TableHead>Preenchimento</TableHead>
                             <TableHead>Atualizado em</TableHead>
                             <TableHead className="text-right">Ações</TableHead>
                         </TableRow>
@@ -51,14 +49,13 @@ export function ProgramasTable({ programas, isLoading, hasError, onRetry, hasFil
                                 <TableRow key={i}>
                                     <TableCell><div className="h-4 w-48 bg-slate-200 animate-pulse rounded" /></TableCell>
                                     <TableCell><div className="h-4 w-24 bg-slate-200 animate-pulse rounded-full" /></TableCell>
-                                    <TableCell><div className="h-4 w-32 bg-slate-200 animate-pulse rounded" /></TableCell>
                                     <TableCell><div className="h-4 w-28 bg-slate-200 animate-pulse rounded" /></TableCell>
                                     <TableCell className="text-right"><div className="h-8 w-8 bg-slate-200 animate-pulse rounded ml-auto" /></TableCell>
                                 </TableRow>
                             ))
                         ) : hasError ? (
                             <TableRow>
-                                <TableCell colSpan={5} className="p-0">
+                                <TableCell colSpan={4} className="p-0">
                                     <div className="py-10 text-center flex flex-col items-center">
                                         <p className="text-slate-500 mb-4">Erro ao carregar programas.</p>
                                         <Button variant="outline" onClick={onRetry}>Tentar Novamente</Button>
@@ -67,7 +64,7 @@ export function ProgramasTable({ programas, isLoading, hasError, onRetry, hasFil
                             </TableRow>
                         ) : programas.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={5} className="p-0">
+                                <TableCell colSpan={4} className="p-0">
                                     {hasFiltersActive ? (
                                         <TableEmptyState 
                                             icon={<Search className="w-8 h-8 text-slate-400" />}
@@ -111,9 +108,6 @@ export function ProgramasTable({ programas, isLoading, hasError, onRetry, hasFil
                                                 <span className={`w-1.5 h-1.5 rounded-full ${statusInfo.colors.dot}`} />
                                                 {statusInfo.label}
                                             </span>
-                                        </TableCell>
-                                        <TableCell className="w-[140px]">
-                                            <CompletudeBadge value={programa.completude} showLabel={false} />
                                         </TableCell>
                                         <TableCell className="text-slate-500 text-sm">
                                             {new Date(programa.updated_at).toLocaleString('pt-BR')}
