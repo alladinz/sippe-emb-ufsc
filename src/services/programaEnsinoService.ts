@@ -165,6 +165,20 @@ export async function getProgramaById(id: string): Promise<ProgramaEnsino | null
   };
 }
 
+export async function deletePrograma(id: string) {
+  // Must be 'draft' to be deleted
+  const programa = await db.query.programasEnsino.findFirst({
+    where: eq(programasEnsino.id, id)
+  });
+
+  if (!programa) throw new Error("Programa not found");
+  if (programa.status !== "draft") throw new Error("Only draft programs can be deleted");
+
+  await db.delete(programasEnsino).where(eq(programasEnsino.id, id));
+  
+  return { success: true };
+}
+
 export async function getProgramaByDisciplinaId(disciplinaId: string): Promise<ProgramaEnsino | null> {
   const result = await db
     .select({ programa: programasEnsino })
