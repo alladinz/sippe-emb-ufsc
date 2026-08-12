@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth/auth";
 import { getProgramaByDisciplinaId } from "@/services/programaEnsinoService";
 
-export async function GET(request: Request, context: { params: { disciplinaId: string } }) {
+export async function GET(request: Request, context: { params: Promise<{ disciplinaId: string }> }) {
   try {
     const session = await auth.api.getSession();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

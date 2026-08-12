@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth/auth";
 import { getProgramaById, updatePrograma } from "@/services/programaEnsinoService";
 import { updateProgramaSchema } from "@/schemas/programaEnsinoSchema";
 
-export async function GET(request: Request, context: { params: { id: string } }) {
+export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth.api.getSession();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -19,7 +19,7 @@ export async function GET(request: Request, context: { params: { id: string } })
   }
 }
 
-export async function PATCH(request: Request, context: { params: { id: string } }) {
+export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth.api.getSession();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

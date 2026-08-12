@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth/auth";
 import { reviewPrograma } from "@/services/programaEnsinoService";
 import { reviewProgramaSchema } from "@/schemas/programaEnsinoSchema";
 
-export async function POST(request: Request, context: { params: { id: string } }) {
+export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth.api.getSession();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
