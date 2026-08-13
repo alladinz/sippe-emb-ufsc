@@ -3,7 +3,6 @@ import {
   Document, Page, Text, View,
   StyleSheet, Image,
 } from '@react-pdf/renderer';
-import { BRASAO_UFSC } from '@/assets/brasaoUFSC';
 import { resolveContent } from './pdfHelpers';
 import type { ProgramaEnsino } from '../../types/programaEnsino';
 
@@ -149,9 +148,10 @@ const styles = StyleSheet.create({
 
 export interface ProgramaPDFProps {
   programa: ProgramaEnsino;
+  logoBlob?: Blob | null;
 }
 
-export function ProgramaPDF({ programa }: ProgramaPDFProps) {
+export function ProgramaPDF({ programa, logoBlob }: ProgramaPDFProps) {
   if (!programa) {
     return (
       <Document title="Programa de Ensino">
@@ -170,6 +170,20 @@ export function ProgramaPDF({ programa }: ProgramaPDFProps) {
     .filter((b) => b.tipo === 'complementar')
     .sort((a, b) => a.ordem - b.ordem);
 
+  const renderTextWithBold = (text: string) => {
+    if (!text) return null;
+    const parts = String(text).split('**');
+    return (
+      <Text style={styles.paragraph}>
+        {parts.map((part, i) => (
+          <Text key={i} style={{ fontFamily: i % 2 === 1 ? 'Times-Bold' : 'Times-Roman' }}>
+            {part}
+          </Text>
+        ))}
+      </Text>
+    );
+  };
+
   return (
     <Document
       title={`Programa de Ensino - ${programa.codigo_disciplina ?? ''}`}
@@ -180,8 +194,16 @@ export function ProgramaPDF({ programa }: ProgramaPDFProps) {
       <Page size="A4" style={styles.page}>
         {/* Header */}
         <View style={styles.header}>
-          {/* eslint-disable-next-line jsx-a11y/alt-text */}
-          <Image src={BRASAO_UFSC} style={styles.logo} />
+          {logoBlob ? (
+            /* eslint-disable-next-line jsx-a11y/alt-text */
+            <Image
+              cache
+              src={logoBlob}
+              style={styles.logo}
+            />
+          ) : (
+            <View style={styles.logo} />
+          )}
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerLineBold}>Universidade Federal de Santa Catarina</Text>
             <Text style={styles.headerLine}>CAMPUS JOINVILLE</Text>
@@ -244,33 +266,25 @@ export function ProgramaPDF({ programa }: ProgramaPDFProps) {
         {/* II. EMENTA */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>II. EMENTA</Text>
-          <Text style={styles.paragraph}>
-            {String(resolveContent(programa.ementa) || 'Não informada.')}
-          </Text>
+          {renderTextWithBold(String(resolveContent(programa.ementa) || 'Não informada.'))}
         </View>
 
         {/* III. OBJETIVOS */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>III. OBJETIVOS</Text>
-          <Text style={styles.paragraph}>
-            {String(resolveContent(programa.objetivos) || 'Não informados.')}
-          </Text>
+          {renderTextWithBold(String(resolveContent(programa.objetivos) || 'Não informados.'))}
         </View>
 
         {/* IV. CONTEÚDO PROGRAMÁTICO */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>IV. CONTEÚDO PROGRAMÁTICO</Text>
-          <Text style={styles.paragraph}>
-            {String(resolveContent(programa.conteudo_programatico) || 'Não informado.')}
-          </Text>
+          {renderTextWithBold(String(resolveContent(programa.conteudo_programatico) || 'Não informado.'))}
         </View>
 
         {/* V. CRITÉRIOS DE AVALIAÇÃO */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>V. CRITÉRIOS INSTITUCIONAIS DE AVALIAÇÃO</Text>
-          <Text style={styles.paragraph}>
-            {String(resolveContent(programa.criterios_avaliacao) || 'Não informados.')}
-          </Text>
+          {renderTextWithBold(String(resolveContent(programa.criterios_avaliacao) || 'Não informados.'))}
         </View>
 
         {/* VI. BIBLIOGRAFIA */}

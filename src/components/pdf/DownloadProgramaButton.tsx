@@ -26,8 +26,18 @@ export function DownloadProgramaButton({
     setIsGenerating(true);
 
     try {
+      let logoBlob: Blob | null = null;
+      try {
+        const response = await fetch('/brasao_UFSC.jpg');
+        if (response.ok) {
+          logoBlob = await response.blob();
+        }
+      } catch (e) {
+        console.warn('Não foi possível carregar o brasão binário:', e);
+      }
+
       const blob = await pdf(
-        <ProgramaPDF programa={programa} />
+        <ProgramaPDF programa={programa} logoBlob={logoBlob} />
       ).toBlob();
 
       const codigo = programa.codigo_disciplina ?? 'PROG';

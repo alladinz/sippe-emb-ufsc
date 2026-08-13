@@ -1,9 +1,8 @@
 import { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { auth } from '@/lib/auth/auth';
-import { db } from '@/db';
-import { eq } from 'drizzle-orm';
-import { programasEnsino } from '@/db/schema_programas';
+
+import { getProgramaById } from '@/services/programaEnsinoService';
 import { ArrowLeft, Download } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -17,6 +16,17 @@ export const metadata: Metadata = {
   title: 'Visualizar Programa de Ensino | SIPPE',
 };
 
+function formatText(text?: string | null): string {
+  if (!text) return "Não informado.";
+  // Convert markdown **bold** to HTML <strong>
+  // Prevent arbitrary HTML if any exists
+  const safeText = text
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+  
+  return safeText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+}
+
 export default async function ProgramaEnsinoVisualizarPage({
   params
 }: {
@@ -29,12 +39,11 @@ export default async function ProgramaEnsinoVisualizarPage({
     redirect("/login");
   }
 
-  const programaRow = await db.select().from(programasEnsino).where(eq(programasEnsino.id, id)).limit(1);
-  if (!programaRow || programaRow.length === 0) {
+  const programa = await getProgramaById(id);
+  if (!programa) {
     notFound();
   }
 
-  const programa = programaRow[0] as unknown as ProgramaEnsino;
   const statusInfo = getProgramaStatusBadge(programa.status);
 
   const basicas = (programa.bibliografia ?? [])
@@ -110,8 +119,8 @@ export default async function ProgramaEnsinoVisualizarPage({
           <div>
             <h4 className="font-bold mb-3 uppercase">II. EMENTA</h4>
             <div 
-              className="text-xs leading-relaxed text-justify prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: programa.ementa || "Não informada." }}
+              className="text-xs whitespace-pre-wrap leading-relaxed text-justify prose prose-sm max-w-none"
+              dangerouslySetInnerHTML={{ __html: formatText(programa.ementa) }}
             />
           </div>
 
@@ -119,8 +128,8 @@ export default async function ProgramaEnsinoVisualizarPage({
           <div>
             <h4 className="font-bold mb-3 uppercase">III. OBJETIVOS</h4>
             <div 
-              className="text-xs leading-relaxed text-justify prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: programa.objetivos || "Não informados." }}
+              className="text-xs whitespace-pre-wrap leading-relaxed text-justify prose prose-sm max-w-none"
+              dangerouslySetInnerHTML={{ __html: formatText(programa.objetivos) }}
             />
           </div>
 
@@ -129,7 +138,7 @@ export default async function ProgramaEnsinoVisualizarPage({
             <h4 className="font-bold mb-3 uppercase">IV. CONTEÚDO PROGRAMÁTICO</h4>
             <div 
               className="text-xs whitespace-pre-wrap leading-relaxed pl-4 border-l-2 border-slate-100 prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: programa.conteudo_programatico || "Não informado." }}
+              dangerouslySetInnerHTML={{ __html: formatText(programa.conteudo_programatico) }}
             />
           </div>
 
@@ -137,8 +146,8 @@ export default async function ProgramaEnsinoVisualizarPage({
           <div>
             <h4 className="font-bold mb-3 uppercase">V. CRITÉRIOS INSTITUCIONAIS DE AVALIAÇÃO</h4>
             <div 
-              className="text-xs leading-relaxed text-justify prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: programa.criterios_avaliacao || "Não informados." }}
+              className="text-xs whitespace-pre-wrap leading-relaxed text-justify prose prose-sm max-w-none"
+              dangerouslySetInnerHTML={{ __html: formatText(programa.criterios_avaliacao) }}
             />
           </div>
 
