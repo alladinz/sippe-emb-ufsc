@@ -40,6 +40,7 @@ export function Sidebar({ isReviewer, isChef, isAdmin }: SidebarProps) {
         { href: "/dashboard/study-plans", label: "Planos de ensino", icon: FileText, show: true },
         { href: "/dashboard/programas-ensino", label: "Programas de ensino", icon: GraduationCap, show: isChef || isReviewer },
         { href: "/dashboard/coordinator", label: "Revisão de planos", icon: ClipboardCheck, show: isReviewer },
+        { href: "/dashboard/revisao-programas", label: "Revisão de programas", icon: ClipboardCheck, show: isReviewer || isChef },
         { href: "/dashboard/chef", label: "Visão geral", icon: School, show: isChef },
         { href: "/dashboard/secretary", label: "Arquivo Central", icon: Archive, show: isAdmin },
     ];

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { db } from "@/db";
 import { programasEnsino, historicoProgramas } from "../db/schema_programas";
-import { disciplinas, user, universityCourses } from "@/db/schema";
+import { disciplinas, user, universityCourses, notifications } from "@/db/schema";
 import { eq, and, ilike, or, desc, sql, ne } from "drizzle-orm";
 import { 
   ProgramaEnsino, 
@@ -324,7 +324,10 @@ export async function submitPrograma(id: string, cursoAprovacao: string, userId:
   if (!prog.conteudo_programatico?.trim()) missing.push('conteudo_programatico');
 
   if (missing.length > 0) {
-    throw new Error(`Missing required fields: ${missing.join(', ')}`);
+    const error: any = new Error(`Missing required fields: ${missing.join(', ')}`);
+    error.code = 'MISSING_FIELDS';
+    error.fields = missing;
+    throw error;
   }
 
   await db.update(programasEnsino)
@@ -341,16 +344,62 @@ export async function submitPrograma(id: string, cursoAprovacao: string, userId:
     programaId: id,
     usuarioId: userId,
     tipoEvento: 'submetido',
-    descricao: `Submetido para o curso ${cursoAprovacao}`,
+    descricao: `Programa submetido para aprovação da coordenação: ${cursoAprovacao}`,
   });
+
+  // Notifications
+  const disciplineName = prog.nome_disciplina ?? 'Disciplina';
+  
+  // Find users with role 'coordenador' or 'chefe'
+  const recipients = await db.select({ id: user.id }).from(user)
+    .where(
+      and(
+        sql`papel IN ('coordenador', 'chefe')`,
+        eq(user.status, 'active'),
+        ne(user.id, userId)
+      )
+    );
+
+  if (recipients.length > 0) {
+    for (const recipient of recipients) {
+      // check deduplication
+      const existingNotif = await db.select().from(notifications)
+        .where(
+          and(
+            eq(notifications.programaId, id),
+            eq(notifications.type, 'programa_submetido'),
+            eq(notifications.read, false),
+            eq(notifications.userId, recipient.id)
+          )
+        ).limit(1);
+
+      if (existingNotif.length === 0) {
+        await db.insert(notifications).values({
+          userId: recipient.id,
+          type: 'programa_submetido',
+          title: 'Programa de Ensino aguarda aprovação',
+          message: `O programa de ensino de "${disciplineName}" foi submetido para aprovação da coordenação de ${cursoAprovacao}.`,
+          programaId: id,
+        });
+      }
+    }
+  }
 
   return (await getProgramaById(id))!;
 }
 
 export async function reviewPrograma(id: string, action: 'approve' | 'reject', feedback: string | undefined, userId: string): Promise<ProgramaEnsino> {
+  if (action === 'reject' && !feedback?.trim()) {
+    const error: any = new Error('Feedback obrigatório ao rejeitar');
+    error.code = 'FEEDBACK_REQUIRED';
+    throw error;
+  }
+
   const prog = await getProgramaById(id);
   if (!prog) throw new Error('Programa not found');
-  if (prog.status !== 'submitted') throw new Error('Only submitted programs can be reviewed');
+  if (prog.status !== 'submitted') throw new Error('Apenas programas submetidos podem ser revisados');
+
+  const disciplineName = prog.nome_disciplina ?? 'Disciplina';
 
   if (action === 'approve') {
     await db.update(programasEnsino)
@@ -358,6 +407,7 @@ export async function reviewPrograma(id: string, action: 'approve' | 'reject', f
         status: 'approved',
         aprovadoPor: userId,
         aprovadoEm: new Date(),
+        atualizadoPor: userId,
         updatedAt: new Date()
       })
       .where(eq(programasEnsino.id, id));
@@ -366,30 +416,47 @@ export async function reviewPrograma(id: string, action: 'approve' | 'reject', f
       programaId: id,
       usuarioId: userId,
       tipoEvento: 'aprovado',
-      descricao: 'Programa aprovado',
+      descricao: 'Programa aprovado pela coordenação',
+      snapshot: { aprovado_por: userId, aprovado_em: new Date().toISOString() },
     });
+
+    if (prog.criado_por) {
+      await db.insert(notifications).values({
+        userId: prog.criado_por,
+        type: 'programa_aprovado',
+        title: 'Programa de Ensino aprovado',
+        message: `O programa de ensino de "${disciplineName}" foi aprovado pela coordenação.`,
+        programaId: id,
+      });
+    }
+
   } else {
-    // rejected
+    // reject
     await db.update(programasEnsino)
       .set({
-        status: 'draft', // Reset to allow editing
+        status: 'draft',
         feedbackAprovacao: feedback,
+        atualizadoPor: userId,
         updatedAt: new Date()
       })
       .where(eq(programasEnsino.id, id));
     
-    // According to instructions, we also need to record that it was rejected
-    // But setting status to 'draft' immediately makes it editable. 
-    // Wait, prompt says: 
-    // UPDATE status = 'rejected', feedback_aprovacao = feedback
-    // Also reset to allow re-editing: status = 'draft' after recording the rejection
-    // Let's just set it to 'draft' and rely on historico_programas for the rejection record
     await db.insert(historicoProgramas).values({
       programaId: id,
       usuarioId: userId,
       tipoEvento: 'rejeitado',
-      descricao: feedback,
+      descricao: `Programa devolvido para revisão. Feedback: ${feedback}`,
     });
+
+    if (prog.criado_por) {
+      await db.insert(notifications).values({
+        userId: prog.criado_por,
+        type: 'programa_devolvido',
+        title: 'Programa de Ensino devolvido para revisão',
+        message: `O programa de "${disciplineName}" foi devolvido pela coordenação. Motivo: ${feedback}`,
+        programaId: id,
+      });
+    }
   }
 
   return (await getProgramaById(id))!;
@@ -398,12 +465,13 @@ export async function reviewPrograma(id: string, action: 'approve' | 'reject', f
 export async function archivePrograma(id: string, userId: string): Promise<ProgramaEnsino> {
   const prog = await getProgramaById(id);
   if (!prog) throw new Error('Programa not found');
-  if (prog.status !== 'approved') throw new Error('Only approved programs can be archived');
+  if (prog.status !== 'approved') throw new Error('Apenas programas aprovados podem ser arquivados');
 
   await db.update(programasEnsino)
     .set({
       status: 'archived',
       arquivadoEm: new Date(),
+      atualizadoPor: userId,
       updatedAt: new Date()
     })
     .where(eq(programasEnsino.id, id));
@@ -412,8 +480,8 @@ export async function archivePrograma(id: string, userId: string): Promise<Progr
     programaId: id,
     usuarioId: userId,
     tipoEvento: 'arquivado',
-    descricao: 'Programa arquivado',
-    snapshot: prog, // snapshot full prog
+    descricao: 'Programa arquivado definitivamente.',
+    snapshot: prog as any, 
   });
 
   return (await getProgramaById(id))!;

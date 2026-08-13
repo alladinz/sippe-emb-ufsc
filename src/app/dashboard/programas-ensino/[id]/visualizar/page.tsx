@@ -9,7 +9,6 @@ import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { DownloadProgramaButton } from '@/components/pdf/DownloadProgramaButton';
-import type { ProgramaEnsino } from '@/types/programaEnsino';
 import { getProgramaStatusBadge } from '@/utils/programaStatus';
 
 export const metadata: Metadata = {

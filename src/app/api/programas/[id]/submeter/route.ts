@@ -20,8 +20,17 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     try {
       const updated = await submitPrograma(id, result.data.curso_aprovacao, session.user.id);
       return NextResponse.json(updated);
-    } catch (e: any) {
-      return NextResponse.json({ error: e.message }, { status: 400 });
+    } catch (err: any) {
+      if (err.code === 'MISSING_FIELDS') {
+        return NextResponse.json({
+          error: err.message,
+          fields: err.fields
+        }, { status: 400 });
+      }
+      if (err.message.includes('draft') || err.message.includes('rascunho')) {
+        return NextResponse.json({ error: err.message }, { status: 409 });
+      }
+      return NextResponse.json({ error: 'Erro ao submeter programa' }, { status: 500 });
     }
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

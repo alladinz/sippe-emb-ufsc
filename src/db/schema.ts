@@ -222,11 +222,12 @@ export const notifications = pgTable("notifications", {
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
-  type: text("type").notNull(), // novo_plano, nova_submissao, plano_aprovado, plano_rejeitado
+  type: text("type").notNull(), // novo_plano, nova_submissao, plano_aprovado, plano_rejeitado, programa_submetido, etc.
   title: text("title").notNull(),
   message: text("message"),
   read: boolean("read").default(false),
   planId: uuid("plan_id").references(() => studyPlans.id, { onDelete: 'set null' }),
+  programaId: uuid("programa_id"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

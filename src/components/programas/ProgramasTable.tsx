@@ -113,11 +113,19 @@ export function ProgramasTable({ programas, isLoading, hasError, onRetry, hasFil
                                             {new Date(programa.updated_at).toLocaleString('pt-BR')}
                                         </TableCell>
                                         <TableCell className="text-right">
-                                            <Link href={`/dashboard/programas-ensino/${programa.id}`}>
-                                                <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 font-medium flex items-center gap-1 ml-auto">
-                                                    Abrir <ArrowRight className="w-4 h-4" />
-                                                </Button>
-                                            </Link>
+                                            {programa.status === 'archived' || programa.status === 'approved' ? (
+                                                <Link href={`/dashboard/programas-ensino/${programa.id}/visualizar`}>
+                                                    <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-700 hover:bg-slate-100 font-medium flex items-center gap-1 ml-auto">
+                                                        Visualizar <ArrowRight className="w-4 h-4" />
+                                                    </Button>
+                                                </Link>
+                                            ) : (
+                                                <Link href={`/dashboard/programas-ensino/${programa.id}`}>
+                                                    <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 font-medium flex items-center gap-1 ml-auto">
+                                                        Abrir <ArrowRight className="w-4 h-4" />
+                                                    </Button>
+                                                </Link>
+                                            )}
                                         </TableCell>
                                     </TableRow>
                                 );

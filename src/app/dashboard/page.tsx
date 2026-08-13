@@ -1,10 +1,11 @@
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/db";
 import { studyPlans } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { programasEnsino } from "@/db/schema_programas";
+import { eq, desc, count } from "drizzle-orm";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileEdit, ArrowRight, Clock, BookOpen } from "lucide-react";
+import { FileEdit, ArrowRight, Clock, BookOpen, GraduationCap } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
@@ -31,6 +32,19 @@ export default async function DashboardPage() {
   const total = pendingPlans.length;
   const submittedCount = total - drafts.length;
   const progressPercent = total > 0 ? (submittedCount / total) * 100 : 0;
+
+  // Programas stats for chefe/coordenador
+  const programasStats = { submetidos: 0, aprovados: 0 };
+  const userRole = (user as { papel?: string }).papel;
+  if (userRole === 'coordenador' || userRole === 'chefe') {
+    // Actually, this is a Server Component, I'll just query the db directly
+    const [sub, apr] = await Promise.all([
+      db.select({ value: count() }).from(programasEnsino).where(eq(programasEnsino.status, 'submitted')),
+      db.select({ value: count() }).from(programasEnsino).where(eq(programasEnsino.status, 'approved')),
+    ]);
+    programasStats.submetidos = sub[0].value;
+    programasStats.aprovados = apr[0].value;
+  }
 
   return (
     <div className="space-y-8">
@@ -101,7 +115,7 @@ export default async function DashboardPage() {
         <div className="space-y-6">
             <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
                 <Clock className="w-5 h-5 text-slate-600" />
-                Resumo
+                Resumo (Planos de Ensino)
             </h2>
             
             <div className="grid gap-3">
@@ -140,8 +154,27 @@ export default async function DashboardPage() {
                 </div>
             </div>
 
+            {(userRole === 'coordenador' || userRole === 'chefe') && (
+              <>
+                <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2 mt-8">
+                    <GraduationCap className="w-5 h-5 text-slate-600" />
+                    Programas de Ensino
+                </h2>
+                <div className="grid gap-3">
+                  <div className="bg-white rounded-lg p-4 shadow-sm border-l-4 border-yellow-400">
+                      <p className="text-[12px] text-slate-500 font-medium uppercase tracking-wider">Aguardando Revisão</p>
+                      <p className="text-[28px] font-semibold text-slate-900 mt-1 leading-none">{programasStats.submetidos}</p>
+                  </div>
+                  <div className="bg-white rounded-lg p-4 shadow-sm border-l-4 border-green-400">
+                      <p className="text-[12px] text-slate-500 font-medium uppercase tracking-wider">Aprovados</p>
+                      <p className="text-[28px] font-semibold text-slate-900 mt-1 leading-none">{programasStats.aprovados}</p>
+                  </div>
+                </div>
+              </>
+            )}
+
             <p className="text-[11px] text-slate-400 text-center italic">
-                Total de {total} documentos no sistema.
+                Total de {total} planos no sistema.
             </p>
         </div>
       </div>

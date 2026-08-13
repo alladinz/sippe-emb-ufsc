@@ -20,6 +20,7 @@ interface Notification {
     message: string | null;
     read: boolean;
     planId: string | null;
+    programaId: string | null;
     createdAt: string;
 }
 
@@ -87,16 +88,28 @@ export function NotificationBell() {
             router.push(path);
             setIsOpen(false);
         }
+        if (notification.programaId) {
+            const editTypes = ['programa_devolvido'];
+            const path = editTypes.includes(notification.type) 
+                ? `/dashboard/programas-ensino/${notification.programaId}`
+                : `/dashboard/programas-ensino/${notification.programaId}/visualizar`;
+            
+            router.push(path);
+            setIsOpen(false);
+        }
     };
 
     const getIcon = (type: string) => {
         switch (type) {
             case "plano_aprovado":
+            case "programa_aprovado":
                 return <CheckCircle className="w-4 h-4 text-green-500" />;
             case "plano_rejeitado":
+            case "programa_devolvido":
                 return <XCircle className="w-4 h-4 text-red-500" />;
             case "nova_submissao":
             case "novo_plano":
+            case "programa_submetido":
                 return <Bell className="w-4 h-4 text-yellow-500" />;
             default:
                 return <Bell className="w-4 h-4 text-blue-500" />;
