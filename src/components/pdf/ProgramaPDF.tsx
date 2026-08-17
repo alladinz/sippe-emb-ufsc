@@ -14,6 +14,8 @@ const styles = StyleSheet.create({
     fontSize: 10,
     lineHeight: 1.4,
     color: '#000000',
+    // Global constraint to prevent horizontal overflow in nested items
+    overflow: 'hidden',
   },
   header: {
     flexDirection: 'row',
@@ -94,6 +96,7 @@ const styles = StyleSheet.create({
   bibItem: {
     marginBottom: 4,
     flexDirection: 'row',
+    width: 470, // explicitly restrict width to avoid right overflow
   },
   bibNumber: {
     width: 25,
@@ -253,9 +256,9 @@ export function ProgramaPDF({ programa, logoBlob }: ProgramaPDFProps) {
               </View>
             </View>
             <View style={styles.gridRow}>
-              <View style={styles.gridCell}>
-                <Text style={styles.label}>Cursos Vinculados:</Text>
-                <Text style={styles.text}>
+              <View style={[styles.gridCell, { flexDirection: 'column', width: 470 }]}>
+                <Text style={[styles.label, { marginBottom: 2 }]}>Cursos Vinculados:</Text>
+                <Text style={[styles.text, { lineHeight: 1.4, flexWrap: 'wrap' }]}>
                   {programa.cursos_vinculados?.length ? programa.cursos_vinculados.join(', ') : '-'}
                 </Text>
               </View>
