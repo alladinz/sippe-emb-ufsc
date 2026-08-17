@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { DownloadProgramaButton } from '@/components/pdf/DownloadProgramaButton';
 import { getProgramaStatusBadge } from '@/utils/programaStatus';
+import { tiptapToPlainText } from '@/components/pdf/pdfHelpers';
 
 export const metadata: Metadata = {
   title: 'Visualizar Programa de Ensino | SIPPE',
@@ -24,6 +25,57 @@ function formatText(text?: string | null): string {
     .replace(/>/g, "&gt;");
   
   return safeText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+}
+
+function ViewerRichContent({
+  content
+}: { content?: string | null }) {
+  if (!content || !content.trim()) {
+    return (
+      <p className="text-sm text-gray-400 italic">
+        Não preenchido
+      </p>
+    );
+  }
+
+  // Detect content type
+  const trimmed = content.trim();
+
+  // Case 1: Tiptap JSON object
+  if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+    try {
+      const parsed = JSON.parse(trimmed);
+      const plainText = tiptapToPlainText(parsed);
+      return (
+        <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">
+          {plainText || (
+            <span className="text-gray-400 italic">
+              Não preenchido
+            </span>
+          )}
+        </p>
+      );
+    } catch {
+      // JSON parse failed — treat as plain text
+    }
+  }
+
+  // Case 2: HTML string from rich text editor
+  if (/<[a-z][\s\S]*>/i.test(trimmed)) {
+    return (
+      <div
+        className="prose prose-sm max-w-none text-gray-800 leading-relaxed viewer-rich-content"
+        dangerouslySetInnerHTML={{ __html: trimmed }}
+      />
+    );
+  }
+
+  // Case 3: Plain text
+  return (
+    <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">
+      {trimmed}
+    </p>
+  );
 }
 
 export default async function ProgramaEnsinoVisualizarPage({
@@ -126,28 +178,25 @@ export default async function ProgramaEnsinoVisualizarPage({
           {/* III. OBJETIVOS */}
           <div>
             <h4 className="font-bold mb-3 uppercase">III. OBJETIVOS</h4>
-            <div 
-              className="text-xs whitespace-pre-wrap leading-relaxed text-justify prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: formatText(programa.objetivos) }}
-            />
+            <div className="text-xs text-justify">
+              <ViewerRichContent content={programa.objetivos} />
+            </div>
           </div>
 
           {/* IV. CONTEÚDO PROGRAMÁTICO */}
           <div>
             <h4 className="font-bold mb-3 uppercase">IV. CONTEÚDO PROGRAMÁTICO</h4>
-            <div 
-              className="text-xs whitespace-pre-wrap leading-relaxed pl-4 border-l-2 border-slate-100 prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: formatText(programa.conteudo_programatico) }}
-            />
+            <div className="text-xs pl-4 border-l-2 border-slate-100">
+              <ViewerRichContent content={programa.conteudo_programatico} />
+            </div>
           </div>
 
           {/* V. CRITÉRIOS DE AVALIAÇÃO */}
           <div>
             <h4 className="font-bold mb-3 uppercase">V. CRITÉRIOS INSTITUCIONAIS DE AVALIAÇÃO</h4>
-            <div 
-              className="text-xs whitespace-pre-wrap leading-relaxed text-justify prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: formatText(programa.criterios_avaliacao) }}
-            />
+            <div className="text-xs text-justify">
+              <ViewerRichContent content={programa.criterios_avaliacao} />
+            </div>
           </div>
 
           {/* VI. BIBLIOGRAFIA */}

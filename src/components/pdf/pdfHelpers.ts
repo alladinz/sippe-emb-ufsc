@@ -23,6 +23,9 @@ export function stripHtmlForPdf(html: string | null | undefined): string {
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
     .replace(/\n{3,}/g, '\n\n') // collapse triple+ newlines
+    // After all replacements, as a final safety net:
+    .replace(/<\/?[^>]+(>|$)/g, '')
+    .replace(/&lt;[^&]+&gt;/g, '') // encoded tags
     .trim();
 }
 
