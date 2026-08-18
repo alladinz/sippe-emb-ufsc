@@ -1,9 +1,6 @@
 import React from 'react';
-import {
-  Document, Page, Text, View,
-  StyleSheet, Image,
-} from '@react-pdf/renderer';
-import { resolveContent } from './pdfHelpers';
+import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
+import { resolveContent, parseBoldMarkers } from './pdfHelpers';
 import type { ProgramaEnsino } from '../../types/programaEnsino';
 
 // Exact same styles as PlanoPDF to ensure identical format
@@ -298,24 +295,50 @@ export function ProgramaPDF({ programa, logoBlob }: ProgramaPDFProps) {
             {basicas.length > 0 && (
               <View style={styles.bibSection}>
                 <Text style={styles.bibTypeLabel}>Bibliografia Básica</Text>
-                {basicas.map((item, i) => (
-                  <View key={item.id} style={styles.bibItem} wrap={false}>
-                    <Text style={styles.bibNumber}>[{i + 1}]</Text>
-                    <Text style={styles.bibText}>{item.referencia}</Text>
-                  </View>
-                ))}
+                {basicas.map((item, i) => {
+                  const segments = parseBoldMarkers(item.referencia);
+                  return (
+                    <View key={item.id} style={styles.bibItem} wrap={false}>
+                      <Text style={styles.bibNumber}>[{i + 1}]</Text>
+                      <Text style={styles.bibText}>
+                        {segments.map((seg, si) =>
+                          seg.isBold ? (
+                            <Text key={si} style={{ fontFamily: 'Times-Bold' }}>
+                              {seg.text}
+                            </Text>
+                          ) : (
+                            <Text key={si}>{seg.text}</Text>
+                          )
+                        )}
+                      </Text>
+                    </View>
+                  );
+                })}
               </View>
             )}
 
             {complementares.length > 0 && (
               <View style={styles.bibSection}>
                 <Text style={styles.bibTypeLabel}>Bibliografia Complementar</Text>
-                {complementares.map((item, i) => (
-                  <View key={item.id} style={styles.bibItem} wrap={false}>
-                    <Text style={styles.bibNumber}>[{i + 1}]</Text>
-                    <Text style={styles.bibText}>{item.referencia}</Text>
-                  </View>
-                ))}
+                {complementares.map((item, i) => {
+                  const segments = parseBoldMarkers(item.referencia);
+                  return (
+                    <View key={item.id} style={styles.bibItem} wrap={false}>
+                      <Text style={styles.bibNumber}>[{i + 1}]</Text>
+                      <Text style={styles.bibText}>
+                        {segments.map((seg, si) =>
+                          seg.isBold ? (
+                            <Text key={si} style={{ fontFamily: 'Times-Bold' }}>
+                              {seg.text}
+                            </Text>
+                          ) : (
+                            <Text key={si}>{seg.text}</Text>
+                          )
+                        )}
+                      </Text>
+                    </View>
+                  );
+                })}
               </View>
             )}
           </View>

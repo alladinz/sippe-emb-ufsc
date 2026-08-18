@@ -132,3 +132,26 @@ export function formatDateTimeBR(
     hour: '2-digit', minute: '2-digit'
   });
 }
+
+export interface TextSegment {
+  text:   string;
+  isBold: boolean;
+}
+
+export function parseBoldMarkers(
+  text: string
+): TextSegment[] {
+  if (!text) return [{ text: '', isBold: false }];
+  const segments: TextSegment[] = [];
+  const parts = text.split(/\*\*(.+?)\*\*/g);
+  parts.forEach((part, index) => {
+    if (!part) return;
+    segments.push({
+      text:   part,
+      isBold: index % 2 === 1,
+    });
+  });
+  return segments.length > 0
+    ? segments
+    : [{ text, isBold: false }];
+}

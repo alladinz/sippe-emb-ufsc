@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { programasEnsino, historicoProgramas } from "../db/schema_programas";
 import { disciplinas, user, universityCourses, notifications } from "@/db/schema";
 import { eq, and, ilike, or, desc, sql, ne } from "drizzle-orm";
+import { buildBoldReference, extractTitleAndBold } from '@/utils/bibliografiaUtils';
 import { 
   ProgramaEnsino, 
   ProgramaListItem, 
@@ -231,9 +232,25 @@ export async function createPrograma(disciplinaId: string, userId: string): Prom
         items.forEach((item) => {
           let ref = "";
           if (typeof item === 'object' && item !== null) {
-            ref = `${item.authors || ''} ${item.details || ''}`.trim();
+            if (item.authors && item.details) {
+              ref = buildBoldReference({
+                authors: item.authors,
+                details: item.details,
+                full: item.full
+              });
+            } else if (item.full) {
+              // Fallback if only "full" is available
+              const authorMatch = item.full.match(/^([A-Z][^.]+\.)\s+(.*)$/s);
+              if (authorMatch) {
+                ref = `${authorMatch[1]} ` + extractTitleAndBold(authorMatch[2]);
+              } else {
+                ref = extractTitleAndBold(item.full);
+              }
+            } else {
+              ref = `${item.authors || ''} ${item.details || ''}`.trim();
+            }
           } else if (typeof item === 'string') {
-            ref = item;
+            ref = extractTitleAndBold(item);
           }
           if (ref) {
             bibToSave.push({

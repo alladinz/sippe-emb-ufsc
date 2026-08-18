@@ -1,8 +1,9 @@
 "use client";
 
-import { Plus, Trash2, BookOpen } from "lucide-react";
+import { Plus, BookOpen } from "lucide-react";
 import type { EditorTabProps } from "./editorTypes";
 import type { BibliografiaItem } from "../../types/programaEnsino";
+import { BibliografiaItemEditor } from "./BibliografiaItemEditor";
 
 export function TabBibliografia({ formState, updateField, isReadOnly }: EditorTabProps) {
   
@@ -59,29 +60,13 @@ export function TabBibliografia({ formState, updateField, isReadOnly }: EditorTa
         ) : (
           <div className="space-y-2">
             {items.map((item) => (
-              <div key={item.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                <div className="flex-1">
-                  <span className={`text-xs font-semibold uppercase tracking-wide ${item.tipo === 'basica' ? 'text-blue-600' : 'text-gray-500'}`}>
-                    {item.tipo === 'basica' ? 'Básica' : 'Complementar'}
-                  </span>
-                  <textarea
-                    value={item.referencia}
-                    onChange={e => updateBibliografia(item.id, e.target.value)}
-                    disabled={isReadOnly}
-                    rows={2}
-                    placeholder="SOBRENOME, Nome. Título da obra. Edição. Local: Editora, Ano."
-                    className="mt-1 w-full text-sm text-gray-800 bg-transparent border-none resize-none focus:outline-none focus:ring-0 p-0 placeholder:text-gray-400 disabled:text-gray-500"
-                  />
-                </div>
-                {!isReadOnly && (
-                  <button 
-                    onClick={() => removeBibliografia(item.id)}
-                    className="text-gray-400 hover:text-red-500 transition-colors flex-shrink-0 mt-0.5"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
+              <BibliografiaItemEditor
+                key={item.id}
+                item={item}
+                isReadOnly={isReadOnly}
+                onChange={updateBibliografia}
+                onRemove={removeBibliografia}
+              />
             ))}
           </div>
         )}

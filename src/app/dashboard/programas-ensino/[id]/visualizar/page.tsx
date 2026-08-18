@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import { DownloadProgramaButton } from '@/components/pdf/DownloadProgramaButton';
 import { getProgramaStatusBadge } from '@/utils/programaStatus';
 import { tiptapToPlainText } from '@/components/pdf/pdfHelpers';
+import { parseBoldMarkers } from '@/utils/bibliografiaUtils';
 
 export const metadata: Metadata = {
   title: 'Visualizar Programa de Ensino | SIPPE',
@@ -211,7 +212,11 @@ export default async function ProgramaEnsinoVisualizarPage({
                     {basicas.map((item, i) => (
                       <li key={item.id} className="text-xs flex gap-2">
                         <span className="w-6 shrink-0">[{i + 1}]</span>
-                        <span>{item.referencia}</span>
+                        <span>
+                          {parseBoldMarkers(item.referencia).map((seg, segI) =>
+                            seg.isBold ? <strong key={segI} className="font-semibold">{seg.text}</strong> : <span key={segI}>{seg.text}</span>
+                          )}
+                        </span>
                       </li>
                     ))}
                   </ul>
@@ -225,7 +230,11 @@ export default async function ProgramaEnsinoVisualizarPage({
                     {complementares.map((item, i) => (
                       <li key={item.id} className="text-xs flex gap-2">
                         <span className="w-6 shrink-0">[{i + 1}]</span>
-                        <span>{item.referencia}</span>
+                        <span>
+                          {parseBoldMarkers(item.referencia).map((seg, segI) =>
+                            seg.isBold ? <strong key={segI} className="font-semibold">{seg.text}</strong> : <span key={segI}>{seg.text}</span>
+                          )}
+                        </span>
                       </li>
                     ))}
                   </ul>
