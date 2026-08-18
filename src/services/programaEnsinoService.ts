@@ -240,7 +240,7 @@ export async function createPrograma(disciplinaId: string, userId: string): Prom
               });
             } else if (item.full) {
               // Fallback if only "full" is available
-              const authorMatch = item.full.match(/^([A-Z][^.]+\.)\s+(.*)$/s);
+              const authorMatch = item.full.match(/^([A-Z][^.]+\.)\s+([\s\S]*)$/);
               if (authorMatch) {
                 ref = `${authorMatch[1]} ` + extractTitleAndBold(authorMatch[2]);
               } else {

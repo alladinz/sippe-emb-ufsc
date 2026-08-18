@@ -6,7 +6,7 @@ export function extractTitleAndBold(
   // Match everything up to the first ". " (period + space)
   // or ". " followed by a digit (edition number like "6ª")
   // The title ends at the FIRST period-space boundary
-  const match = details.match(/^(.+?)\.\s+(.*)$/s);
+  const match = details.match(/^([\s\S]+?)\.\s+([\s\S]*)$/);
 
   if (!match) {
     // No period found — entire string is the title
