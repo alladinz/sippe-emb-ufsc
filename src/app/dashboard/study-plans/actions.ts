@@ -6,7 +6,7 @@ import { db } from "@/db";
 import { studyPlans } from "@/db/schema";
 import { eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { courses, bibliography, universityCourses, organization as orgTable } from "@/db/schema";
+import { courses, bibliography, universityCourses, organization as orgTable, systemSettings } from "@/db/schema";
 
 export async function createStudyPlanFromSelectionAction(
   courseId: string,
@@ -32,6 +32,9 @@ export async function createStudyPlanFromSelectionAction(
   const selectedOrgs = await db.query.organization.findMany({
       where: inArray(orgTable.id, organizationIds)
   });
+
+  const settings = await db.query.systemSettings.findMany();
+  const globalEvaluationRules = settings.find(s => s.key === "DEFAULT_FINAL_EVALUATION")?.value || "O(a) aluno(a) com frequência suficiente e média das notas entre três (3,0) e cinco vírgula cinco (5,5) terá direito a uma nova avaliação no final do semestre que versará sobre todo o conteúdo da disciplina, conforme o que dispõe o § 2º do Art. 70 e § 3º do Art. 71 da Resolução nº 17/Cun/97. Neste caso, a média final será calculada através da média aritmética simples entre a média das notas das avaliações feitas durante o semestre e a nota obtida na nova avaliação. A nota mínima de aprovação é seis (6,0).\n\nCaso o(a) aluno(a) não compareça a 75% da carga horária da disciplina estará automaticamente reprovado com nota 0,0(zero), independentemente da sua média nas avaliações individuais, conforme dispõem no Art. 69 § 2º da Resolução 017/CUn/97.\n\nOs(as) alunos(as) que eventualmente faltarem em alguma avaliação que foram perdidas por motivos extremos, mediante justificativa; dentro do prazo de 3 (três) dias úteis após a avaliação conforme o que dispõe o Art. 74, da Resolução 017/CUn/97, poderão solicitar na secretaria acadêmica do Centro de Engenharias da Mobilidade o pedido de segunda chamada. Após a análise do pedido e seu deferimento, os(as) alunos(as) poderão realizar a avaliação de segunda chamada na data, no local e horário definido no cronograma.";
 
   // Graduation Mapping
   const GRADUATION_MAP: Record<string, string> = {
@@ -79,11 +82,7 @@ export async function createStudyPlanFromSelectionAction(
         campus: "Campus de Joinville",
         center: "Centro Tecnológico de Joinville",
         universityAcronym: "UFSC",
-        finalEvaluationRules: `O(a) aluno(a) com **frequência suficiente** e **média das notas entre três (3,0) e cinco vírgula cinco (5,5)** terá direito a uma **nova avaliação** no final do semestre que versará sobre todo o conteúdo da disciplina, conforme o que dispõe o **§ 2º do Art. 70 e § 3º do Art. 71 da Resolução nº 17/Cun/97**. Neste caso, a **média final** será calculada através da **média aritmética simples** entre a média das notas das avaliações feitas durante o semestre e a nota obtida na nova avaliação. A **nota mínima de aprovação é seis (6,0)**.
-
-Caso o(a) aluno(a) **não compareça a 75% da carga horária** da disciplina estará **automaticamente reprovado com nota 0,0(zero)**, independentemente da sua média nas avaliações individuais, conforme dispõem no **Art. 69 § 2º da Resolução 017/CUn/97**.
-
-Os(as) alunos(as) que eventualmente faltarem em alguma avaliação que foram perdidas por motivos extremos, mediante justificativa; dentro do prazo de **3 (três) dias úteis** após a avaliação conforme o que dispõe o **Art. 74, da Resolução 017/CUn/97**, poderão solicitar na secretaria acadêmica do Centro de Engenharias da Mobilidade o pedido de **segunda chamada**. Após a análise do pedido e seu deferimento, os(as) alunos(as) poderão realizar a avaliação de segunda chamada na data, no local e horário definido no cronograma.`,
+        finalEvaluationRules: globalEvaluationRules,
       }).returning();
 
       // 3. Add Course Junction
@@ -165,6 +164,9 @@ export async function createStudyPlanAction() {
     throw new Error("Usuário não está vinculado a nenhum departamento/curso.");
   }
 
+  const settings = await db.query.systemSettings.findMany();
+  const globalEvaluationRules = settings.find(s => s.key === "DEFAULT_FINAL_EVALUATION")?.value || "O(a) aluno(a) com frequência suficiente e média das notas entre três (3,0) e cinco vírgula cinco (5,5) terá direito a uma nova avaliação no final do semestre que versará sobre todo o conteúdo da disciplina, conforme o que dispõe o § 2º do Art. 70 e § 3º do Art. 71 da Resolução nº 17/Cun/97. Neste caso, a média final será calculada através da média aritmética simples entre a média das notas das avaliações feitas durante o semestre e a nota obtida na nova avaliação. A nota mínima de aprovação é seis (6,0).\n\nCaso o(a) aluno(a) não compareça a 75% da carga horária da disciplina estará automaticamente reprovado com nota 0,0(zero), independentemente da sua média nas avaliações individuais, conforme dispõem no Art. 69 § 2º da Resolução 017/CUn/97.\n\nOs(as) alunos(as) que eventualmente faltarem em alguma avaliação que foram perdidas por motivos extremos, mediante justificativa; dentro do prazo de 3 (três) dias úteis após a avaliação conforme o que dispõe o Art. 74, da Resolução 017/CUn/97, poderão solicitar na secretaria acadêmica do Centro de Engenharias da Mobilidade o pedido de segunda chamada. Após a análise do pedido e seu deferimento, os(as) alunos(as) poderão realizar a avaliação de segunda chamada na data, no local e horário definido no cronograma.";
+
   // Create new draft
   const [newPlan] = await db.insert(studyPlans).values({
     userId: session.user.id,
@@ -173,11 +175,7 @@ export async function createStudyPlanAction() {
     semester: "2026.1",
     campus: "Campus de Joinville",
     center: "Centro Tecnológico de Joinville",
-    finalEvaluationRules: `O(a) aluno(a) com **frequência suficiente** e **média das notas entre três (3,0) e cinco vírgula cinco (5,5)** terá direito a uma **nova avaliação** no final do semestre que versará sobre todo o conteúdo da disciplina, conforme o que dispõe o **§ 2º do Art. 70 e § 3º do Art. 71 da Resolução nº 17/Cun/97**. Neste caso, a **média final** será calculada através da **média aritmética simples** entre a média das notas das avaliações feitas durante o semestre e a nota obtida na nova avaliação. A **nota mínima de aprovação é seis (6,0)**.
-
-Caso o(a) aluno(a) **não compareça a 75% da carga horária** da disciplina estará **automaticamente reprovado com nota 0,0(zero)**, independentemente da sua média nas avaliações individuais, conforme dispõem no **Art. 69 § 2º da Resolução 017/CUn/97**.
-
-Os(as) alunos(as) que eventualmente faltarem em alguma avaliação que foram perdidas por motivos extremos, mediante justificativa; dentro do prazo de **3 (três) dias úteis** após a avaliação conforme o que dispõe o **Art. 74, da Resolução 017/CUn/97**, poderão solicitar na secretaria acadêmica do Centro de Engenharias da Mobilidade o pedido de **segunda chamada**. Após a análise do pedido e seu deferimento, os(as) alunos(as) poderão realizar a avaliação de segunda chamada na data, no local e horário definido no cronograma.`,
+    finalEvaluationRules: globalEvaluationRules,
   }).returning();
 
   if (!newPlan) {

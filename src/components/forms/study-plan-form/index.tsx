@@ -79,17 +79,21 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
     class2: { number: "-", content: "" }
   })), [initialData.weeklySchedule]);
 
+  const isDraftOrRejected = !initialData.status || initialData.status === 'draft' || initialData.status === 'rejected';
+
   const fullDefaultValues = useMemo(() => ({
     ...initialData,
     universityAcronym: initialData.universityAcronym || "UFSC",
     campus: initialData.campus || "Campus de Joinville",
     center: initialData.center || "Centro Tecnológico de Joinville",
-    finalEvaluationRules: initialData.finalEvaluationRules || globalEvaluationRules || DEFAULT_FINAL_EVALUATION,
+    finalEvaluationRules: isDraftOrRejected 
+      ? (globalEvaluationRules || DEFAULT_FINAL_EVALUATION) 
+      : (initialData.finalEvaluationRules || globalEvaluationRules || DEFAULT_FINAL_EVALUATION),
     courses: initialData.courses || [],
     bibliography: initialData.bibliography || [],
     schedule: initialSchedule,
     weeklySchedule: initialWeeklySchedule
-  }), [initialData, initialSchedule, initialWeeklySchedule, globalEvaluationRules]);
+  }), [initialData, initialSchedule, initialWeeklySchedule, globalEvaluationRules, isDraftOrRejected]);
 
   const lastSavedDataRef = useRef<StudyPlanFormValues>(fullDefaultValues);
   
