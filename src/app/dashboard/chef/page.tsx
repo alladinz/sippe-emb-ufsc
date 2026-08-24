@@ -9,13 +9,15 @@ import {
   School, 
   Database, 
   Calendar, 
-  Users 
+  Users,
+  Settings
 } from "lucide-react";
 import Link from "next/link";
 import { PlansTable } from "./_components/plans-table";
 import { MasterCourseList } from "./_components/master-course-list";
 import { SemesterManagement } from "./_components/semester-management";
 import { UserManagement } from "./_components/user-management";
+import { EvaluationSettings } from "./_components/evaluation-settings";
 import { ImportarPlanilha } from "@/components/ImportarPlanilha";
 import { SearchInput } from "./_components/search-input";
 import { cn } from "@/lib/utils";
@@ -63,6 +65,10 @@ export default async function ChefDashboardPage({ searchParams }: ChefDashboardP
       },
       orderBy: [desc(member.createdAt)]
   });
+
+  // Fetch settings
+  const settings = await db.query.systemSettings.findMany();
+  const defaultEvaluationSetting = settings.find(s => s.key === "DEFAULT_FINAL_EVALUATION")?.value || "";
 
   // --- FILTERS LOGIC FOR PLANS ---
   // We need to resolve orgId if course slug is provided
@@ -166,6 +172,13 @@ export default async function ChefDashboardPage({ searchParams }: ChefDashboardP
             >
                 <Calendar className="w-4 h-4" />
                 Configuração de Semestres
+            </TabsTrigger>
+            <TabsTrigger 
+                value="evaluation-settings" 
+                className="gap-2 px-6 data-[state=active]:bg-slate-100 data-[state=active]:text-slate-900 data-[state=active]:shadow-none transition-all"
+            >
+                <Settings className="w-4 h-4" />
+                Configuração de Avaliação
             </TabsTrigger>
             <TabsTrigger 
                 value="users" 
@@ -274,6 +287,12 @@ export default async function ChefDashboardPage({ searchParams }: ChefDashboardP
         <TabsContent value="semesters" className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
             <ImportarPlanilha />
             <SemesterManagement semesters={allSemesters} />
+        </TabsContent>
+
+        <TabsContent value="evaluation-settings" className="animate-in fade-in slide-in-from-bottom-4 duration-300">
+            <EvaluationSettings 
+                initialValue={defaultEvaluationSetting || "O(a) aluno(a) com frequência suficiente e média das notas entre três (3,0) e cinco vírgula cinco (5,5) terá direito a uma nova avaliação no final do semestre que versará sobre todo o conteúdo da disciplina, conforme o que dispõe o § 2º do Art. 70 e § 3º do Art. 71 da Resolução nº 17/Cun/97. Neste caso, a média final será calculada através da média aritmética simples entre a média das notas das avaliações feitas durante o semestre e a nota obtida na nova avaliação. A nota mínima de aprovação é seis (6,0).\n\nCaso o(a) aluno(a) não compareça a 75% da carga horária da disciplina estará automaticamente reprovado com nota 0,0(zero), independentemente da sua média nas avaliações individuais, conforme dispõem no Art. 69 § 2º da Resolução 017/CUn/97.\n\nOs(as) alunos(as) que eventualmente faltarem em alguma avaliação que foram perdidas por motivos extremos, mediante justificativa; dentro do prazo de 3 (três) dias úteis após a avaliação conforme o que dispõe o Art. 74, da Resolução 017/CUn/97, poderão solicitar na secretaria acadêmica do Centro de Engenharias da Mobilidade o pedido de segunda chamada. Após a análise do pedido e seu deferimento, os(as) alunos(as) poderão realizar a avaliação de segunda chamada na data, no local e horário definido no cronograma."}
+            />
         </TabsContent>
 
         <TabsContent value="users" className="animate-in fade-in slide-in-from-bottom-4 duration-300">

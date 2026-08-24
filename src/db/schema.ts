@@ -277,6 +277,14 @@ export const turmas = pgTable("turmas", {
   };
 });
 
+// --- SYSTEM SETTINGS ---
+export const systemSettings = pgTable("system_settings", {
+  key: text("key").primaryKey(),
+  value: text("value").notNull(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  updatedBy: text("updated_by").references(() => user.id),
+});
+
 // --- RELATIONS ---
 
 export const organizationRelations = relations(organization, ({ many }) => ({

@@ -2,7 +2,7 @@
 
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/db";
-import { universityCourses, studyPlans, courses, bibliography, member, semesters, organization, user, session, account, invitation, notifications } from "@/db/schema";
+import { universityCourses, studyPlans, courses, bibliography, member, semesters, organization, user, session, account, invitation, notifications, systemSettings } from "@/db/schema";
 import { eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { v4 as uuidv4 } from "uuid";
@@ -54,6 +54,28 @@ async function verifyChef() {
 export async function importMasterCoursesAction(coursesList: RawCourse[], graduation: string) {
     await verifyChef();
     await processCoursesBatch(coursesList, graduation);
+    revalidatePath("/dashboard/chef");
+}
+
+export async function updateSystemSettingAction(key: string, value: string) {
+    const { session } = await verifyChef();
+    
+    const existing = await db.query.systemSettings.findFirst({
+        where: eq(systemSettings.key, key)
+    });
+    
+    if (existing) {
+        await db.update(systemSettings)
+            .set({ value, updatedAt: new Date(), updatedBy: session.user.id })
+            .where(eq(systemSettings.key, key));
+    } else {
+        await db.insert(systemSettings).values({
+            key,
+            value,
+            updatedAt: new Date(),
+            updatedBy: session.user.id
+        });
+    }
     revalidatePath("/dashboard/chef");
 }
 

@@ -41,6 +41,10 @@ export default async function EditStudyPlanPage({ params }: EditStudyPlanPagePro
     redirect("/dashboard/study-plans");
   }
 
+  // Fetch system settings
+  const settings = await db.query.systemSettings.findMany();
+  const globalEvaluationRules = settings.find(s => s.key === "DEFAULT_FINAL_EVALUATION")?.value;
+
   return (
     <div className="max-w-5xl mx-auto">
       <div className="mb-8">
@@ -57,6 +61,7 @@ export default async function EditStudyPlanPage({ params }: EditStudyPlanPagePro
         initialData={plan as unknown as StudyPlanFormValues} 
         onSave={saveStudyPlanAction.bind(null, id)} 
         onSubmit={submitStudyPlanAction.bind(null, id)}
+        globalEvaluationRules={globalEvaluationRules}
         semesterDates={semesterData ? {
             startDate: semesterData.startDate,
             endDate: semesterData.endDate
