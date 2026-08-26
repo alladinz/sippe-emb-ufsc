@@ -4,18 +4,70 @@
 // Used when rich text fields store HTML strings
 export function stripHtmlForPdf(html: string | null | undefined): string {
   if (!html) return '';
-  return html
+
+  const text = html
     .replace(/<br\s*\/?>/gi, '\n')
     .replace(/<\/p>/gi, '\n')
-    .replace(/<\/li>/gi, '\n')
-    .replace(/<li[^>]*>/gi, '• ')
-    .replace(/<\/ul>/gi, '\n')
-    .replace(/<\/ol>/gi, '\n')
-    .replace(/<strong[^>]*>/gi, '')
-    .replace(/<\/strong>/gi, '')
-    .replace(/<em[^>]*>/gi, '')
-    .replace(/<\/em>/gi, '')
-    .replace(/<[^>]+>/g, '')
+    .replace(/<strong[^>]*>/gi, '**')
+    .replace(/<\/strong>/gi, '**')
+    .replace(/<b[^>]*>/gi, '**')
+    .replace(/<\/b>/gi, '**');
+
+  let inTags = false;
+  let currentTag = '';
+  const listStack: { type: string, counter: number }[] = [];
+  let result = '';
+
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === '<') {
+      inTags = true;
+      currentTag = '';
+    } else if (text[i] === '>') {
+      inTags = false;
+      const tag = currentTag.toLowerCase().trim();
+      const tagName = tag.split(/\s+/)[0];
+      
+      if (tagName === 'ol') {
+        listStack.push({ type: 'ol', counter: 0 });
+      } else if (tagName === '/ol') {
+        if (listStack.length > 0 && listStack[listStack.length - 1].type === 'ol') {
+          listStack.pop();
+        }
+      } else if (tagName === 'ul') {
+        listStack.push({ type: 'ul', counter: 0 });
+      } else if (tagName === '/ul') {
+        if (listStack.length > 0 && listStack[listStack.length - 1].type === 'ul') {
+          listStack.pop();
+        }
+      } else if (tagName === 'li') {
+        const currentList = listStack.length > 0 ? listStack[listStack.length - 1] : null;
+        const indent = '  '.repeat(Math.max(0, listStack.length - 1));
+        
+        if (result.length > 0 && !result.endsWith('\n')) {
+          result += '\n';
+        }
+
+        if (currentList && currentList.type === 'ol') {
+          currentList.counter++;
+          const olStack = listStack.filter(l => l.type === 'ol');
+          const prefix = olStack.map(l => l.counter).join('.');
+          result += `${indent}${prefix}. `;
+        } else {
+          result += `${indent}• `;
+        }
+      } else if (tagName === '/li') {
+        if (result.length > 0 && !result.endsWith('\n')) {
+          result += '\n';
+        }
+      }
+    } else if (!inTags) {
+      result += text[i];
+    } else {
+      currentTag += text[i];
+    }
+  }
+
+  return result
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
@@ -23,9 +75,6 @@ export function stripHtmlForPdf(html: string | null | undefined): string {
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
     .replace(/\n{3,}/g, '\n\n') // collapse triple+ newlines
-    // After all replacements, as a final safety net:
-    .replace(/<\/?[^>]+(>|$)/g, '')
-    .replace(/&lt;[^&]+&gt;/g, '') // encoded tags
     .trim();
 }
 
@@ -53,38 +102,55 @@ export function tiptapToPlainText(content: unknown): string {
   return String(content);
 }
 
-function nodeToText(node: unknown): string {
+function nodeToText(node: unknown, olCounters: number[] = []): string {
   if (!node || typeof node !== 'object') return '';
   const n = node as Record<string, unknown>;
 
   if (n.type === 'text') {
-    return (n.text as string) ?? '';
+    const isBold = Array.isArray(n.marks) && n.marks.some((m: Record<string, unknown>) => m.type === 'bold');
+    let text = (n.text as string) ?? '';
+    if (isBold) text = `**${text}**`;
+    return text;
   }
   if (n.type === 'hardBreak') return '\n';
   if (n.type === 'listItem') {
     const text = (Array.isArray(n.content) ? n.content : [])
-      .map((child) => nodeToText(child))
+      .map((child) => nodeToText(child, olCounters))
       .join('');
-    return '• ' + text;
+    return text;
   }
-  if (n.type === 'orderedList') {
+  if (n.type === 'bulletList') {
     return (Array.isArray(n.content) ? n.content : [])
-      .map((item, i: number) => {
+      .map((item) => {
         const itemNode = item as Record<string, unknown>;
         const text = (Array.isArray(itemNode.content) ? itemNode.content : [])
-          .map((child) => nodeToText(child))
+          .map((child) => nodeToText(child, olCounters))
           .join('');
-        return `${i + 1}. ${text}`;
+        const indent = '  '.repeat(olCounters.length);
+        return `${indent}• ${text}`;
+      })
+      .join('\n');
+  }
+  if (n.type === 'orderedList') {
+    const newCounters = [...olCounters, 0];
+    return (Array.isArray(n.content) ? n.content : [])
+      .map((item) => {
+        newCounters[newCounters.length - 1]++;
+        const itemNode = item as Record<string, unknown>;
+        const text = (Array.isArray(itemNode.content) ? itemNode.content : [])
+          .map((child) => nodeToText(child, newCounters))
+          .join('');
+        const indent = '  '.repeat(olCounters.length);
+        return `${indent}${newCounters.join('.')}. ${text}`;
       })
       .join('\n');
   }
   
   const childrenText = (Array.isArray(n.content) ? n.content : [])
-    .map((child) => nodeToText(child))
+    .map((child) => nodeToText(child, olCounters))
     .join('');
   const blockTypes = [
-    'paragraph', 'heading', 'bulletList',
-    'blockquote', 'codeBlock',
+    'paragraph', 'heading', 'blockquote', 'codeBlock',
   ];
   return blockTypes.includes(n.type as string)
     ? childrenText + '\n'

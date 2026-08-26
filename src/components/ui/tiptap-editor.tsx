@@ -3,6 +3,7 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
+import { Extension } from "@tiptap/core";
 import { Bold, Italic, List, ListOrdered } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -23,6 +24,17 @@ export function TiptapEditor({
   className,
   disabled,
 }: TiptapEditorProps) {
+
+  const TabHandler = React.useMemo(() => Extension.create({
+    name: 'tabHandler',
+    addKeyboardShortcuts() {
+      return {
+        Tab: () => this.editor.commands.sinkListItem('listItem'),
+        'Shift-Tab': () => this.editor.commands.liftListItem('listItem'),
+      };
+    },
+  }), []);
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -38,6 +50,7 @@ export function TiptapEditor({
       Placeholder.configure({
         placeholder: placeholder || "Digite aqui...",
       }),
+      TabHandler,
     ],
     content: value,
     editable: !disabled,
@@ -125,13 +138,29 @@ export function TiptapEditor({
           pointer-events: none;
           height: 0;
         }
+        
+        /* Bullets */
         .ProseMirror ul {
-          list-style-type: disc;
-          padding-left: 1.5rem;
+          list-style-type: disc !important;
+          padding-left: 1.5rem !important;
         }
+        
+        /* CSS Counters for nested numbered lists (1.1, 1.2, etc.) */
         .ProseMirror ol {
-          list-style-type: decimal;
-          padding-left: 1.5rem;
+          counter-reset: item;
+          list-style-type: none !important;
+          padding-left: 1.5rem !important;
+        }
+        .ProseMirror ol > li {
+          display: block;
+          position: relative;
+        }
+        .ProseMirror ol > li::before {
+          content: counters(item, ".") ". ";
+          counter-increment: item;
+          position: absolute;
+          left: -1.5rem;
+          font-weight: 500;
         }
       `}</style>
     </div>
