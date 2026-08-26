@@ -208,15 +208,12 @@ export default async function ProgramaEnsinoVisualizarPage({
               {basicas.length > 0 && (
                 <div className="mb-6">
                   <h5 className="text-xs font-bold mb-2">Bibliografia Básica</h5>
-                  <ul className="space-y-2">
-                    {basicas.map((item, i) => (
-                      <li key={item.id} className="text-xs flex gap-2">
-                        <span className="w-6 shrink-0">[{i + 1}]</span>
-                        <span>
-                          {parseBoldMarkers(item.referencia).map((seg, segI) =>
-                            seg.isBold ? <strong key={segI} className="font-semibold">{seg.text}</strong> : <span key={segI}>{seg.text}</span>
-                          )}
-                        </span>
+                  <ul className="space-y-4">
+                    {basicas.map((item) => (
+                      <li key={item.id} className="text-xs text-justify">
+                        {parseBoldMarkers(item.referencia).map((seg, segI) =>
+                          seg.isBold ? <strong key={segI} className="font-semibold">{seg.text}</strong> : <span key={segI}>{seg.text}</span>
+                        )}
                       </li>
                     ))}
                   </ul>
@@ -226,15 +223,12 @@ export default async function ProgramaEnsinoVisualizarPage({
               {complementares.length > 0 && (
                 <div>
                   <h5 className="text-xs font-bold mb-2">Bibliografia Complementar</h5>
-                  <ul className="space-y-2">
-                    {complementares.map((item, i) => (
-                      <li key={item.id} className="text-xs flex gap-2">
-                        <span className="w-6 shrink-0">[{i + 1}]</span>
-                        <span>
-                          {parseBoldMarkers(item.referencia).map((seg, segI) =>
-                            seg.isBold ? <strong key={segI} className="font-semibold">{seg.text}</strong> : <span key={segI}>{seg.text}</span>
-                          )}
-                        </span>
+                  <ul className="space-y-4">
+                    {complementares.map((item) => (
+                      <li key={item.id} className="text-xs text-justify">
+                        {parseBoldMarkers(item.referencia).map((seg, segI) =>
+                          seg.isBold ? <strong key={segI} className="font-semibold">{seg.text}</strong> : <span key={segI}>{seg.text}</span>
+                        )}
                       </li>
                     ))}
                   </ul>
@@ -242,22 +236,6 @@ export default async function ProgramaEnsinoVisualizarPage({
               )}
             </div>
           )}
-
-          {/* ASSINATURAS */}
-          <div className="pt-24 pb-8 grid grid-cols-2 gap-12">
-            <div className="text-center">
-              <div className="border-t border-slate-800 pt-2 text-xs font-bold">Chefe de Departamento</div>
-              {programa.criador?.nome && (
-                <div className="text-xs mt-1">{programa.criador.nome}</div>
-              )}
-            </div>
-            <div className="text-center">
-              <div className="border-t border-slate-800 pt-2 text-xs font-bold">Coordenação de Curso</div>
-              {programa.curso_aprovacao && (
-                <div className="text-xs mt-1">{programa.curso_aprovacao}</div>
-              )}
-            </div>
-          </div>
 
         </section>
       </div>

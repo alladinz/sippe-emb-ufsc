@@ -91,46 +91,13 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   bibItem: {
-    marginBottom: 4,
-    flexDirection: 'row',
-    width: 470, // explicitly restrict width to avoid right overflow
-  },
-  bibNumber: {
-    width: 25,
-    fontSize: 10,
+    marginBottom: 8,
   },
   bibText: {
-    flex: 1,
     fontSize: 10,
     textAlign: 'justify',
   },
-  signatureRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 50,
-    paddingHorizontal: 20,
-  },
-  signatureItem: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  signatureLine: {
-    borderTopWidth: 1,
-    borderTopColor: '#000',
-    width: '80%',
-    paddingTop: 5,
-    alignItems: 'center',
-  },
-  signatureLabel: {
-    fontSize: 10,
-    fontFamily: 'Times-Bold',
-    textAlign: 'center',
-  },
-  signatureName: {
-    fontSize: 10,
-    textAlign: 'center',
-    marginTop: 2,
-  },
+
   footer: {
     position: 'absolute',
     bottom: 30,
@@ -295,11 +262,10 @@ export function ProgramaPDF({ programa, logoBlob }: ProgramaPDFProps) {
             {basicas.length > 0 && (
               <View style={styles.bibSection}>
                 <Text style={styles.bibTypeLabel}>Bibliografia Básica</Text>
-                {basicas.map((item, i) => {
+                {basicas.map((item) => {
                   const segments = parseBoldMarkers(item.referencia);
                   return (
                     <View key={item.id} style={styles.bibItem} wrap={false}>
-                      <Text style={styles.bibNumber}>[{i + 1}]</Text>
                       <Text style={styles.bibText}>
                         {segments.map((seg, si) =>
                           seg.isBold ? (
@@ -320,11 +286,10 @@ export function ProgramaPDF({ programa, logoBlob }: ProgramaPDFProps) {
             {complementares.length > 0 && (
               <View style={styles.bibSection}>
                 <Text style={styles.bibTypeLabel}>Bibliografia Complementar</Text>
-                {complementares.map((item, i) => {
+                {complementares.map((item) => {
                   const segments = parseBoldMarkers(item.referencia);
                   return (
                     <View key={item.id} style={styles.bibItem} wrap={false}>
-                      <Text style={styles.bibNumber}>[{i + 1}]</Text>
                       <Text style={styles.bibText}>
                         {segments.map((seg, si) =>
                           seg.isBold ? (
@@ -344,25 +309,7 @@ export function ProgramaPDF({ programa, logoBlob }: ProgramaPDFProps) {
           </View>
         )}
 
-        {/* SIGNATURE BLOCK */}
-        <View style={styles.signatureRow} wrap={false}>
-          <View style={styles.signatureItem}>
-            <View style={styles.signatureLine}>
-              <Text style={styles.signatureLabel}>Chefe de Departamento</Text>
-              {programa.criador?.nome && (
-                <Text style={styles.signatureName}>{programa.criador.nome}</Text>
-              )}
-            </View>
-          </View>
-          <View style={styles.signatureItem}>
-            <View style={styles.signatureLine}>
-              <Text style={styles.signatureLabel}>Coordenação de Curso</Text>
-              {programa.curso_aprovacao && (
-                <Text style={styles.signatureName}>{programa.curso_aprovacao}</Text>
-              )}
-            </View>
-          </View>
-        </View>
+
 
         {/* FOOTER */}
         <Text style={styles.footer} render={({ pageNumber, totalPages }) => (
