@@ -142,14 +142,14 @@ export function TiptapEditor({
         /* Bullets */
         .ProseMirror ul {
           list-style-type: disc !important;
-          padding-left: 1.5rem !important;
+          padding-left: 2rem !important;
         }
         
         /* CSS Counters for nested numbered lists (1.1, 1.2, etc.) */
         .ProseMirror ol {
           counter-reset: item;
           list-style-type: none !important;
-          padding-left: 1.5rem !important;
+          padding-left: 2rem !important;
         }
         .ProseMirror ol > li {
           display: block;
@@ -159,8 +159,11 @@ export function TiptapEditor({
           content: counters(item, ".") ". ";
           counter-increment: item;
           position: absolute;
-          left: -1.5rem;
+          right: 100%;
+          padding-right: 0.5rem;
           font-weight: 500;
+          text-align: right;
+          white-space: nowrap;
         }
       `}</style>
     </div>
