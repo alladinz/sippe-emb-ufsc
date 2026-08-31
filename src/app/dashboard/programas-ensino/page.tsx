@@ -17,10 +17,11 @@ export default async function ProgramasEnsinoPage() {
         with: { organization: true }
     });
 
+    const isComissao = memberships.some(m => m.role === "comissao");
     const isChef = memberships.some(m => m.role === "chefe" || m.organization?.name === "Chefia");
     const isReviewer = memberships.some(m => m.role === "coordenador");
 
-    if (!isChef && !isReviewer) {
+    if (!isChef && !isReviewer && !isComissao) {
         redirect("/dashboard");
     }
 

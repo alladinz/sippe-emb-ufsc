@@ -68,7 +68,8 @@ export default async function DashboardLayout({
   // Use the highest priority role for the label
   const displayRole = roles.includes("chefe") ? "chefe" : 
                      roles.includes("coordenador") ? "coordenador" : 
-                     roles.includes("secretario") ? "secretario" : "professor";
+                     roles.includes("secretario") ? "secretario" : 
+                     roles.includes("comissao") ? "comissao" : "professor";
 
   const roleLabel = roleLabels[displayRole] || "Usuário";
 

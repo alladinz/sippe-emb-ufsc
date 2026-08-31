@@ -55,6 +55,7 @@ export function UserMenu({ user, roleLabel, roleId }: UserMenuProps) {
             case 'chefe': return "bg-purple-100 text-purple-700";
             case 'coordenador': return "bg-teal-100 text-teal-700";
             case 'secretario': return "bg-amber-100 text-amber-700";
+            case 'comissao': return "bg-indigo-100 text-indigo-700";
             case 'professor':
             default: return "bg-blue-100 text-blue-700";
         }

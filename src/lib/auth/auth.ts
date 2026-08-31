@@ -41,7 +41,17 @@ export const auth = {
                 where: eq(schema.user.id, payload.id)
               });
               if (user && user.status === 'active') {
-                return { user };
+                const userMemberships = await db.query.member.findMany({
+                    where: eq(schema.member.userId, user.id),
+                    with: { organization: true }
+                });
+                const userRoles = userMemberships.map(m => m.organization?.name === 'Chefia' && m.role === 'professor' ? 'chefe' : m.role);
+                const displayUserRole = userRoles.includes("chefe") ? "chefe" : 
+                                   userRoles.includes("coordenador") ? "coordenador" : 
+                                   userRoles.includes("secretario") ? "secretario" : 
+                                   userRoles.includes("comissao") ? "comissao" : "professor";
+
+                return { user: { ...user, papel: displayUserRole } };
               }
             }
           } catch {
@@ -57,7 +67,18 @@ export const auth = {
           where: eq(schema.user.id, payload.id)
         });
         if (!user || user.status !== 'active') return null;
-        return { user };
+
+        const memberships = await db.query.member.findMany({
+            where: eq(schema.member.userId, user.id),
+            with: { organization: true }
+        });
+        const roles = memberships.map(m => m.organization?.name === 'Chefia' && m.role === 'professor' ? 'chefe' : m.role);
+        const displayRole = roles.includes("chefe") ? "chefe" : 
+                           roles.includes("coordenador") ? "coordenador" : 
+                           roles.includes("secretario") ? "secretario" : 
+                           roles.includes("comissao") ? "comissao" : "professor";
+
+        return { user: { ...user, papel: displayRole } };
       } catch {
         return null;
       }
