@@ -6,7 +6,7 @@ import { db } from "@/db";
 import { studyPlans } from "@/db/schema";
 import { eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { courses, bibliography, universityCourses, organization as orgTable, systemSettings } from "@/db/schema";
+import { courses, bibliography, universityCourses, organization as orgTable } from "@/db/schema";
 
 export async function createStudyPlanFromSelectionAction(
   courseId: string,

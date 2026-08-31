@@ -8,7 +8,7 @@ import type { ProgramaListItem } from "@/types/programaEnsino";
 import Link from "next/link";
 import { Eye, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function ArquivoCentralClient({ plans, query }: { plans: any[], query: string }) {
   const [docType, setDocType] = useState<'planos' | 'programas'>('planos');
   const [programas, setProgramas] = useState<ProgramaListItem[]>([]);

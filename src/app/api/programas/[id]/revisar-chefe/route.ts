@@ -24,10 +24,10 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     try {
       const updated = await reviewByChefe(id, result.data.action, result.data.feedback, user.id);
       return NextResponse.json(updated);
-    } catch (e: any) {
-      return NextResponse.json({ error: e.message }, { status: 400 });
+    } catch (e: unknown) {
+      return NextResponse.json({ error: e instanceof Error ? e.message : 'Unknown error' }, { status: 400 });
     }
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 });
   }
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Check, AlertCircle, Clock, Trash2, Send, Archive, Eye } from "lucide-react";
+import { ArrowLeft, Check, AlertCircle, Clock, Trash2, Send, Eye } from "lucide-react";
 import Link from "next/link";
 import { getProgramaStatusBadge, isProgramaEditable } from "../../utils/programaStatus";
 import type { ProgramaEnsino } from "../../types/programaEnsino";
@@ -13,7 +13,6 @@ interface ProgramaActionBarProps {
     saveStatus: 'saved' | 'saving' | 'error';
     onDelete: () => void;
     onSubmit: () => void;
-    onArchive: () => void;
     onHistory: () => void;
     onVisualizar: () => void;
 }
@@ -23,10 +22,10 @@ export function ProgramaActionBar({
     saveStatus,
     onDelete,
     onSubmit,
-    onArchive,
     onHistory,
     onVisualizar
 }: ProgramaActionBarProps) {
+    // @ts-expect-error useSession is injected
     const { data: session } = authClient.useSession();
     const userPapel = session?.user?.papel as string | undefined;
 
@@ -34,7 +33,6 @@ export function ProgramaActionBar({
     const isDraft = programa.status === 'draft';
     const isPendingChefe = programa.status === 'pending_chefe';
     const isSubmitted = programa.status === 'submitted';
-    const isApproved = programa.status === 'approved';
     const isRejected = programa.status === 'rejected';
 
     const submitLabel = userPapel === 'comissao'
@@ -123,6 +121,7 @@ export function ProgramaActionBar({
                 {isPendingChefe && userPapel === 'chefe' && (
                     <>
                         {/* the reviewByChefe handlers will be added to EditorClient, but the button triggers modal or confirmation */}
+                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                         <Button variant="outline" size="sm" onClick={() => (window as any).rejectChefe?.()} className="gap-2 border-red-200 text-red-600 hover:bg-red-50">
                             Devolver à Comissão
                         </Button>
@@ -134,6 +133,7 @@ export function ProgramaActionBar({
                 )}
 
                 {isSubmitted && userPapel === 'coordenador' && (
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     <Button size="sm" onClick={() => (window as any).openReviewModal?.()} className="gap-2 bg-blue-600 hover:bg-blue-700">
                         Iniciar Revisão
                     </Button>

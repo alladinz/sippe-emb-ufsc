@@ -7,7 +7,6 @@ import { toastError, toastSuccess, confirmDialog } from "@/lib/swal";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { authClient } from "@/lib/auth/client";
 import { ProgramaActionBar } from "@/components/programas/ProgramaActionBar";
-import { SubmitProgramaModal } from "@/components/programas/SubmitProgramaModal";
 import { HistoricoDrawer } from "@/components/programas/HistoricoDrawer";
 import { TabIdentificacao } from "@/components/programas/TabIdentificacao";
 import { TabCargaHoraria } from "@/components/programas/TabCargaHoraria";
@@ -65,9 +64,9 @@ export function ProgramaEnsinoEditorClient({ id }: Props) {
   const debounceRef = useRef<NodeJS.Timeout>(undefined);
 
   const [activeTab, setActiveTab] = useState<TabId>('identificacao');
-  const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [showHistorico, setShowHistorico] = useState(false);
 
+  // @ts-expect-error useSession is injected
   const { data: session } = authClient.useSession();
   const userPapel = session?.user?.papel as string | undefined;
 
@@ -170,25 +169,6 @@ export function ProgramaEnsinoEditorClient({ id }: Props) {
     }
   };
 
-  const handleArchive = async () => {
-    if (!programa) return;
-    const confirmed = await confirmDialog(
-      'Arquivar programa?',
-      'O programa será arquivado e ficará disponível para consulta. Esta ação não pode ser desfeita.',
-      'Arquivar',
-      'Cancelar',
-      false
-    );
-    if (confirmed) {
-      try {
-        const updated = await programasEnsinoApi.archive(programa.id);
-        setPrograma(updated);
-        toastSuccess('Programa arquivado com sucesso.');
-      } catch {
-        toastError('Erro ao arquivar o programa.');
-      }
-    }
-  };
 
   const handleVisualizar = () => {
     if (!programa) return;
@@ -239,6 +219,7 @@ export function ProgramaEnsinoEditorClient({ id }: Props) {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (window as any).rejectChefe = async () => {
         if (!programa) return;
         const feedback = window.prompt("Motivo da devolução:");
@@ -372,7 +353,6 @@ export function ProgramaEnsinoEditorClient({ id }: Props) {
         saveStatus={saveStatus}
         onDelete={handleDelete}
         onSubmit={handlePreSubmit}
-        onArchive={handleArchive}
         onHistory={() => setShowHistorico(true)}
         onVisualizar={handleVisualizar}
       />

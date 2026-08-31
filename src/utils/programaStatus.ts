@@ -57,6 +57,7 @@ export function canSubmitPrograma(status: ProgramaStatus): boolean {
   return status === 'draft';
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function canArchivePrograma(status: ProgramaStatus): boolean {
   return false;
 }

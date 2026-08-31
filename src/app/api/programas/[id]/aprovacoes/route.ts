@@ -17,10 +17,14 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
     try {
       const aprovacoes = await getProgramaAprovacoes(id);
       return NextResponse.json(aprovacoes);
-    } catch (e: any) {
-      return NextResponse.json({ error: e.message }, { status: 400 });
+    } catch (e: unknown) {
+      return NextResponse.json({ error: e instanceof Error ? e.message : 'Erro desconhecido' }, { status: 400 });
     }
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    console.error('Erro ao buscar aprovações do programa', { error });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Erro interno' },
+      { status: 500 }
+    );
   }
 }

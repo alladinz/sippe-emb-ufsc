@@ -125,6 +125,7 @@ export interface ProgramaListItem {
   nome_disciplina?:   string | null;
   cursos_vinculados?: string[] | null;
   updated_at:         Date | string;
+  arquivadoEm?:       string | Date | null;
   criador_nome?:      string | null;
   completude:         number; // 0–100 percent filled
 }
