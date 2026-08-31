@@ -18,7 +18,8 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     }
 
     try {
-      const updated = await submitPrograma(id, result.data.curso_aprovacao, session.user.id);
+      const user = session.user as { papel?: string; id: string };
+      const updated = await submitPrograma(id, user.id, user.papel);
       return NextResponse.json(updated);
     } catch (err: any) {
       if (err.code === 'MISSING_FIELDS') {

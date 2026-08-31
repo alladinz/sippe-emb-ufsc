@@ -18,7 +18,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     }
 
     try {
-      const updated = await reviewPrograma(id, result.data.action, result.data.feedback, session.user.id);
+      const updated = await reviewPrograma(id, result.data.action, result.data.feedback, session.user.id, result.data.curso);
       return NextResponse.json(updated);
     } catch (e: any) {
       return NextResponse.json({ error: e.message }, { status: 400 });

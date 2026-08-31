@@ -356,6 +356,7 @@ export function UserManagement({ members: initialMembers, organizations }: UserM
                                             <SelectContent>
                                                 <SelectItem value="professor">Professor</SelectItem>
                                                 <SelectItem value="coordenador">Coordenador</SelectItem>
+                                                <SelectItem value="comissao">Comissão</SelectItem>
                                                 <SelectItem value="secretario">Secretário</SelectItem>
                                                 <SelectItem value="chefe">Chefe</SelectItem>
                                             </SelectContent>
@@ -576,6 +577,7 @@ export function UserManagement({ members: initialMembers, organizations }: UserM
                                                     <SelectContent>
                                                         <SelectItem value="professor">Professor</SelectItem>
                                                         <SelectItem value="coordenador">Coordenador</SelectItem>
+                                                        <SelectItem value="comissao">Comissão</SelectItem>
                                                         <SelectItem value="secretario">Secretário</SelectItem>
                                                         <SelectItem value="chefe">Chefe</SelectItem>
                                                     </SelectContent>

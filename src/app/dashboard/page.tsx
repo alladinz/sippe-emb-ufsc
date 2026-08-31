@@ -8,12 +8,18 @@ import { Button } from "@/components/ui/button";
 import { FileEdit, ArrowRight, Clock, BookOpen, GraduationCap } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
   const session = await auth.api.getSession();
 
   if (!session) return null;
   const user = session.user;
+  const userRole = (user as { papel?: string }).papel;
+
+  if (userRole === 'comissao') {
+    redirect('/dashboard/programas-ensino');
+  }
 
   // Fetch pending drafts/assignments for this teacher
   const pendingPlans = await db.query.studyPlans.findMany({
@@ -35,7 +41,6 @@ export default async function DashboardPage() {
 
   // Programas stats for chefe/coordenador
   const programasStats = { submetidos: 0, aprovados: 0 };
-  const userRole = (user as { papel?: string }).papel;
   if (userRole === 'coordenador' || userRole === 'chefe') {
     // Actually, this is a Server Component, I'll just query the db directly
     const [sub, apr] = await Promise.all([

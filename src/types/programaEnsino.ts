@@ -1,5 +1,6 @@
 export type ProgramaStatus =
   | 'draft'
+  | 'pending_chefe'
   | 'submitted'
   | 'approved'
   | 'rejected'
@@ -91,12 +92,29 @@ export interface UpdateProgramaDto {
 }
 
 export interface SubmitProgramaDto {
-  curso_aprovacao: string;
+  curso_aprovacao?: string; // made optional, wait, actually submit no longer takes curso_aprovacao directly if it goes to all, but let's keep it for compatibility or leave it
 }
 
 export interface ReviewProgramaDto {
   action:   'approve' | 'reject';
   feedback?: string;
+  curso:     string;
+}
+
+export interface ReviewChefeProgramaDto {
+  action: 'forward' | 'reject_back';
+  feedback?: string;
+}
+
+export interface ProgramaAprovacao {
+  id: string;
+  programa_id: string;
+  curso: string;
+  coordenador_id: string | null;
+  status: 'pending' | 'approved' | 'rejected';
+  feedback: string | null;
+  decided_at: string | null;
+  created_at: string;
 }
 
 export interface ProgramaListItem {

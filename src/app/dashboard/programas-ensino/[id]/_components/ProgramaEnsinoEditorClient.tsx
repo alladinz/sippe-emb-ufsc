@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { programasEnsinoApi } from "@/services/programasEnsinoApi";
 import { toastError, toastSuccess, confirmDialog } from "@/lib/swal";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { authClient } from "@/lib/auth/client";
 import { ProgramaActionBar } from "@/components/programas/ProgramaActionBar";
 import { SubmitProgramaModal } from "@/components/programas/SubmitProgramaModal";
 import { HistoricoDrawer } from "@/components/programas/HistoricoDrawer";
@@ -66,6 +67,9 @@ export function ProgramaEnsinoEditorClient({ id }: Props) {
   const [activeTab, setActiveTab] = useState<TabId>('identificacao');
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [showHistorico, setShowHistorico] = useState(false);
+
+  const { data: session } = authClient.useSession();
+  const userPapel = session?.user?.papel as string | undefined;
 
   useEffect(() => {
     if (!id) return;
@@ -191,7 +195,7 @@ export function ProgramaEnsinoEditorClient({ id }: Props) {
     router.push(`/dashboard/programas-ensino/${programa.id}/visualizar`);
   };
 
-  const handlePreSubmit = () => {
+  const handlePreSubmit = async () => {
     if (!formState.ementa?.trim()) {
       toastError('Preencha a Ementa antes de submeter.');
       setActiveTab('ementa');
@@ -208,19 +212,54 @@ export function ProgramaEnsinoEditorClient({ id }: Props) {
       return;
     }
     
-    setShowSubmitModal(true);
-  };
-
-  const handleSubmitConfirm = async (cursoAprovacao: string) => {
-    if (!programa) return;
-    try {
-      const updated = await programasEnsinoApi.submit(programa.id, { curso_aprovacao: cursoAprovacao });
-      setPrograma(updated);
-      toastSuccess('Programa submetido para aprovação.');
-    } catch {
-      toastError('Erro ao submeter o programa.');
+    // We no longer need the modal to pick a course, because the backend automatically routes to Chefe or to all courses.
+    const confirmed = await confirmDialog(
+      'Encaminhar Programa?',
+      userPapel === 'comissao'
+        ? 'O programa será encaminhado para a revisão da Chefia.'
+        : 'O programa será encaminhado para aprovação de todas as Coordenações vinculadas.',
+      'Encaminhar',
+      'Cancelar'
+    );
+    if (confirmed) {
+      handleSubmitConfirm();
     }
   };
+
+  const handleSubmitConfirm = async () => {
+    if (!programa) return;
+    try {
+      const updated = await programasEnsinoApi.submit(programa.id);
+      setPrograma(updated);
+      toastSuccess('Programa encaminhado com sucesso.');
+    } catch {
+      toastError('Erro ao encaminhar o programa.');
+    }
+  };
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      (window as any).rejectChefe = async () => {
+        if (!programa) return;
+        const feedback = window.prompt("Motivo da devolução:");
+        if (feedback === null) return;
+        if (!feedback.trim()) {
+          toastError("O motivo é obrigatório.");
+          return;
+        }
+        try {
+          const updated = await programasEnsinoApi.reviewByChefe(programa.id, {
+            action: 'reject_back',
+            feedback
+          });
+          setPrograma(updated);
+          toastSuccess('Programa devolvido à Comissão.');
+        } catch {
+          toastError('Erro ao devolver programa.');
+        }
+      };
+    }
+  }, [programa]);
 
   function getTabStatus(tab: TabId): 'complete' | 'partial' | 'empty' {
     switch (tab) {
@@ -373,17 +412,6 @@ export function ProgramaEnsinoEditorClient({ id }: Props) {
         {activeTab === 'avaliacao'     && <TabAvaliacao formState={formState} updateField={updateField} isReadOnly={readOnly} />}
         {activeTab === 'bibliografia'  && <TabBibliografia formState={formState} updateField={updateField} isReadOnly={readOnly} />}
       </div>
-
-      {showSubmitModal && (
-        <SubmitProgramaModal
-          cursos={programa.cursos_vinculados || []}
-          onClose={() => setShowSubmitModal(false)}
-          onConfirm={async (curso) => {
-            await handleSubmitConfirm(curso);
-            setShowSubmitModal(false);
-          }}
-        />
-      )}
 
       {showHistorico && (
         <HistoricoDrawer

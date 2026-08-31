@@ -5,6 +5,8 @@ import { ArrowLeft, Check, AlertCircle, Clock, Trash2, Send, Archive, Eye } from
 import Link from "next/link";
 import { getProgramaStatusBadge, isProgramaEditable } from "../../utils/programaStatus";
 import type { ProgramaEnsino } from "../../types/programaEnsino";
+import { authClient } from "@/lib/auth/client";
+import { AprovacoesPanel } from "./AprovacoesPanel";
 
 interface ProgramaActionBarProps {
     programa: ProgramaEnsino;
@@ -25,11 +27,19 @@ export function ProgramaActionBar({
     onHistory,
     onVisualizar
 }: ProgramaActionBarProps) {
+    const { data: session } = authClient.useSession();
+    const userPapel = session?.user?.papel as string | undefined;
+
     const statusInfo = getProgramaStatusBadge(programa.status);
     const isDraft = programa.status === 'draft';
+    const isPendingChefe = programa.status === 'pending_chefe';
     const isSubmitted = programa.status === 'submitted';
     const isApproved = programa.status === 'approved';
     const isRejected = programa.status === 'rejected';
+
+    const submitLabel = userPapel === 'comissao'
+        ? 'Encaminhar para Chefia'
+        : 'Encaminhar para Coordenações';
 
     return (
         <div className="flex flex-col md:flex-row md:items-center justify-between bg-white p-4 border rounded-lg shadow-sm gap-4">
@@ -84,7 +94,7 @@ export function ProgramaActionBar({
                     Histórico
                 </Button>
 
-                {isDraft && (
+                {isDraft && userPapel !== 'comissao' && (
                     <Button variant="outline" size="sm" onClick={onDelete} className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200">
                         <Trash2 className="w-4 h-4" />
                         Excluir Rascunho
@@ -99,23 +109,46 @@ export function ProgramaActionBar({
                 {isDraft && (
                     <Button size="sm" onClick={onSubmit} className="gap-2 bg-blue-600 hover:bg-blue-700">
                         <Send className="w-4 h-4" />
-                        Submeter para Aprovação
+                        {submitLabel}
                     </Button>
                 )}
 
-                {isSubmitted && (
+                {isPendingChefe && userPapel === 'comissao' && (
+                    <span className="text-xs text-slate-500 flex items-center gap-1.5 ml-2 border border-slate-200 px-3 py-1.5 rounded-lg bg-slate-50">
+                        <Clock className="w-3.5 h-3.5" />
+                        Aguardando revisão da chefia
+                    </span>
+                )}
+
+                {isPendingChefe && userPapel === 'chefe' && (
+                    <>
+                        {/* the reviewByChefe handlers will be added to EditorClient, but the button triggers modal or confirmation */}
+                        <Button variant="outline" size="sm" onClick={() => (window as any).rejectChefe?.()} className="gap-2 border-red-200 text-red-600 hover:bg-red-50">
+                            Devolver à Comissão
+                        </Button>
+                        <Button size="sm" onClick={onSubmit} className="gap-2 bg-blue-600 hover:bg-blue-700">
+                            <Send className="w-4 h-4" />
+                            {submitLabel}
+                        </Button>
+                    </>
+                )}
+
+                {isSubmitted && userPapel === 'coordenador' && (
+                    <Button size="sm" onClick={() => (window as any).openReviewModal?.()} className="gap-2 bg-blue-600 hover:bg-blue-700">
+                        Iniciar Revisão
+                    </Button>
+                )}
+
+                {isSubmitted && userPapel !== 'coordenador' && (
                     <span className="text-xs text-slate-500 flex items-center gap-1.5 ml-2 border border-slate-200 px-3 py-1.5 rounded-lg bg-slate-50">
                         <Clock className="w-3.5 h-3.5" />
                         Aguardando aprovação
                     </span>
                 )}
-
-                {isApproved && (
-                    <Button variant="outline" size="sm" onClick={onArchive} className="gap-2 border-blue-200 text-blue-600 hover:bg-blue-50">
-                        <Archive className="w-4 h-4" />
-                        Arquivar
-                    </Button>
-                )}
+            </div>
+            
+            <div className="w-full">
+                <AprovacoesPanel programaId={programa.id} status={programa.status} />
             </div>
         </div>
     );

@@ -2,7 +2,8 @@ import type { ProgramaStatus } from '../types/programaEnsino';
 
 export const PROGRAMA_STATUS_LABEL: Record<ProgramaStatus, string> = {
   draft: 'Rascunho',
-  submitted: 'Aguardando Aprovação',
+  pending_chefe: 'Aguardando Revisão da Chefia',
+  submitted: 'Em Aprovação pelas Coordenações',
   approved: 'Aprovado',
   rejected: 'Devolvido',
   archived: 'Arquivado',
@@ -12,6 +13,10 @@ export const PROGRAMA_STATUS_COLORS: Record<ProgramaStatus, { bg: string; text: 
   draft: {
     bg: 'bg-gray-100', text: 'text-gray-600',
     border: 'border-gray-200', dot: 'bg-gray-400'
+  },
+  pending_chefe: {
+    bg: 'bg-purple-50', text: 'text-purple-700',
+    border: 'border-purple-200', dot: 'bg-purple-400'
   },
   submitted: {
     bg: 'bg-yellow-50', text: 'text-yellow-700',
@@ -38,8 +43,14 @@ export function getProgramaStatusBadge(status: ProgramaStatus) {
   };
 }
 
-export function isProgramaEditable(status: ProgramaStatus): boolean {
-  return status === 'draft';
+export function isProgramaEditable(
+  status: ProgramaStatus,
+  papel?: string
+): boolean {
+  if (status === 'draft') return true;
+  // Chefe can edit pending_chefe before forwarding
+  if (status === 'pending_chefe' && papel === 'chefe') return true;
+  return false;
 }
 
 export function canSubmitPrograma(status: ProgramaStatus): boolean {
@@ -47,5 +58,5 @@ export function canSubmitPrograma(status: ProgramaStatus): boolean {
 }
 
 export function canArchivePrograma(status: ProgramaStatus): boolean {
-  return status === 'approved';
+  return false;
 }

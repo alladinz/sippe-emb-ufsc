@@ -6,6 +6,8 @@ import type {
   UpdateProgramaDto,
   SubmitProgramaDto,
   ReviewProgramaDto,
+  ReviewChefeProgramaDto,
+  ProgramaAprovacao,
 } from '../types/programaEnsino';
 
 export const programasEnsinoApi = {
@@ -47,9 +49,9 @@ export const programasEnsinoApi = {
   },
 
   // Submit for coordinator approval
-  submit: async (id: string, body: SubmitProgramaDto) => {
+  submit: async (id: string, body?: SubmitProgramaDto) => {
     const { data } = await api.post(
-      `/programas/${id}/submeter`, body
+      `/programas/${id}/submeter`, body || {}
     );
     return data as ProgramaEnsino;
   },
@@ -62,7 +64,23 @@ export const programasEnsinoApi = {
     return data as ProgramaEnsino;
   },
 
-  // Archive an approved program
+  // Chefe reviews pending comissao
+  reviewByChefe: async (id: string, body: ReviewChefeProgramaDto) => {
+    const { data } = await api.post(
+      `/programas/${id}/revisar-chefe`, body
+    );
+    return data as ProgramaEnsino;
+  },
+
+  // Get aprovacoes panel
+  getAprovacoes: async (id: string) => {
+    const { data } = await api.get(
+      `/programas/${id}/aprovacoes`
+    );
+    return data as ProgramaAprovacao[];
+  },
+
+  // Archive a program manually
   archive: async (id: string) => {
     const { data } = await api.post(
       `/programas/${id}/arquivar`

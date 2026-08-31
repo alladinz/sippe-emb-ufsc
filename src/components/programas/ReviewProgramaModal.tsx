@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, CheckCircle2, XCircle } from "lucide-react";
+import { programasEnsinoApi } from "@/services/programasEnsinoApi";
+import type { ProgramaAprovacao } from "@/types/programaEnsino";
 
 interface ReviewProgramaModalProps {
   isOpen: boolean;
@@ -15,10 +17,25 @@ export default function ReviewProgramaModal({ isOpen, onClose, programa, onStatu
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState("");
   const [action, setAction] = useState<"approve" | "reject" | null>(null);
+  const [pendingAprovacoes, setPendingAprovacoes] = useState<ProgramaAprovacao[]>([]);
+  const [selectedCurso, setSelectedCurso] = useState("");
+
+  useEffect(() => {
+    if (isOpen && programa?.id) {
+      programasEnsinoApi.getAprovacoes(programa.id).then(rows => {
+        setPendingAprovacoes(rows.filter(r => r.status === 'pending'));
+      }).catch(console.error);
+    }
+  }, [isOpen, programa]);
 
   if (!isOpen) return null;
 
   const handleSubmit = async () => {
+    if (!selectedCurso) {
+      alert("Por favor, selecione o curso para o qual está aprovando.");
+      return;
+    }
+
     if (action === "reject" && !feedback.trim()) {
       alert("Por favor, forneça um feedback para a rejeição.");
       return;
@@ -32,6 +49,7 @@ export default function ReviewProgramaModal({ isOpen, onClose, programa, onStatu
         body: JSON.stringify({
           action,
           feedback: action === "reject" ? feedback : undefined,
+          curso: selectedCurso,
         }),
       });
 
@@ -64,6 +82,24 @@ export default function ReviewProgramaModal({ isOpen, onClose, programa, onStatu
           <div className="mb-6">
             <h3 className="text-sm font-medium text-slate-500 mb-1">Disciplina</h3>
             <p className="text-base text-slate-900">{programa.nomeDisciplina} ({programa.codigoDisciplina})</p>
+          </div>
+
+          <div className="mb-6">
+            <label className="text-sm font-medium text-slate-700">
+              Você está aprovando como coordenador de:
+            </label>
+            <select
+              value={selectedCurso}
+              onChange={e => setSelectedCurso(e.target.value)}
+              className="mt-1 w-full text-sm border border-slate-200 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            >
+              <option value="">Selecione o curso</option>
+              {pendingAprovacoes.map(ap => (
+                <option key={ap.curso} value={ap.curso}>
+                  {ap.curso}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="space-y-4">
@@ -123,7 +159,7 @@ export default function ReviewProgramaModal({ isOpen, onClose, programa, onStatu
           </button>
           <button
             onClick={handleSubmit}
-            disabled={!action || loading || (action === "reject" && !feedback.trim())}
+            disabled={!selectedCurso || !action || loading || (action === "reject" && !feedback.trim())}
             className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
           >
             {loading ? "Processando..." : "Confirmar"}

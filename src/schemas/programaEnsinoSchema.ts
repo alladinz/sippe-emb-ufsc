@@ -26,16 +26,28 @@ export const updateProgramaSchema = z.object({
 });
 
 export const submitProgramaSchema = z.object({
-  curso_aprovacao: z.string().min(1, 'Informe o curso para aprovação'),
+  curso_aprovacao: z.string().optional(),
 });
 
 export const reviewProgramaSchema = z.object({
   action: z.enum(['approve', 'reject']),
   feedback: z.string().optional(),
+  curso: z.string().min(1, 'Curso é obrigatório'),
 }).refine(
   data => data.action !== 'reject' || (data.feedback && data.feedback.trim().length > 0),
   {
     message: 'Feedback é obrigatório ao rejeitar',
+    path: ['feedback'],
+  }
+);
+
+export const reviewChefeProgramaSchema = z.object({
+  action: z.enum(['forward', 'reject_back']),
+  feedback: z.string().optional(),
+}).refine(
+  data => data.action !== 'reject_back' || (data.feedback && data.feedback.trim().length > 0),
+  {
+    message: 'Feedback é obrigatório ao devolver à comissão',
     path: ['feedback'],
   }
 );

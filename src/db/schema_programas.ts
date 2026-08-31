@@ -46,3 +46,14 @@ export const historicoProgramas = pgTable("historico_programas", {
   snapshot: jsonb("snapshot"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
+
+export const programaAprovacoes = pgTable("programa_aprovacoes", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  programaId: uuid("programa_id").notNull().references(() => programasEnsino.id, { onDelete: 'cascade' }),
+  curso: varchar("curso", { length: 255 }).notNull(),
+  coordenadorId: text("coordenador_id").references(() => user.id, { onDelete: 'set null' }),
+  status: varchar("status", { length: 20 }).notNull().default('pending'), // pending, approved, rejected
+  feedback: text("feedback"),
+  decidedAt: timestamp("decided_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});

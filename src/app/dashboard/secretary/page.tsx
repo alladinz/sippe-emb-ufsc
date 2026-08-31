@@ -3,8 +3,7 @@ import { auth } from "@/lib/auth/auth";
 import { db } from "@/db";
 import { studyPlans } from "@/db/schema";
 import { desc, inArray } from "drizzle-orm";
-import { SearchFilter } from "./_components/search-filter";
-import { CentralArchiveTable } from "./_components/central-archive-table";
+import { ArquivoCentralClient } from "./_components/arquivo-central-client";
 
 interface SecretaryDashboardPageProps {
     searchParams: Promise<{
@@ -62,14 +61,7 @@ export default async function SecretaryDashboardPage({ searchParams }: Secretary
         </p>
       </div>
 
-      <div className="flex justify-between items-center bg-white p-4 border rounded-xl shadow-sm">
-        <SearchFilter />
-        <div className="text-sm text-slate-500 font-medium">
-            {plans.length} planos no arquivo
-        </div>
-      </div>
-
-      <CentralArchiveTable plans={plans} initialQuery={query} />
+      <ArquivoCentralClient plans={plans} query={query} />
     </div>
   );
 }

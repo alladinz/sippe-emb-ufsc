@@ -41,6 +41,7 @@ export default async function DashboardLayout({
   const isReviewer = roles.includes("coordenador") || roles.includes("chefe");
   const isChef = roles.includes("chefe");
   const isAdmin = roles.includes("secretario") || roles.includes("chefe");
+  const isComissao = roles.includes("comissao");
 
   // For the header display, try to find an active one or just use the first
   let activeMember = null;
@@ -61,6 +62,7 @@ export default async function DashboardLayout({
     coordenador: "Coordenador(a)",
     chefe: "Chefe de Departamento",
     secretario: "Secretário(a) do Departamento",
+    comissao: "Comissão",
   };
 
   // Use the highest priority role for the label
@@ -75,7 +77,8 @@ export default async function DashboardLayout({
       <Sidebar 
         isReviewer={isReviewer} 
         isChef={isChef} 
-        isAdmin={isAdmin} 
+        isAdmin={isAdmin}
+        isComissao={isComissao}
       />
 
       {/* Main Content */}
