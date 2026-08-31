@@ -26,6 +26,6 @@ export default async function ProgramasEnsinoPage() {
     }
 
     return (
-        <ProgramasEnsinoClient isChef={isChef} />
+        <ProgramasEnsinoClient isChef={isChef} isComissao={isComissao} />
     );
 }

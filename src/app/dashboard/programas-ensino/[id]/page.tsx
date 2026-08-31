@@ -18,8 +18,9 @@ export default async function ProgramaEnsinoEditorPage(props: { params: Promise<
     });
 
     const isChef = memberships.some(m => m.role === "chefe" || m.organization?.name === "Chefia");
+    const isComissao = memberships.some(m => m.role === "comissao");
 
-    if (!isChef) {
+    if (!isChef && !isComissao) {
         redirect("/dashboard/programas-ensino");
     }
 

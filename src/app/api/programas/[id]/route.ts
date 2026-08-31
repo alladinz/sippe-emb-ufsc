@@ -33,7 +33,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
     }
 
     try {
-      const updated = await updatePrograma(id, result.data, session.user.id);
+      const updated = await updatePrograma(id, result.data, session.user.id, (session.user as any).papel);
       return NextResponse.json(updated);
     } catch (e: any) {
       return NextResponse.json({ error: e.message }, { status: 400 });

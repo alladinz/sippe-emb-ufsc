@@ -10,7 +10,7 @@ import { CreateProgramaModal } from "@/components/programas/CreateProgramaModal"
 import { TablePagination } from "@/components/table";
 import type { ProgramaListItem } from "@/types/programaEnsino";
 
-export function ProgramasEnsinoClient({ isChef }: { isChef: boolean }) {
+export function ProgramasEnsinoClient({ isChef, isComissao = false }: { isChef: boolean; isComissao?: boolean }) {
     const router = useRouter();
     const [programas, setProgramas] = useState<ProgramaListItem[]>([]);
     const [total, setTotal] = useState(0);
@@ -64,7 +64,7 @@ export function ProgramasEnsinoClient({ isChef }: { isChef: boolean }) {
                         Gerencie os programas de ensino das disciplinas do departamento.
                     </p>
                 </div>
-                {isChef && (
+                { (isChef || isComissao) && (
                     <button
                         onClick={() => setShowCreateModal(true)}
                         className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"

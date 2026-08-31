@@ -111,7 +111,7 @@ export function ProgramaEnsinoEditorClient({ id }: Props) {
 
   // Watch formState changes and trigger autosave
   useEffect(() => {
-    if (!programa || !isDirty || !isProgramaEditable(programa.status)) return;
+    if (!programa || !isDirty || !isProgramaEditable(programa.status, userPapel)) return;
 
     setSaveStatus('saving');
     clearTimeout(debounceRef.current);

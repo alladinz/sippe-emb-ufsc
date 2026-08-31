@@ -291,10 +291,14 @@ export async function createPrograma(disciplinaId: string, userId: string): Prom
   return (await getProgramaById(newProgram.id))!;
 }
 
-export async function updatePrograma(id: string, data: UpdateProgramaDto, userId: string): Promise<ProgramaEnsino> {
+export async function updatePrograma(id: string, data: UpdateProgramaDto, userId: string, userPapel?: string): Promise<ProgramaEnsino> {
   const prog = await getProgramaById(id);
   if (!prog) throw new Error('Programa not found');
-  if (prog.status !== 'draft') throw new Error('Cannot update non-draft program');
+  
+  // Use the central logic for editability
+  if (prog.status !== 'draft' && !(prog.status === 'pending_chefe' && userPapel === 'chefe')) {
+    throw new Error('Cannot update this program in its current status');
+  }
 
   const updateData: any = {
     atualizadoPor: userId,
