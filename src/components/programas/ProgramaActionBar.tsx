@@ -5,7 +5,7 @@ import { ArrowLeft, Check, AlertCircle, Clock, Trash2, Send, Eye } from "lucide-
 import Link from "next/link";
 import { getProgramaStatusBadge, isProgramaEditable } from "../../utils/programaStatus";
 import type { ProgramaEnsino } from "../../types/programaEnsino";
-import { authClient } from "@/lib/auth/client";
+import { useSession } from "@/lib/auth/client";
 import { AprovacoesPanel } from "./AprovacoesPanel";
 
 interface ProgramaActionBarProps {
@@ -25,8 +25,7 @@ export function ProgramaActionBar({
     onHistory,
     onVisualizar
 }: ProgramaActionBarProps) {
-    // @ts-expect-error useSession is injected
-    const { data: session } = authClient.useSession();
+    const { data: session } = useSession();
     const userPapel = session?.user?.papel as string | undefined;
 
     const statusInfo = getProgramaStatusBadge(programa.status);

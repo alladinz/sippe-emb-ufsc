@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { programasEnsinoApi } from "@/services/programasEnsinoApi";
 import { toastError, toastSuccess, confirmDialog } from "@/lib/swal";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { authClient } from "@/lib/auth/client";
+import { useSession } from "@/lib/auth/client";
 import { ProgramaActionBar } from "@/components/programas/ProgramaActionBar";
 import { HistoricoDrawer } from "@/components/programas/HistoricoDrawer";
 import { TabIdentificacao } from "@/components/programas/TabIdentificacao";
@@ -66,8 +66,7 @@ export function ProgramaEnsinoEditorClient({ id }: Props) {
   const [activeTab, setActiveTab] = useState<TabId>('identificacao');
   const [showHistorico, setShowHistorico] = useState(false);
 
-  // @ts-expect-error useSession is injected
-  const { data: session } = authClient.useSession();
+  const { data: session } = useSession();
   const userPapel = session?.user?.papel as string | undefined;
 
   useEffect(() => {
@@ -317,7 +316,7 @@ export function ProgramaEnsinoEditorClient({ id }: Props) {
     );
   }
 
-  const readOnly = !isProgramaEditable(programa.status);
+  const readOnly = !isProgramaEditable(programa.status, userPapel);
 
   return (
     <div className="max-w-5xl mx-auto pb-20">

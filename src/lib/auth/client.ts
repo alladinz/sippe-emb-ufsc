@@ -41,7 +41,7 @@ export const authClient = {
 
 // Custom hook to replace better-auth useSession
 export function useSession() {
-  const [data, setData] = useState<{ user: { id: string, name: string | null, email: string | null } } | null>(null);
+  const [data, setData] = useState<{ user: { id: string, name: string | null, email: string | null, papel?: string } } | null>(null);
   const [isPending, setIsPending] = useState(true);
   const [error, setError] = useState<unknown>(null);
 
