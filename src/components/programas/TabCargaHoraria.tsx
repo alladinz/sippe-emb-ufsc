@@ -84,7 +84,7 @@ export function TabCargaHoraria({ formState, updateField, isReadOnly }: EditorTa
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Créditos Teóricos</label>
           <input
@@ -110,10 +110,22 @@ export function TabCargaHoraria({ formState, updateField, isReadOnly }: EditorTa
           />
         </div>
         <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Créditos de Extensão</label>
+          <input
+            type="number"
+            min={0}
+            max={20}
+            value={formState.creditos_extensao}
+            onChange={(e) => updateField('creditos_extensao', parseInt(e.target.value) || 0)}
+            disabled={isReadOnly}
+            className="w-full px-3 py-2 border rounded-md text-center focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
+          />
+        </div>
+        <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Total de Créditos</label>
           <input
             type="number"
-            value={(Number(formState.creditos_teoricos) || 0) + (Number(formState.creditos_praticos) || 0)}
+            value={(Number(formState.creditos_teoricos) || 0) + (Number(formState.creditos_praticos) || 0) + (Number(formState.creditos_extensao) || 0)}
             readOnly
             className="w-full px-3 py-2 border rounded-md text-center bg-gray-100 text-gray-600 font-medium cursor-not-allowed"
           />

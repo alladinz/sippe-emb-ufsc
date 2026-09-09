@@ -137,6 +137,7 @@ export async function getProgramaById(id: string): Promise<ProgramaEnsino | null
     carga_horaria_total: p.cargaHorariaTotal,
     creditos_teoricos: p.creditosTeoricos,
     creditos_praticos: p.creditosPraticos,
+    creditos_extensao: p.creditosExtensao,
     ementa: p.ementa,
     objetivos: p.objetivos,
     conteudo_programatico: p.conteudoProgramatico,
@@ -279,6 +280,7 @@ export async function createPrograma(disciplinaId: string, userId: string): Prom
     cargaHorariaExtensao: 0,
     creditosTeoricos: disc.creditosTeorico,
     creditosPraticos: disc.creditosPratico,
+    creditosExtensao: 0,
     ementa: ementaToSave,
     bibliografia: bibToSave.length > 0 ? bibToSave : null,
   }).returning();
@@ -316,6 +318,7 @@ export async function updatePrograma(id: string, data: UpdateProgramaDto, userId
   if (data.carga_horaria_total !== undefined) updateData.cargaHorariaTotal = data.carga_horaria_total;
   if (data.creditos_teoricos !== undefined) updateData.creditosTeoricos = data.creditos_teoricos;
   if (data.creditos_praticos !== undefined) updateData.creditosPraticos = data.creditos_praticos;
+  if (data.creditos_extensao !== undefined) updateData.creditosExtensao = data.creditos_extensao;
   if (data.ementa !== undefined) updateData.ementa = data.ementa;
   if (data.objetivos !== undefined) updateData.objetivos = data.objetivos;
   if (data.conteudo_programatico !== undefined) updateData.conteudoProgramatico = data.conteudo_programatico;

@@ -224,6 +224,12 @@ export function ProgramaPDF({ programa, logoBlob }: ProgramaPDFProps) {
               </View>
             </View>
             <View style={styles.gridRow}>
+              <View style={styles.gridCell}>
+                <Text style={styles.label}>Créditos de extensão:</Text>
+                <Text style={styles.text}>{String(programa.creditos_extensao || '-')}</Text>
+              </View>
+            </View>
+            <View style={styles.gridRow}>
               <View style={[styles.gridCell, { flexDirection: 'column', width: 470 }]}>
                 <Text style={[styles.label, { marginBottom: 2 }]}>Cursos Vinculados:</Text>
                 <Text style={[styles.text, { lineHeight: 1.4, flexWrap: 'wrap' }]}>

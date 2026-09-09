@@ -11,6 +11,7 @@ export interface ProgramaFormState {
   carga_horaria_total: number;
   creditos_teoricos: number;
   creditos_praticos: number;
+  creditos_extensao: number;
 
   ementa: string;
   objetivos: string;

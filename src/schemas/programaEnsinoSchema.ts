@@ -14,6 +14,7 @@ export const updateProgramaSchema = z.object({
   carga_horaria_total:     z.number().int().min(0).optional(),
   creditos_teoricos:       z.number().int().min(0).optional(),
   creditos_praticos:       z.number().int().min(0).optional(),
+  creditos_extensao:       z.number().int().min(0).optional(),
   ementa:                  z.string().optional(),
   objetivos:               z.string().optional(),
   conteudo_programatico:   z.string().optional(),

@@ -32,6 +32,7 @@ export interface ProgramaEnsino {
   carga_horaria_total?:    number | null;
   creditos_teoricos?:      number | null;
   creditos_praticos?:      number | null;
+  creditos_extensao?:      number | null;
 
   // Section 3–6 — Content
   ementa?:                 string | null;
@@ -64,6 +65,7 @@ export interface ProgramaEnsino {
     carga_horaria_extensao?: number | null;
     creditos_teorico?:    number | null;
     creditos_pratico?:    number | null;
+    creditos_extensao?:   number | null;
     graduacoes?:          string[];
   } | null;
   criador?: {
@@ -87,6 +89,7 @@ export interface UpdateProgramaDto {
   carga_horaria_total?:     number;
   creditos_teoricos?:       number;
   creditos_praticos?:       number;
+  creditos_extensao?:       number;
   ementa?:                  string;
   objetivos?:               string;
   conteudo_programatico?:   string;
