@@ -61,6 +61,7 @@ export interface ProgramaEnsino {
     nome:   string;
     curso:  string | null;
     carga_horaria_total?: number | null;
+    carga_horaria_extensao?: number | null;
     creditos_teorico?:    number | null;
     creditos_pratico?:    number | null;
     graduacoes?:          string[];
