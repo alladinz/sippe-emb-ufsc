@@ -46,6 +46,8 @@ async function seed() {
     { name: "Coordenador Teste", email: "coordenador@teste.com", role: "coordenador", orgSlug: "engenharia-automotiva" },
     { name: "Chefe Teste", email: "chefe@teste.com", role: "chefe", orgSlug: "bacharelado-em-ciencia-e-tecnologia" },
     { name: "Secretaria Teste", email: "secretaria@teste.com", role: "secretario", orgSlug: "bacharelado-em-ciencia-e-tecnologia" },
+    { name: "Comissão 2", email: "comissao2@emb.br", role: "comissao", orgSlug: "bacharelado-em-ciencia-e-tecnologia" },
+    { name: "Comissão 3", email: "comissao3@emb.br", role: "comissao", orgSlug: "bacharelado-em-ciencia-e-tecnologia" },
   ];
 
   for (const u of usersData) {
