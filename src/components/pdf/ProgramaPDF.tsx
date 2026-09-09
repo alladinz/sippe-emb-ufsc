@@ -205,6 +205,10 @@ export function ProgramaPDF({ programa, logoBlob }: ProgramaPDFProps) {
             </View>
             <View style={styles.gridRow}>
               <View style={styles.gridCell}>
+                <Text style={styles.label}>Carga horária de extensão:</Text>
+                <Text style={styles.text}>{programa.carga_horaria_extensao ? `${programa.carga_horaria_extensao} horas` : '-'}</Text>
+              </View>
+              <View style={[styles.gridCell, { flex: 0.6 }]}>
                 <Text style={styles.label}>Carga horária total:</Text>
                 <Text style={styles.text}>{programa.carga_horaria_total ? `${programa.carga_horaria_total} horas` : '-'}</Text>
               </View>

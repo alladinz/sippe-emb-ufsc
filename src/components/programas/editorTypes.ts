@@ -7,6 +7,7 @@ export interface ProgramaFormState {
 
   carga_horaria_teorica: number;
   carga_horaria_pratica: number;
+  carga_horaria_extensao: number;
   carga_horaria_total: number;
   creditos_teoricos: number;
   creditos_praticos: number;

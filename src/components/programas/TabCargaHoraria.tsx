@@ -6,11 +6,11 @@ import type { EditorTabProps } from "./editorTypes";
 
 export function TabCargaHoraria({ formState, updateField, isReadOnly }: EditorTabProps) {
   useEffect(() => {
-    const total = Number(formState.carga_horaria_teorica || 0) + Number(formState.carga_horaria_pratica || 0);
+    const total = Number(formState.carga_horaria_teorica || 0) + Number(formState.carga_horaria_pratica || 0) + Number(formState.carga_horaria_extensao || 0);
     if (total !== formState.carga_horaria_total) {
       updateField('carga_horaria_total', total);
     }
-  }, [formState.carga_horaria_teorica, formState.carga_horaria_pratica, formState.carga_horaria_total, updateField]);
+  }, [formState.carga_horaria_teorica, formState.carga_horaria_pratica, formState.carga_horaria_extensao, formState.carga_horaria_total, updateField]);
 
   return (
     <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
@@ -24,7 +24,7 @@ export function TabCargaHoraria({ formState, updateField, isReadOnly }: EditorTa
         Pré-preenchidos com base nos dados importados da planilha. Verifique e corrija se necessário.
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Carga Horária Teórica (h)</label>
           <div className="relative">
@@ -49,6 +49,21 @@ export function TabCargaHoraria({ formState, updateField, isReadOnly }: EditorTa
               max={999}
               value={formState.carga_horaria_pratica}
               onChange={(e) => updateField('carga_horaria_pratica', parseInt(e.target.value) || 0)}
+              disabled={isReadOnly}
+              className="w-full pl-3 pr-8 py-2 border rounded-md text-center focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
+            />
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">h</span>
+          </div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Carga Horária de Extensão (h)</label>
+          <div className="relative">
+            <input
+              type="number"
+              min={0}
+              max={999}
+              value={formState.carga_horaria_extensao}
+              onChange={(e) => updateField('carga_horaria_extensao', parseInt(e.target.value) || 0)}
               disabled={isReadOnly}
               className="w-full pl-3 pr-8 py-2 border rounded-md text-center focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
             />

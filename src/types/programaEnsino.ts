@@ -28,6 +28,7 @@ export interface ProgramaEnsino {
   // Section 2 — Carga Horária
   carga_horaria_teorica?:  number | null;
   carga_horaria_pratica?:  number | null;
+  carga_horaria_extensao?: number | null;
   carga_horaria_total?:    number | null;
   creditos_teoricos?:      number | null;
   creditos_praticos?:      number | null;
@@ -81,6 +82,7 @@ export interface UpdateProgramaDto {
   cursos_vinculados?:       string[];
   carga_horaria_teorica?:   number;
   carga_horaria_pratica?:   number;
+  carga_horaria_extensao?:  number;
   carga_horaria_total?:     number;
   creditos_teoricos?:       number;
   creditos_praticos?:       number;

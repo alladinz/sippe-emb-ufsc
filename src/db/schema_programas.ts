@@ -14,6 +14,7 @@ export const programasEnsino = pgTable("programas_ensino", {
   
   cargaHorariaTeorica: integer("carga_horaria_teorica").default(0),
   cargaHorariaPratica: integer("carga_horaria_pratica").default(0),
+  cargaHorariaExtensao: integer("carga_horaria_extensao").default(0),
   cargaHorariaTotal: integer("carga_horaria_total").default(0),
   creditosTeoricos: integer("creditos_teoricos").default(0),
   creditosPraticos: integer("creditos_praticos").default(0),

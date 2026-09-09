@@ -10,6 +10,7 @@ export const updateProgramaSchema = z.object({
   cursos_vinculados:       z.array(z.string()).optional(),
   carga_horaria_teorica:   z.number().int().min(0).optional(),
   carga_horaria_pratica:   z.number().int().min(0).optional(),
+  carga_horaria_extensao:  z.number().int().min(0).optional(),
   carga_horaria_total:     z.number().int().min(0).optional(),
   creditos_teoricos:       z.number().int().min(0).optional(),
   creditos_praticos:       z.number().int().min(0).optional(),

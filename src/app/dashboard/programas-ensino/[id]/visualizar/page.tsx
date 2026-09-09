@@ -160,6 +160,7 @@ export default async function ProgramaEnsinoVisualizarPage({
               <p><span className="font-bold">Código:</span> {programa.codigo_disciplina}</p>
               <p><span className="font-bold">Carga horária teórica:</span> {programa.carga_horaria_teorica || '-'} horas</p>
               <p><span className="font-bold">Carga horária prática:</span> {programa.carga_horaria_pratica || '-'} horas</p>
+              <p><span className="font-bold">Carga horária de extensão:</span> {programa.carga_horaria_extensao || '-'} horas</p>
               <p><span className="font-bold">Carga horária total:</span> {programa.carga_horaria_total || '-'} horas</p>
               <p><span className="font-bold">Créditos teóricos:</span> {programa.creditos_teoricos || '-'}</p>
               <p><span className="font-bold">Créditos práticos:</span> {programa.creditos_praticos || '-'}</p>
