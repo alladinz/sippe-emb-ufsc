@@ -33,9 +33,10 @@ type TabId = typeof TABS[number]['id'];
 
 interface Props {
   id: string;
+  defaultCriterios?: string;
 }
 
-export function ProgramaEnsinoEditorClient({ id }: Props) {
+export function ProgramaEnsinoEditorClient({ id, defaultCriterios = "" }: Props) {
   const router = useRouter();
   
   const [programa, setPrograma] = useState<ProgramaEnsino | null>(null);
@@ -105,7 +106,7 @@ export function ProgramaEnsinoEditorClient({ id }: Props) {
       ementa:                p.ementa ?? '',
       objetivos:             p.objetivos ?? '',
       conteudo_programatico: p.conteudo_programatico ?? '',
-      criterios_avaliacao:   p.criterios_avaliacao ?? '',
+      criterios_avaliacao:   p.criterios_avaliacao || defaultCriterios,
       bibliografia:          p.bibliografia ?? [],
     });
     // Reset dirty state when initializing

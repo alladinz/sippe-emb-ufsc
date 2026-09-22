@@ -27,5 +27,11 @@ export default async function ProgramaEnsinoEditorPage(props: { params: Promise<
     const params = await props.params;
     const id = params.id;
 
-    return <ProgramaEnsinoEditorClient id={id} />;
+    // Fetch default criteria for Programas de Ensino
+    const setting = await db.query.systemSettings.findFirst({
+        where: (settings, { eq }) => eq(settings.key, "DEFAULT_CRITERIOS_AVALIACAO_PROGRAMA")
+    });
+    const defaultCriterios = setting?.value || "";
+
+    return <ProgramaEnsinoEditorClient id={id} defaultCriterios={defaultCriterios} />;
 }

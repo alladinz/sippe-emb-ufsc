@@ -32,10 +32,12 @@ export default async function RevisaoProgramasPage() {
     redirect("/dashboard");
   }
 
+  const statusFilter = userRole === "chefe" ? "pending_chefe" : "submitted";
+
   // Fetch submitted programs
   const programasSubmetidos = await db.select()
     .from(programasEnsino)
-    .where(eq(programasEnsino.status, "submitted"))
+    .where(eq(programasEnsino.status, statusFilter))
     .orderBy(desc(programasEnsino.submetidoEm));
 
   return (
