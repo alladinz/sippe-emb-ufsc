@@ -4,15 +4,8 @@ import { redirect } from "next/navigation";
 import { db } from "@/db";
 import { programasEnsino } from "@/db/schema_programas";
 import { eq, desc } from "drizzle-orm";
-import { 
-  Breadcrumb, 
-  BreadcrumbList, 
-  BreadcrumbItem, 
-  BreadcrumbLink, 
-  BreadcrumbSeparator, 
-  BreadcrumbPage 
-} from "@/components/ui/breadcrumb";
-import Link from "next/link";
+
+
 import SubmissionsTable from "@/components/programas/SubmissionsTable";
 
 export const metadata: Metadata = {
@@ -41,37 +34,27 @@ export default async function RevisaoProgramasPage() {
     .orderBy(desc(programasEnsino.submetidoEm));
 
   return (
-    <div className="flex flex-col h-full bg-slate-50/50">
-      <div className="flex-none bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
-          <Breadcrumb className="mb-4 sm:mb-6">
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href="/dashboard">Dashboard</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Revisão de Programas</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">Revisão de Programas</h1>
-              <p className="mt-1 text-sm sm:text-base text-slate-500">
-                Analise e aprove os programas de ensino submetidos.
-              </p>
-            </div>
-          </div>
-        </div>
+    <div className="space-y-12 pb-10">
+      <div className="flex flex-col gap-2">
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+          Revisão de Programas de Ensino
+        </h1>
+        <p className="text-slate-500 max-w-2xl">
+          Analise e aprove os programas de ensino submetidos.
+        </p>
       </div>
 
-      <div className="flex-1 overflow-auto">
-        <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-          <SubmissionsTable initialData={programasSubmetidos} />
+      <div className="space-y-6">
+        <div className="flex items-center justify-between border-b pb-4">
+            <h2 className="text-xl font-bold text-slate-900 flex items-center gap-3">
+                <div className="h-8 w-1 bg-amber-500 rounded-full" />
+                Novas Submissões
+                <span className="ml-2 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-700">
+                    {programasSubmetidos.length}
+                </span>
+            </h2>
         </div>
+        <SubmissionsTable initialData={programasSubmetidos} />
       </div>
     </div>
   );
