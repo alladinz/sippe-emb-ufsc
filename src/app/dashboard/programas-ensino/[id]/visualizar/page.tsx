@@ -12,6 +12,7 @@ import { DownloadProgramaButton } from '@/components/pdf/DownloadProgramaButton'
 import { getProgramaStatusBadge } from '@/utils/programaStatus';
 import { tiptapToPlainText } from '@/components/pdf/pdfHelpers';
 import { parseBoldMarkers } from '@/utils/bibliografiaUtils';
+import { formatCursosVinculados } from '@/utils/courseUtils';
 
 export const metadata: Metadata = {
   title: 'Visualizar Programa de Ensino | SIPPE',
@@ -165,7 +166,7 @@ export default async function ProgramaEnsinoVisualizarPage({
               <p><span className="font-bold">Créditos teóricos:</span> {programa.creditos_teoricos || '-'}</p>
               <p><span className="font-bold">Créditos práticos:</span> {programa.creditos_praticos || '-'}</p>
               <p><span className="font-bold">Créditos de extensão:</span> {programa.creditos_extensao || '-'}</p>
-              <p className="col-span-2 mt-2"><span className="font-bold">Cursos Vinculados:</span> {programa.cursos_vinculados?.length ? programa.cursos_vinculados.join(', ') : '-'}</p>
+              <p className="col-span-2 mt-2"><span className="font-bold">Cursos Vinculados:</span> {formatCursosVinculados(programa.cursos_vinculados)}</p>
             </div>
           </div>
 

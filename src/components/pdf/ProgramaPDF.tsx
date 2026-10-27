@@ -1,6 +1,7 @@
 import React from 'react';
 import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
 import { resolveContent, parseBoldMarkers } from './pdfHelpers';
+import { formatCursosVinculados } from '../../utils/courseUtils';
 import type { ProgramaEnsino } from '../../types/programaEnsino';
 
 // Exact same styles as PlanoPDF to ensure identical format
@@ -233,7 +234,7 @@ export function ProgramaPDF({ programa, logoBlob }: ProgramaPDFProps) {
               <View style={[styles.gridCell, { flexDirection: 'column', width: 470 }]}>
                 <Text style={[styles.label, { marginBottom: 2 }]}>Cursos Vinculados:</Text>
                 <Text style={[styles.text, { lineHeight: 1.4, flexWrap: 'wrap' }]}>
-                  {programa.cursos_vinculados?.length ? programa.cursos_vinculados.join(', ') : '-'}
+                  {formatCursosVinculados(programa.cursos_vinculados)}
                 </Text>
               </View>
             </View>
