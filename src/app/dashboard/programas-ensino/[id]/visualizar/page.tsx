@@ -159,10 +159,10 @@ export default async function ProgramaEnsinoVisualizarPage({
             <div className="grid grid-cols-2 gap-x-12 gap-y-2 text-xs border p-4 rounded-sm bg-slate-50/30">
               <p><span className="font-bold">Nome:</span> {programa.nome_disciplina}</p>
               <p><span className="font-bold">Código:</span> {programa.codigo_disciplina}</p>
-              <p><span className="font-bold">Carga horária teórica:</span> {programa.carga_horaria_teorica || '-'} horas</p>
-              <p><span className="font-bold">Carga horária prática:</span> {programa.carga_horaria_pratica || '-'} horas</p>
-              <p><span className="font-bold">Carga horária de extensão:</span> {programa.carga_horaria_extensao || '-'} horas</p>
-              <p><span className="font-bold">Carga horária total:</span> {programa.carga_horaria_total || '-'} horas</p>
+              <p><span className="font-bold">Carga horária teórica:</span> {programa.carga_horaria_teorica ? `${programa.carga_horaria_teorica} horas` : '-'}</p>
+              <p><span className="font-bold">Carga horária prática:</span> {programa.carga_horaria_pratica ? `${programa.carga_horaria_pratica} horas` : '-'}</p>
+              <p><span className="font-bold">Carga horária de extensão:</span> {programa.carga_horaria_extensao ? `${programa.carga_horaria_extensao} horas` : '-'}</p>
+              <p><span className="font-bold">Carga horária total:</span> {programa.carga_horaria_total ? `${programa.carga_horaria_total} horas` : '-'}</p>
               <p><span className="font-bold">Créditos teóricos:</span> {programa.creditos_teoricos || '-'}</p>
               <p><span className="font-bold">Créditos práticos:</span> {programa.creditos_praticos || '-'}</p>
               <p><span className="font-bold">Créditos de extensão:</span> {programa.creditos_extensao || '-'}</p>
