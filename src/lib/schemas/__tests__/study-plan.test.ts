@@ -8,7 +8,7 @@ describe("Study Plan Zod Schema", () => {
       status: "draft",
       methodology: "Valid methodology",
       evaluation: "Valid evaluation",
-      schedule: "<p>Valid schedule</p>",
+      schedule: [{ day: "Segunda-feira", enabled: true }],
       courses: [
         { code: "ABC1234", name: "Cálculo I" }
       ],
