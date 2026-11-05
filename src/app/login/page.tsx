@@ -210,48 +210,62 @@ export default function LoginPage() {
                   Primeiro acesso ou esqueceu a senha?
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="sm:max-w-[420px] p-6 rounded-xl border border-slate-200/80 shadow-xl">
                 {resetSuccess ? (
-                  <div className="py-6 text-center space-y-4">
-                    <div className="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto">
+                  <div className="py-6 text-center space-y-3">
+                    <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center mx-auto border border-emerald-100">
                       <KeyRound className="w-6 h-6" />
                     </div>
-                    <div className="space-y-2">
-                      <h3 className="text-lg font-bold">E-mail enviado!</h3>
-                      <p className="text-sm text-slate-500 px-4">
-                        Se este e-mail estiver cadastrado, você receberá um link em instantes para definir sua senha.
+                    <div className="space-y-1">
+                      <h3 className="text-base font-bold text-[#102E52]">E-mail enviado!</h3>
+                      <p className="text-xs text-slate-500 leading-relaxed px-2">
+                        Se este e-mail estiver cadastrado, você receberá em instantes um link seguro para cadastrar ou redefinir sua senha.
                       </p>
                     </div>
                   </div>
                 ) : (
                   <>
                     <DialogHeader>
-                      <DialogTitle>Redefinir Senha</DialogTitle>
-                      <DialogDescription>
-                        Informe seu e-mail cadastrado pelo Chefe para receber o link de acesso.
+                      <DialogTitle className="text-lg font-bold text-[#102E52] flex items-center gap-2">
+                        <KeyRound className="w-5 h-5 text-[#023E8A]" />
+                        Redefinir Senha
+                      </DialogTitle>
+                      <DialogDescription className="text-xs text-slate-500 mt-1 leading-relaxed">
+                        Informe o e-mail institucional cadastrado no SIPPE. Enviaremos um link seguro para que você possa definir sua senha inicial de primeiro acesso ou redefinir sua senha atual.
                       </DialogDescription>
                     </DialogHeader>
-                    <div className="py-4 space-y-4">
+                    <div className="py-3 space-y-3">
                       {resetError && (
-                        <div className="bg-destructive/15 text-destructive text-xs p-3 rounded-md">
+                        <div className="bg-destructive/15 text-destructive text-xs p-3 rounded-lg">
                           {resetError}
                         </div>
                       )}
-                      <div className="space-y-2">
-                        <Label htmlFor="resetEmail">E-mail Institucional</Label>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="resetEmail" className="text-xs font-semibold text-slate-700">E-mail Institucional</Label>
                         <Input
                           id="resetEmail"
                           type="email"
                           placeholder="seu@email.com"
                           value={resetEmail}
                           onChange={(e) => setResetEmail(e.target.value)}
+                          className="h-9 rounded-lg border-slate-200 text-xs focus-visible:ring-[#023E8A]"
                         />
                       </div>
                     </div>
-                    <DialogFooter>
-                      <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancelar</Button>
-                      <Button onClick={handleResetRequest} disabled={resetLoading || !resetEmail}>
-                        {resetLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                    <DialogFooter className="gap-2 sm:gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsDialogOpen(false)}
+                        className="h-9 px-4 text-xs font-semibold text-slate-600 border-slate-200 hover:bg-slate-50 rounded-lg"
+                      >
+                        Cancelar
+                      </Button>
+                      <Button
+                        onClick={handleResetRequest}
+                        disabled={resetLoading || !resetEmail}
+                        className="h-9 bg-[#023E8A] hover:bg-[#023E8A]/90 text-white font-bold px-4 text-xs rounded-lg"
+                      >
+                        {resetLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" /> : null}
                         Enviar Link
                       </Button>
                     </DialogFooter>

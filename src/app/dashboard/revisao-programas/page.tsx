@@ -7,6 +7,7 @@ import { eq, desc } from "drizzle-orm";
 
 
 import SubmissionsTable from "@/components/programas/SubmissionsTable";
+import { PageHeader } from "@/components/dashboard/page-header";
 
 export const metadata: Metadata = {
   title: "Revisão de Programas de Ensino - SIPPE",
@@ -34,15 +35,11 @@ export default async function RevisaoProgramasPage() {
     .orderBy(desc(programasEnsino.submetidoEm));
 
   return (
-    <div className="space-y-12 pb-10">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-          Revisão de Programas de Ensino
-        </h1>
-        <p className="text-slate-500 max-w-2xl">
-          Analise e aprove os programas de ensino submetidos.
-        </p>
-      </div>
+    <div className="space-y-8 pb-10">
+      <PageHeader
+        title="Revisão de Programas de Ensino"
+        description="Analise e aprove os programas de ensino submetidos."
+      />
 
       <div className="space-y-6">
         <div className="flex items-center justify-between border-b pb-4">

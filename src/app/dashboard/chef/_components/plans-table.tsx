@@ -15,11 +15,10 @@ import {
     TableEmptyState,
 } from "@/components/table";
 import { useTable } from "@/hooks/table/useTable";
-import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/dashboard/status-badge";
 import { Button } from "@/components/ui/button";
-import { Eye, Clock, CheckCircle, XCircle } from "lucide-react";
+import { Eye } from "lucide-react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 
 interface Plan {
@@ -45,14 +44,6 @@ export function PlansTable({ initialPlans, total, pageSize, currentPage }: Plans
     const searchParams = useSearchParams();
     
     const { density } = useTable({ id: 'chef-plans-overview' });
-
-    const statusLabels: Record<string, { label: string, color: string, icon: React.ElementType }> = {
-        draft: { label: "Rascunho", color: "bg-slate-100 text-slate-800", icon: Clock },
-        submitted: { label: "Nova Submissão", color: "bg-blue-100 text-blue-800", icon: Clock },
-        pending_review: { label: "Em Revisão", color: "bg-brand-light/20 text-indigo-800", icon: Clock },
-        approved: { label: "Aprovado", color: "bg-green-100 text-green-800", icon: CheckCircle },
-        rejected: { label: "Rejeitado", color: "bg-red-100 text-red-800", icon: XCircle },
-    };
 
     const onPageChange = (page: number) => {
         const params = new URLSearchParams(searchParams.toString());
@@ -105,13 +96,7 @@ export function PlansTable({ initialPlans, total, pageSize, currentPage }: Plans
                                     <TableCell className="font-medium text-slate-700">{plan.user.name}</TableCell>
                                     <TableCell className="text-slate-600">{plan.semester}</TableCell>
                                     <TableCell>
-                                        <Badge className={cn("gap-1.5 border-none", statusLabels[plan.status]?.color)}>
-                                            {(() => {
-                                                const StatusIcon = statusLabels[plan.status]?.icon;
-                                                return StatusIcon ? <StatusIcon className="w-3 h-3" /> : null;
-                                            })()}
-                                            {statusLabels[plan.status]?.label || plan.status}
-                                        </Badge>
+                                        <StatusBadge status={plan.status} />
                                     </TableCell>
                                     <TableCell className="text-slate-500 text-xs">
                                         {new Date(plan.updatedAt).toLocaleDateString('pt-BR')}

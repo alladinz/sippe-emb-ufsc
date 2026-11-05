@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { programasEnsinoApi } from "@/services/programasEnsinoApi";
-import { toastError, toastSuccess, confirmDialog } from "@/lib/swal";
+import { toastError, toastSuccess, confirmDialog, promptDialog } from "@/lib/swal";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { useSession } from "@/lib/auth/client";
 import { ProgramaActionBar } from "@/components/programas/ProgramaActionBar";
@@ -38,7 +38,7 @@ interface Props {
 
 export function ProgramaEnsinoEditorClient({ id, defaultCriterios = "" }: Props) {
   const router = useRouter();
-  
+
   const [programa, setPrograma] = useState<ProgramaEnsino | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -65,6 +65,10 @@ export function ProgramaEnsinoEditorClient({ id, defaultCriterios = "" }: Props)
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
   const [isDirty, setIsDirty] = useState(false);
   const debounceRef = useRef<NodeJS.Timeout>(undefined);
+  const isSavingRef = useRef(false);
+  const saveSeqRef = useRef(0);
+  const formStateRef = useRef(formState);
+  formStateRef.current = formState;
 
   const [activeTab, setActiveTab] = useState<TabId>('identificacao');
   const [showHistorico, setShowHistorico] = useState(false);
@@ -72,26 +76,7 @@ export function ProgramaEnsinoEditorClient({ id, defaultCriterios = "" }: Props)
   const { data: session } = useSession();
   const userPapel = session?.user?.papel as string | undefined;
 
-  useEffect(() => {
-    if (!id) return;
-    setIsLoading(true);
-
-    programasEnsinoApi.getById(id)
-      .then(data => {
-        setPrograma(data);
-        initFormState(data);
-      })
-      .catch(err => {
-        if (err.response?.status === 404) {
-          setNotFound(true);
-        } else {
-          setHasError(true);
-        }
-      })
-      .finally(() => setIsLoading(false));
-  }, [id]);
-
-  function initFormState(p: ProgramaEnsino) {
+  const initFormState = useCallback((p: ProgramaEnsino) => {
     setFormState({
       codigo_disciplina:     p.codigo_disciplina ?? p.disciplina?.codigo ?? '',
       nome_disciplina:       p.nome_disciplina ?? p.disciplina?.nome ?? '',
@@ -111,7 +96,80 @@ export function ProgramaEnsinoEditorClient({ id, defaultCriterios = "" }: Props)
     });
     // Reset dirty state when initializing
     setIsDirty(false);
+  }, [defaultCriterios]);
+
+  useEffect(() => {
+    if (!id) return;
+    setIsLoading(true);
+
+    programasEnsinoApi.getById(id)
+      .then(data => {
+        setPrograma(data);
+        initFormState(data);
+      })
+      .catch(err => {
+        if (err.response?.status === 404) {
+          setNotFound(true);
+        } else {
+          setHasError(true);
+        }
+      })
+      .finally(() => setIsLoading(false));
+  }, [id, initFormState]);
+
+  function updateField<K extends keyof ProgramaFormState>(field: K, value: ProgramaFormState[K]) {
+    setFormState(prev => ({ ...prev, [field]: value }));
+    setIsDirty(true);
   }
+
+  const flushSave = useCallback(async (): Promise<boolean> => {
+    if (!programa || !isDirty) return true;
+    clearTimeout(debounceRef.current);
+
+    while (isSavingRef.current) {
+      await new Promise(r => setTimeout(r, 60));
+    }
+
+    if (!isDirty) return true;
+
+    const currentSeq = ++saveSeqRef.current;
+    isSavingRef.current = true;
+    setSaveStatus('saving');
+
+    try {
+      const dataToSave = formStateRef.current;
+      const updateData = {
+        codigo_disciplina:     dataToSave.codigo_disciplina,
+        nome_disciplina:       dataToSave.nome_disciplina,
+        cursos_vinculados:     dataToSave.cursos_vinculados,
+        carga_horaria_teorica: dataToSave.carga_horaria_teorica,
+        carga_horaria_pratica: dataToSave.carga_horaria_pratica,
+        carga_horaria_extensao: dataToSave.carga_horaria_extensao,
+        carga_horaria_total:   dataToSave.carga_horaria_total,
+        creditos_teoricos:     dataToSave.creditos_teoricos,
+        creditos_praticos:     dataToSave.creditos_praticos,
+        creditos_extensao:     dataToSave.creditos_extensao,
+        ementa:                dataToSave.ementa,
+        objetivos:             dataToSave.objetivos,
+        conteudo_programatico: dataToSave.conteudo_programatico,
+        criterios_avaliacao:   dataToSave.criterios_avaliacao,
+        bibliografia:          dataToSave.bibliografia,
+      };
+      await programasEnsinoApi.update(programa.id, updateData);
+      if (currentSeq === saveSeqRef.current) {
+        setSaveStatus('saved');
+        setIsDirty(false);
+      }
+      return true;
+    } catch {
+      if (currentSeq === saveSeqRef.current) {
+        setSaveStatus('error');
+      }
+      return false;
+    } finally {
+      isSavingRef.current = false;
+    }
+  }, [programa, isDirty]);
 
   // Watch formState changes and trigger autosave
   useEffect(() => {
@@ -120,40 +178,50 @@ export function ProgramaEnsinoEditorClient({ id, defaultCriterios = "" }: Props)
     setSaveStatus('saving');
     clearTimeout(debounceRef.current);
 
-    debounceRef.current = setTimeout(async () => {
-      try {
-        const updateData = {
-          codigo_disciplina:     formState.codigo_disciplina,
-          nome_disciplina:       formState.nome_disciplina,
-          cursos_vinculados:     formState.cursos_vinculados,
-          carga_horaria_teorica: formState.carga_horaria_teorica,
-          carga_horaria_pratica: formState.carga_horaria_pratica,
-          carga_horaria_extensao: formState.carga_horaria_extensao,
-          carga_horaria_total:   formState.carga_horaria_total,
-          creditos_teoricos:     formState.creditos_teoricos,
-          creditos_praticos:     formState.creditos_praticos,
-          creditos_extensao:     formState.creditos_extensao,
-          ementa:                formState.ementa,
-          objetivos:             formState.objetivos,
-          conteudo_programatico: formState.conteudo_programatico,
-          criterios_avaliacao:   formState.criterios_avaliacao,
-          bibliografia:          formState.bibliografia,
-        };
-        await programasEnsinoApi.update(programa.id, updateData);
-        setSaveStatus('saved');
-        setIsDirty(false);
-      } catch {
-        setSaveStatus('error');
-      }
+    debounceRef.current = setTimeout(() => {
+      flushSave().catch(console.error);
     }, 1500);
 
     return () => clearTimeout(debounceRef.current);
-  }, [formState, isDirty, programa]);
+  }, [formState, isDirty, programa, userPapel, flushSave]);
 
-  function updateField<K extends keyof ProgramaFormState>(field: K, value: ProgramaFormState[K]) {
-    setFormState(prev => ({ ...prev, [field]: value }));
-    setIsDirty(true);
-  }
+  // Protect against accidental navigation/tab closing with unsaved changes
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (saveStatus === 'saving' || isDirty) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+
+    // Save immediately if navigating internally via links
+    const handleAnchorClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const anchor = target.closest('a');
+      if (!anchor) return;
+      if (anchor.target === '_blank' || anchor.getAttribute('href')?.startsWith('#')) return;
+
+      if (isDirty) {
+        flushSave().catch(console.error);
+      }
+    };
+
+    // Save on mobile backgrounding / tab switching
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden' && isDirty) {
+        flushSave().catch(console.error);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('click', handleAnchorClick, { capture: true });
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('click', handleAnchorClick, { capture: true });
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [saveStatus, isDirty, flushSave]);
 
   const handleDelete = async () => {
     if (!programa) return;
@@ -175,13 +243,26 @@ export function ProgramaEnsinoEditorClient({ id, defaultCriterios = "" }: Props)
     }
   };
 
-
-  const handleVisualizar = () => {
+  const handleVisualizar = async () => {
     if (!programa) return;
+    if (isDirty) {
+      const saved = await flushSave();
+      if (!saved) {
+        toastError("Erro ao salvar alterações antes de visualizar.");
+        return;
+      }
+    }
     router.push(`/dashboard/programas-ensino/${programa.id}/visualizar`);
   };
 
   const handlePreSubmit = async () => {
+    if (isDirty) {
+      const saved = await flushSave();
+      if (!saved) {
+        toastError("Não foi possível salvar as alterações mais recentes. Verifique sua conexão antes de submeter.");
+        return;
+      }
+    }
     if (!formState.ementa?.trim()) {
       toastError('Preencha a Ementa antes de submeter.');
       setActiveTab('ementa');
@@ -197,7 +278,7 @@ export function ProgramaEnsinoEditorClient({ id, defaultCriterios = "" }: Props)
       setActiveTab('conteudo');
       return;
     }
-    
+
     // We no longer need the modal to pick a course, because the backend automatically routes to Chefe or to all courses.
     const confirmed = await confirmDialog(
       'Encaminhar Programa?',
@@ -223,30 +304,39 @@ export function ProgramaEnsinoEditorClient({ id, defaultCriterios = "" }: Props)
     }
   };
 
+  const handleRejectChefe = useCallback(async () => {
+    if (!programa) return;
+    const feedback = await promptDialog(
+      "Devolver à Comissão",
+      "Informe o parecer e os apontamentos para os ajustes necessários:",
+      "Descreva detalhadamente o que precisa ser ajustado...",
+      "Confirmar Devolução",
+      "Cancelar",
+      true
+    );
+    if (feedback === null) return;
+    if (!feedback.trim()) {
+      toastError("O motivo da devolução é obrigatório.");
+      return;
+    }
+    try {
+      const updated = await programasEnsinoApi.reviewByChefe(programa.id, {
+        action: 'reject_back',
+        feedback
+      });
+      setPrograma(updated);
+      toastSuccess('Programa devolvido à Comissão.');
+    } catch {
+      toastError('Erro ao devolver programa.');
+    }
+  }, [programa]);
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (window as any).rejectChefe = async () => {
-        if (!programa) return;
-        const feedback = window.prompt("Motivo da devolução:");
-        if (feedback === null) return;
-        if (!feedback.trim()) {
-          toastError("O motivo é obrigatório.");
-          return;
-        }
-        try {
-          const updated = await programasEnsinoApi.reviewByChefe(programa.id, {
-            action: 'reject_back',
-            feedback
-          });
-          setPrograma(updated);
-          toastSuccess('Programa devolvido à Comissão.');
-        } catch {
-          toastError('Erro ao devolver programa.');
-        }
-      };
+      (window as any).rejectChefe = handleRejectChefe;
     }
-  }, [programa]);
+  }, [handleRejectChefe]);
 
   function getTabStatus(tab: TabId): 'complete' | 'partial' | 'empty' {
     switch (tab) {
@@ -346,10 +436,10 @@ export function ProgramaEnsinoEditorClient({ id, defaultCriterios = "" }: Props)
       </div>
 
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Programa de Ensino</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          {readOnly 
-            ? 'Este programa não pode ser editado no momento.'
+        <h1 className="text-2xl font-bold text-[#102E52]">Programa de Ensino</h1>
+        <p className="text-xs text-slate-500 mt-1">
+          {readOnly
+            ? 'Este programa não pode ser editado no momento (modo somente leitura).'
             : 'As alterações são salvas automaticamente enquanto você edita.'}
         </p>
       </div>
@@ -361,28 +451,35 @@ export function ProgramaEnsinoEditorClient({ id, defaultCriterios = "" }: Props)
         onSubmit={handlePreSubmit}
         onHistory={() => setShowHistorico(true)}
         onVisualizar={handleVisualizar}
+        onRejectChefe={handleRejectChefe}
       />
 
-      <div className="mt-6 border-b border-gray-200 overflow-x-auto">
-        <div className="flex space-x-1 min-w-max pb-px">
+      <div className="mt-6 w-full overflow-x-auto py-1 flex sm:justify-center justify-start">
+        <div
+          className="inline-flex h-11 items-center justify-center rounded-xl bg-slate-100/90 p-1 text-slate-500 gap-1 border border-slate-200/70 shadow-2xs min-w-max"
+          role="tablist"
+          aria-label="Abas do Programa de Ensino"
+        >
           {TABS.map(tab => {
             const tabStatus = getTabStatus(tab.id);
-            const dotColor = tabStatus === 'complete' ? 'bg-green-500' :
-                             tabStatus === 'partial'  ? 'bg-yellow-400' : 'bg-gray-200';
+            const dotColor = tabStatus === 'complete' ? 'bg-emerald-500' :
+                             tabStatus === 'partial'  ? 'bg-amber-400' : 'bg-slate-300';
             const isActive = activeTab === tab.id;
-            
+
             return (
               <button
                 key={tab.id}
+                role="tab"
+                aria-selected={isActive}
                 onClick={() => setActiveTab(tab.id)}
-                className={`relative px-4 py-3 text-sm font-medium transition-colors ${
-                  isActive 
-                    ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50/50' 
-                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50 border-b-2 border-transparent'
+                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#023E8A] ${
+                  isActive
+                    ? 'bg-white text-[#023E8A] shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
                 }`}
               >
                 <span>{tab.label}</span>
-                <span className={`block w-1.5 h-1.5 rounded-full mx-auto mt-1 transition-colors duration-300 ${dotColor}`} />
+                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotColor}`} />
               </button>
             );
           })}

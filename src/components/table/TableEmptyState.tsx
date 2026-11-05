@@ -27,10 +27,10 @@ export function TableEmptyState({
       <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-slate-50">
         {icon}
       </div>
-      <h3 className="mb-2 text-lg font-medium text-slate-900">{title}</h3>
-      {description && <p className="mb-6 max-w-sm text-sm text-slate-500">{description}</p>}
+      <h3 className="mb-1 text-base font-bold text-slate-900">{title}</h3>
+      {description && <p className="mb-6 max-w-sm text-sm font-normal text-slate-500">{description}</p>}
       {actionLabel && onAction && (
-        <Button onClick={onAction} className="gap-2 bg-brand-blue hover:bg-brand-blue/90">
+        <Button onClick={onAction} className="gap-2 bg-brand-blue hover:bg-brand-blue/90 font-bold">
           <Plus className="h-4 w-4" />
           {actionLabel}
         </Button>

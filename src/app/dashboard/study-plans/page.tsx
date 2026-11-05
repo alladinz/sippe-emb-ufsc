@@ -4,6 +4,7 @@ import { studyPlans, universityCourses, organization, semesters } from "@/db/sch
 import { eq, desc, asc } from "drizzle-orm";
 import { CreatePlanDialog } from "./_components/create-plan-dialog";
 import { TeacherPlansTable } from "./_components/teacher-plans-table";
+import { PageHeader } from "@/components/dashboard/page-header";
 
 export default async function StudyPlansPage() {
   const session = await auth.api.getSession();
@@ -19,37 +20,32 @@ export default async function StudyPlansPage() {
   });
 
   const availableCourses = await db.query.universityCourses.findMany({
-    orderBy: [asc(universityCourses.name)]
+    orderBy: [asc(universityCourses.name)],
   });
 
   const allOrganizations = await db.query.organization.findMany({
-    orderBy: [asc(organization.name)]
+    orderBy: [asc(organization.name)],
   });
 
   const activeSemester = await db.query.semesters.findFirst({
-    where: eq(semesters.ativo, true)
+    where: eq(semesters.ativo, true),
   });
 
-  const filteredOrgs = allOrganizations.filter(o => o.name !== "Geral");
+  const filteredOrgs = allOrganizations.filter((o) => o.name !== "Geral");
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-            Meus Planos de Ensino
-          </h1>
-          <p className="text-slate-500">
-            Gerencie seus rascunhos e acompanhe o status das suas submissões.
-          </p>
-        </div>
-        
-        <CreatePlanDialog 
-          courses={availableCourses} 
-          organizations={filteredOrgs} 
-          activeSemester={activeSemester?.name || "2026.1"}
-        />
-      </div>
+    <div className="space-y-6 pb-8">
+      <PageHeader
+        title="Meus Planos de Ensino"
+        description="Gerencie seus rascunhos e acompanhe o status das suas submissões."
+        action={
+          <CreatePlanDialog
+            courses={availableCourses}
+            organizations={filteredOrgs}
+            activeSemester={activeSemester?.name || "2026.1"}
+          />
+        }
+      />
 
       <TeacherPlansTable plans={userStudyPlans} />
     </div>

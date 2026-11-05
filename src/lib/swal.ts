@@ -8,7 +8,7 @@ const BRAND_BLUE = '#023E8A';
 
 export const swalConfig: SweetAlertOptions = {
   confirmButtonColor: BRAND_BLUE,
-  cancelButtonColor: '#6b7280',
+  cancelButtonColor: '#64748b',
   buttonsStyling: true,
   heightAuto: false, // Prevents body jump and potential interaction issues
   customClass: {
@@ -27,56 +27,53 @@ export const swalConfig: SweetAlertOptions = {
   }
 };
 
+export const swalToastConfig: SweetAlertOptions = {
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timerProgressBar: false,
+  heightAuto: false,
+  customClass: {
+    popup: 'swal-toast-popup',
+    title: 'swal-toast-title',
+  },
+};
+
 // Success toast (top-end, auto-dismiss, no interaction needed)
 export const toastSuccess = (message: string) =>
   MySwal.fire({
-    ...swalConfig,
-    toast: true,
-    position: 'top-end',
+    ...swalToastConfig,
     icon: 'success',
+    iconHtml: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:auto;"><polyline points="20 6 9 17 4 12"></polyline></svg>',
     title: message,
-    showConfirmButton: false,
     timer: 3000,
-    timerProgressBar: true,
   });
 
 // Error toast
 export const toastError = (message: string) =>
   MySwal.fire({
-    ...swalConfig,
-    toast: true,
-    position: 'top-end',
+    ...swalToastConfig,
     icon: 'error',
     title: message,
-    showConfirmButton: false,
-    timer: 4000,
-    timerProgressBar: true,
+    timer: 4500,
   });
 
 // Warning toast
 export const toastWarning = (message: string) =>
   MySwal.fire({
-    ...swalConfig,
-    toast: true,
-    position: 'top-end',
+    ...swalToastConfig,
     icon: 'warning',
     title: message,
-    showConfirmButton: false,
     timer: 3500,
-    timerProgressBar: true,
   });
 
 // Info toast
 export const toastInfo = (message: string) =>
   MySwal.fire({
-    ...swalConfig,
-    toast: true,
-    position: 'top-end',
+    ...swalToastConfig,
     icon: 'info',
     title: message,
-    showConfirmButton: false,
     timer: 3000,
-    timerProgressBar: true,
   });
 
 // Confirmation dialog — returns true if confirmed, false if cancelled
@@ -99,6 +96,40 @@ export const confirmDialog = async (
     reverseButtons: true,
   });
   return result.isConfirmed;
+};
+
+// Prompt dialog — text input with validation
+export const promptDialog = async (
+  title: string,
+  text: string,
+  placeholder = 'Digite aqui...',
+  confirmLabel = 'Confirmar',
+  cancelLabel = 'Cancelar',
+  isDangerous = false
+): Promise<string | null> => {
+  const result = await MySwal.fire({
+    ...swalConfig,
+    title,
+    text,
+    input: 'textarea',
+    inputPlaceholder: placeholder,
+    showCancelButton: true,
+    confirmButtonText: confirmLabel,
+    cancelButtonText: cancelLabel,
+    confirmButtonColor: isDangerous ? '#dc2626' : BRAND_BLUE,
+    reverseButtons: true,
+    inputValidator: (value) => {
+      if (!value || !value.trim()) {
+        return 'Este campo é obrigatório.';
+      }
+      return null;
+    },
+  });
+
+  if (result.isConfirmed && typeof result.value === 'string') {
+    return result.value.trim();
+  }
+  return null;
 };
 
 // Loading dialog — call swalLoading() to show, MySwal.close() to hide

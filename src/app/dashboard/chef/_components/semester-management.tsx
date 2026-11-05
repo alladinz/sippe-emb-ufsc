@@ -118,14 +118,22 @@ export function SemesterManagement({ semesters }: SemesterManagementProps) {
     };
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="md:col-span-1 rounded-lg">
-                <CardHeader>
-                    <CardTitle className="text-lg flex items-center gap-2">
-                        {editingId ? <Pencil className="w-4 h-4 text-brand-blue" /> : <Plus className="w-4 h-4 text-brand-blue" />}
-                        {editingId ? "Editar Semestre" : "Novo Semestre"}
-                    </CardTitle>
-                    <CardDescription>Defina os prazos para automação do cronograma.</CardDescription>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="md:col-span-1 border border-slate-200/80 rounded-xl shadow-xs overflow-hidden bg-white">
+                <CardHeader className="p-5 border-b border-slate-100 bg-slate-50/50">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#023E8A] flex items-center justify-center shrink-0">
+                            {editingId ? <Pencil className="w-5 h-5 text-[#023E8A]" /> : <Plus className="w-5 h-5 text-[#023E8A]" />}
+                        </div>
+                        <div className="min-w-0 flex-1 space-y-0.5">
+                            <CardTitle className="text-base font-bold text-[#102E52] leading-snug">
+                                {editingId ? "Editar Semestre" : "Novo Semestre"}
+                            </CardTitle>
+                            <CardDescription className="text-xs text-slate-500 leading-normal">
+                                Defina os prazos para automação do cronograma.
+                            </CardDescription>
+                        </div>
+                    </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
@@ -214,12 +222,21 @@ export function SemesterManagement({ semesters }: SemesterManagementProps) {
                 </CardContent>
             </Card>
 
-            <Card className="md:col-span-2 rounded-lg">
-                <CardHeader>
-                    <CardTitle className="text-lg flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-brand-blue" />
-                        Semestres Configurados
-                    </CardTitle>
+            <Card className="md:col-span-2 border border-slate-200/80 rounded-xl shadow-xs overflow-hidden bg-white">
+                <CardHeader className="p-5 border-b border-slate-100 bg-slate-50/50">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#023E8A] flex items-center justify-center shrink-0">
+                            <Calendar className="w-5 h-5 text-[#023E8A]" />
+                        </div>
+                        <div className="min-w-0 flex-1 space-y-0.5">
+                            <CardTitle className="text-base font-bold text-[#102E52] leading-snug">
+                                Semestres Configurados
+                            </CardTitle>
+                            <CardDescription className="text-xs text-slate-500 leading-normal">
+                                Períodos letivos cadastrados e calendário de aulas.
+                            </CardDescription>
+                        </div>
+                    </div>
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">

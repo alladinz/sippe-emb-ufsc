@@ -95,16 +95,16 @@ export function CreatePlanDialog({ courses, organizations, activeSemester }: Cre
             }
         }}>
             <DialogTrigger asChild>
-                <Button className="gap-2 rounded-sm shadow-sm">
+                <Button className="gap-2 bg-[#023E8A] hover:bg-[#023E8A]/90 text-white font-bold rounded-lg h-9 shadow-xs text-xs">
                     <Plus className="w-4 h-4" />
                     Novo Plano de Ensino
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] rounded-xl overflow-hidden p-0 border-none shadow-2xl">
-                <div className="bg-white p-6 space-y-6">
+            <DialogContent className="sm:max-w-[440px] rounded-xl overflow-hidden p-0 border border-slate-200/80 shadow-xl">
+                <div className="bg-white p-6 space-y-5">
                 <DialogHeader className="space-y-1">
-                    <DialogTitle className="text-lg flex items-center gap-2 text-slate-900">
-                        <BookOpen className="w-5 h-5 text-brand-blue" />
+                    <DialogTitle className="text-lg font-bold flex items-center gap-2 text-[#102E52]">
+                        <BookOpen className="w-5 h-5 text-[#023E8A]" />
                         Novo Plano de Ensino
                     </DialogTitle>
                     <DialogDescription className="text-xs text-slate-500">
@@ -114,9 +114,9 @@ export function CreatePlanDialog({ courses, organizations, activeSemester }: Cre
                 
                 <div className="grid gap-5">
                     <div className="space-y-2">
-                        <Label htmlFor="course" className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Disciplina</Label>
+                        <Label htmlFor="course" className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Disciplina <span className="text-red-500">*</span></Label>
                         <Select value={courseId} onValueChange={setCourseId}>
-                            <SelectTrigger className="w-full h-10 border-slate-200 focus:ring-brand-blue">
+                            <SelectTrigger className="w-full h-10 border-slate-200 rounded-lg focus:ring-2 focus:ring-[#023E8A] text-xs">
                                 <SelectValue placeholder="Selecione a disciplina..." />
                             </SelectTrigger>
                             <SelectContent position="popper" sideOffset={4} className="max-h-[350px] p-0 w-[var(--radix-select-trigger-width)]" onPointerDownOutside={(e) => {
@@ -132,7 +132,7 @@ export function CreatePlanDialog({ courses, organizations, activeSemester }: Cre
                                             placeholder="Buscar nome ou código..." 
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
-                                            className="h-8 pl-8 text-xs border-slate-200 focus-visible:ring-brand-blue bg-white"
+                                            className="h-8 pl-8 text-xs border-slate-200 focus-visible:ring-[#023E8A] bg-white rounded-md"
                                             autoFocus
                                             onKeyDown={(e) => {
                                                 // Prevent select from closing on space or enter in search
@@ -150,7 +150,7 @@ export function CreatePlanDialog({ courses, organizations, activeSemester }: Cre
                                         filteredCourses.map(c => (
                                             <SelectItem key={c.id} value={c.id} className="text-xs py-2 focus:bg-slate-50">
                                                 <div className="flex items-center gap-2">
-                                                    <span className="font-mono text-[9px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded border border-slate-200">{c.code}</span>
+                                                    <span className="font-mono text-[9px] bg-slate-100 text-[#023E8A] font-bold px-1.5 py-0.5 rounded border border-slate-200">{c.code}</span>
                                                     <span className="font-medium truncate max-w-[220px]">{c.name}</span>
                                                 </div>
                                             </SelectItem>
@@ -162,7 +162,7 @@ export function CreatePlanDialog({ courses, organizations, activeSemester }: Cre
                     </div>
 
                     <div className="space-y-2.5">
-                        <Label className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Graduações (PPC)</Label>
+                        <Label className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Graduações (PPC) <span className="text-red-500">*</span></Label>
                         <div className="grid grid-cols-1 gap-1 max-h-[140px] overflow-y-auto p-2 border border-slate-200 rounded-lg bg-slate-50/30">
                             {organizations.map(o => (
                                 <div 
@@ -176,7 +176,7 @@ export function CreatePlanDialog({ courses, organizations, activeSemester }: Cre
                                         id={`prof-org-${o.id}`} 
                                         checked={organizationIds.includes(o.id)}
                                         onCheckedChange={() => toggleOrganization(o.id)}
-                                        className="h-4 w-4 rounded-sm border-slate-300 data-[state=checked]:bg-brand-blue data-[state=checked]:border-brand-blue"
+                                        className="h-4 w-4 rounded-sm border-slate-300 data-[state=checked]:bg-[#023E8A] data-[state=checked]:border-[#023E8A]"
                                     />
                                     <Label 
                                         htmlFor={`prof-org-${o.id}`}
@@ -190,31 +190,35 @@ export function CreatePlanDialog({ courses, organizations, activeSemester }: Cre
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="semester" className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Semestre Letivo</Label>
+                        <Label htmlFor="semester" className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Semestre Letivo</Label>
                         <div className="relative">
                             <Input 
                                 id="semester" 
                                 value={activeSemester} 
                                 readOnly
-                                className="h-10 bg-slate-50 border-slate-200 text-slate-500 cursor-not-allowed text-xs font-semibold pl-3"
+                                className="h-10 bg-slate-50 border-slate-200 text-slate-500 cursor-not-allowed text-xs font-semibold pl-3 rounded-lg"
                             />
                             <div className="absolute right-3 top-2.5 flex items-center gap-1.5">
-                                <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                                <span className="text-[9px] text-green-600 font-bold uppercase tracking-tight">Ativo</span>
+                                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                                <span className="text-[9px] text-emerald-600 font-bold uppercase tracking-tight">Ativo</span>
                             </div>
                         </div>
                     </div>
                 </div>
                 </div>
 
-                <div className="bg-slate-50 px-6 py-4 flex justify-end gap-3 border-t border-slate-200">
-                    <Button variant="ghost" onClick={() => setOpen(false)} className="h-9 text-xs font-semibold text-slate-500 hover:text-slate-700">
+                <div className="bg-slate-50 px-6 py-4 flex justify-end gap-2.5 border-t border-slate-200/80">
+                    <Button
+                        variant="outline"
+                        onClick={() => setOpen(false)}
+                        className="h-9 text-xs font-semibold text-slate-600 border-slate-200 hover:bg-slate-100 rounded-lg px-4"
+                    >
                         Cancelar
                     </Button>
                     <Button 
                         onClick={handleCreate} 
                         disabled={isCreating || !courseId || organizationIds.length === 0}
-                        className="bg-brand-blue hover:bg-brand-blue/90 h-9 text-xs px-6 rounded-sm font-bold shadow-sm transition-all active:scale-[0.98]"
+                        className="bg-[#023E8A] hover:bg-[#023E8A]/90 text-white h-9 text-xs px-5 rounded-lg font-bold shadow-xs transition-all active:scale-[0.98]"
                     >
                         {isCreating ? (
                             <>

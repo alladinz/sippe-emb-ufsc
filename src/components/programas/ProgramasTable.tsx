@@ -17,7 +17,7 @@ import { useTable } from "@/hooks/table/useTable";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, GraduationCap, Search } from "lucide-react";
 import Link from "next/link";
-import { getProgramaStatusBadge } from "../../utils/programaStatus";
+import { StatusBadge } from "@/components/dashboard/status-badge";
 import type { ProgramaListItem } from "../../types/programaEnsino";
 
 interface ProgramasTableProps {
@@ -36,17 +36,25 @@ export function ProgramasTable({ programas, isLoading, hasError, onRetry, hasFil
             <TableContainer density={density}>
                 <Table>
                     <TableHeader>
-                        <TableRow className="bg-slate-50/50">
-                            <TableHead>Disciplina</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Atualizado em</TableHead>
-                            <TableHead className="text-right">Ações</TableHead>
+                        <TableRow className="bg-slate-50/75 border-b border-slate-200">
+                            <TableHead className="text-xs font-bold text-slate-600 uppercase tracking-wider py-3">
+                                Disciplina
+                            </TableHead>
+                            <TableHead className="text-xs font-bold text-slate-600 uppercase tracking-wider py-3">
+                                Status
+                            </TableHead>
+                            <TableHead className="text-xs font-bold text-slate-600 uppercase tracking-wider py-3">
+                                Atualizado em
+                            </TableHead>
+                            <TableHead className="text-xs font-bold text-slate-600 uppercase tracking-wider text-right py-3">
+                                Ações
+                            </TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {isLoading ? (
                             Array.from({ length: 5 }).map((_, i) => (
-                                <TableRow key={i}>
+                                <TableRow key={i} className="border-b border-slate-100">
                                     <TableCell><div className="h-4 w-48 bg-slate-200 animate-pulse rounded" /></TableCell>
                                     <TableCell><div className="h-4 w-24 bg-slate-200 animate-pulse rounded-full" /></TableCell>
                                     <TableCell><div className="h-4 w-28 bg-slate-200 animate-pulse rounded" /></TableCell>
@@ -56,9 +64,11 @@ export function ProgramasTable({ programas, isLoading, hasError, onRetry, hasFil
                         ) : hasError ? (
                             <TableRow>
                                 <TableCell colSpan={4} className="p-0">
-                                    <div className="py-10 text-center flex flex-col items-center">
-                                        <p className="text-slate-500 mb-4">Erro ao carregar programas.</p>
-                                        <Button variant="outline" onClick={onRetry}>Tentar Novamente</Button>
+                                    <div className="py-12 text-center flex flex-col items-center">
+                                        <p className="text-slate-500 mb-4 text-sm font-normal">Erro ao carregar programas de ensino.</p>
+                                        <Button variant="outline" onClick={onRetry} className="font-bold">
+                                            Tentar Novamente
+                                        </Button>
                                     </div>
                                 </TableCell>
                             </TableRow>
@@ -81,55 +91,49 @@ export function ProgramasTable({ programas, isLoading, hasError, onRetry, hasFil
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            programas.map((programa) => {
-                                const statusInfo = getProgramaStatusBadge(programa.status);
-                                return (
-                                    <TableRow key={programa.id} className="hover:bg-slate-50/30 transition-colors">
-                                        <TableCell>
-                                            <p className="font-medium text-slate-900">{programa.nome_disciplina}</p>
-                                            <p className="text-xs text-slate-400">{programa.codigo_disciplina}</p>
-                                            {programa.cursos_vinculados && programa.cursos_vinculados.length > 0 && (
-                                                <div className="flex gap-1 mt-1">
-                                                    {programa.cursos_vinculados.slice(0, 2).map(c => (
-                                                        <span key={c} className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
-                                                            {c}
-                                                        </span>
-                                                    ))}
-                                                    {programa.cursos_vinculados.length > 2 && (
-                                                        <span className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
-                                                            +{programa.cursos_vinculados.length - 2} mais
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full border ${statusInfo.colors.bg} ${statusInfo.colors.text} ${statusInfo.colors.border}`}>
-                                                <span className={`w-1.5 h-1.5 rounded-full ${statusInfo.colors.dot}`} />
-                                                {statusInfo.label}
-                                            </span>
-                                        </TableCell>
-                                        <TableCell className="text-slate-500 text-sm">
-                                            {new Date(programa.updated_at).toLocaleString('pt-BR')}
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                            {programa.status === 'archived' || programa.status === 'approved' ? (
-                                                <Link href={`/dashboard/programas-ensino/${programa.id}/visualizar`}>
-                                                    <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-700 hover:bg-slate-100 font-medium flex items-center gap-1 ml-auto">
-                                                        Visualizar <ArrowRight className="w-4 h-4" />
-                                                    </Button>
-                                                </Link>
-                                            ) : (
-                                                <Link href={`/dashboard/programas-ensino/${programa.id}`}>
-                                                    <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 font-medium flex items-center gap-1 ml-auto">
-                                                        Abrir <ArrowRight className="w-4 h-4" />
-                                                    </Button>
-                                                </Link>
-                                            )}
-                                        </TableCell>
-                                    </TableRow>
-                                );
-                            })
+                            programas.map((programa) => (
+                                <TableRow key={programa.id} className="hover:bg-slate-50/60 transition-colors border-b border-slate-100">
+                                    <TableCell>
+                                        <p className="font-bold text-slate-900">{programa.nome_disciplina}</p>
+                                        <p className="text-xs text-slate-400 font-mono font-bold mt-0.5">{programa.codigo_disciplina}</p>
+                                        {programa.cursos_vinculados && programa.cursos_vinculados.length > 0 && (
+                                            <div className="flex gap-1 mt-1.5 flex-wrap">
+                                                {programa.cursos_vinculados.slice(0, 2).map(c => (
+                                                    <span key={c} className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full border border-slate-200/60">
+                                                        {c}
+                                                    </span>
+                                                ))}
+                                                {programa.cursos_vinculados.length > 2 && (
+                                                    <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full border border-slate-200/60">
+                                                        +{programa.cursos_vinculados.length - 2} mais
+                                                    </span>
+                                                )}
+                                            </div>
+                                        )}
+                                    </TableCell>
+                                    <TableCell>
+                                        <StatusBadge status={programa.status} />
+                                    </TableCell>
+                                    <TableCell className="text-slate-500 text-xs">
+                                        {new Date(programa.updated_at).toLocaleString('pt-BR')}
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        {programa.status === 'archived' || programa.status === 'approved' ? (
+                                            <Link href={`/dashboard/programas-ensino/${programa.id}/visualizar`}>
+                                                <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-bold gap-1 ml-auto">
+                                                    Visualizar <ArrowRight className="w-4 h-4" />
+                                                </Button>
+                                            </Link>
+                                        ) : (
+                                            <Link href={`/dashboard/programas-ensino/${programa.id}`}>
+                                                <Button variant="ghost" size="sm" className="text-[#023E8A] hover:text-[#023E8A] hover:bg-blue-50 font-bold gap-1 ml-auto">
+                                                    Abrir <ArrowRight className="w-4 h-4" />
+                                                </Button>
+                                            </Link>
+                                        )}
+                                    </TableCell>
+                                </TableRow>
+                            ))
                         )}
                     </TableBody>
                 </Table>

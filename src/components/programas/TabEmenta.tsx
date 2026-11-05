@@ -13,14 +13,14 @@ export function TabEmenta({ formState, updateField, isReadOnly }: EditorTabProps
   const ementaLength = stripHtml(formState.ementa || '').length;
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+    <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6">
       <div className="mb-6">
-        <h2 className="text-lg font-semibold text-gray-900">Ementa</h2>
-        <p className="text-sm text-gray-500">Descrição resumida do conteúdo e abordagem da disciplina.</p>
+        <h2 className="text-lg font-bold text-[#102E52]">Ementa</h2>
+        <p className="text-xs text-slate-500 mt-0.5">Descrição resumida do conteúdo e abordagem da disciplina.</p>
       </div>
 
       <div className="mb-2">
-        <label className="block text-sm font-medium text-gray-700">Ementa da Disciplina</label>
+        <label className="block text-xs font-bold text-slate-700">Ementa da Disciplina</label>
       </div>
 
       <div className="min-h-[200px]">

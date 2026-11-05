@@ -5,10 +5,10 @@ import type { EditorTabProps } from "./editorTypes";
 
 export function TabConteudo({ formState, updateField, isReadOnly }: EditorTabProps) {
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+    <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6">
       <div className="mb-6">
-        <h2 className="text-lg font-semibold text-gray-900">Conteúdo Programático</h2>
-        <p className="text-sm text-gray-500">Relação detalhada dos tópicos abordados na disciplina.</p>
+        <h2 className="text-lg font-bold text-[#102E52]">Conteúdo Programático</h2>
+        <p className="text-xs text-slate-500 mt-0.5">Relação detalhada dos tópicos abordados na disciplina.</p>
       </div>
 
       <div className="min-h-[400px]">

@@ -5,15 +5,15 @@ import type { EditorTabProps } from "./editorTypes";
 
 export function TabObjetivos({ formState, updateField, isReadOnly }: EditorTabProps) {
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+    <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6">
       <div className="mb-6">
-        <h2 className="text-lg font-semibold text-gray-900">Objetivos</h2>
-        <p className="text-sm text-gray-500">O que o aluno será capaz de fazer ao concluir a disciplina.</p>
+        <h2 className="text-lg font-bold text-[#102E52]">Objetivos</h2>
+        <p className="text-xs text-slate-500 mt-0.5">O que o aluno será capaz de fazer ao concluir a disciplina.</p>
       </div>
 
       <div className="mb-2">
-        <label className="block text-sm font-medium text-gray-700">Objetivo Geral e Específicos</label>
-        <p className="text-xs text-gray-500 mt-1 mb-4">
+        <label className="block text-xs font-bold text-slate-700">Objetivo Geral e Específicos</label>
+        <p className="text-xs text-slate-500 mt-0.5 mb-3">
           Descreva em uma frase o propósito central da disciplina. Inclua o objetivo geral e os específicos, separando com tópicos ou numeração.
         </p>
       </div>
