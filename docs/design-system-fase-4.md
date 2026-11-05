@@ -235,3 +235,25 @@ Esta etapa consolidou os ajustes finais de consistência visual identificados du
     ```
   - Em `globals.css`, foram ajustados os estilos específicos de `.swal2-popup.swal2-toast .swal2-icon` para `width: 1.25rem`, `height: 1.25rem`, `font-size: 0.625rem`, borda verde `#10b981` e ocultação de pseudo-linhas legadas de animação em toasts.
   - Modais centrais (`confirmDialog`, `promptDialog`, `swalLoading`) permanecem intactos com seus ícones originais completos.
+
+---
+
+## 10. Fase 4.5 — Acabamento Final Pré-Merge
+
+Esta etapa executou os refinamentos finais e pontuais de acabamento visual antes do merge definitivo à branch `main`.
+
+### 10.1 Refinamento do Dropdown do Usuário (`user-menu.tsx` & `dropdown-menu.tsx`)
+- **Eliminação de Bordas Retangulares e Contornos Rígidos:** A camada base `dropdown-menu.tsx` foi atualizada de `rounded-none` para `rounded-xl` em containers e `rounded-lg` em itens, alinhando-se aos cards do Minimalismo Institucional Contemporâneo.
+- **Tratamento de Foco e Trigger:** No disparador (`UserMenu`), o botão recebeu `rounded-xl`, `border border-transparent` e foco acessível condicional `focus:outline-none focus:ring-0 focus-visible:ring-2 focus-visible:ring-[#023E8A] focus-visible:ring-offset-2`. Isso elimina contornos azuis permanentes quando o menu é aberto via clique do mouse, mantendo foco nítido apenas na navegação por teclado (Tab).
+- **Estrutura Visual Interna:**
+  - **Superfície e Sombra:** Fundo branco (`bg-white`), borda sutil (`border border-slate-200/80`), cantos `rounded-xl`, sombra suave `shadow-lg shadow-slate-900/5` e largura compacta proporcional (`w-56 sm:w-60`).
+  - **Cabeçalho:** Rótulo "Minha Conta" (`text-xs font-bold text-slate-900`) e e-mail institucional truncado com segurança (`text-[11px] text-slate-500 truncate`).
+  - **Separador:** Linha fina e neutra (`h-px bg-slate-100 my-1 -mx-1.5`).
+  - **Ação de Logout:** Ícone Lucide `LogOut` (16px), texto "Sair do Sistema", cor vermelha discreta (`text-red-600`), hover e foco suaves (`hover:bg-red-50/80 hover:text-red-700 focus:bg-red-50/80 focus:text-red-700`) e alinhamento vertical flexível.
+- **Acessibilidade e Viewport:** Preservados o fechamento por clique externo, tecla Escape e proteção contra transbordamento da viewport.
+
+### 10.2 Padronização do Botão de Download de PDF
+- **Eliminação de Ícones Duplicados:** Nos botões de exportação (`DownloadPDFButton` e `DownloadProgramaButton`), foi removido o elemento SVG rígido interno herdado (`<svg ... d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2...`) que concorria com o ícone passado pelos componentes pais (`preview/page.tsx` e `visualizar/page.tsx`).
+- **Ícone Único Padronizado:** Padronizado para um único ícone Lucide `Download` (dimensão aproximada de 18px: `w-[18px] h-[18px] shrink-0`), perfeitamente alinhado com a label "Baixar PDF".
+- **Estado de Carregamento:** Durante a geração do PDF (`isGenerating`), o botão exibe o ícone animado `Loader2` (`w-[18px] h-[18px] animate-spin`) acompanhado do texto "Gerando PDF...".
+- **Preservação Funcional:** Mantidos intactos o Blob em memória, o nome padronizado do arquivo, o download no navegador e a notificação de confirmação via toast.

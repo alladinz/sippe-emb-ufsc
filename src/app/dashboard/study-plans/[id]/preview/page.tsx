@@ -127,10 +127,10 @@ export default async function PreviewStudyPlanPage({ params, searchParams }: Pre
               </Badge>
               <DownloadPDFButton
                 plano={plan}
-                className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium border rounded-md hover:bg-slate-50 transition-colors"
+                className="flex items-center gap-2 px-3 py-1.5 text-xs font-bold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 rounded-lg shadow-2xs transition-colors"
               >
-                <Download className="w-4 h-4" />
-                Baixar PDF
+                <Download className="w-[18px] h-[18px] shrink-0" />
+                <span>Baixar PDF</span>
               </DownloadPDFButton>
 
           </div>
