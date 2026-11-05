@@ -13,14 +13,14 @@ export function TabCargaHoraria({ formState, updateField, isReadOnly }: EditorTa
   }, [formState.carga_horaria_teorica, formState.carga_horaria_pratica, formState.carga_horaria_extensao, formState.carga_horaria_total, updateField]);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+    <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6">
       <div className="mb-6">
-        <h2 className="text-lg font-semibold text-gray-900">Carga Horária e Créditos</h2>
-        <p className="text-sm text-gray-500">Distribuição de horas e créditos da disciplina.</p>
+        <h2 className="text-lg font-bold text-[#102E52]">Carga Horária e Créditos</h2>
+        <p className="text-xs text-slate-500 mt-0.5">Distribuição de horas e créditos da disciplina.</p>
       </div>
 
-      <div className="flex items-start gap-2 p-3 bg-blue-50 border border-blue-100 rounded-lg mb-6 text-xs text-blue-700">
-        <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
+      <div className="flex items-start gap-2 p-3 bg-blue-50/70 border border-blue-100 rounded-xl mb-6 text-xs text-[#023E8A]">
+        <Info className="w-4 h-4 flex-shrink-0 mt-0.5 text-[#023E8A]" />
         Pré-preenchidos com base nos dados importados da planilha. Verifique e corrija se necessário.
       </div>
 

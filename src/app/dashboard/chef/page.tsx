@@ -3,12 +3,11 @@ import { auth } from "@/lib/auth/auth";
 import { db } from "@/db";
 import { studyPlans, organization, universityCourses, user, member, semesters, courses } from "@/db/schema";
 import { eq, desc, and, or, inArray, sql } from "drizzle-orm";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  School, 
-  Database, 
-  Calendar, 
+import {
+  School,
+  Database,
+  Calendar,
   Users,
   Settings
 } from "lucide-react";
@@ -20,6 +19,7 @@ import { UserManagement } from "./_components/user-management";
 import { EvaluationSettings } from "./_components/evaluation-settings";
 import { ImportarPlanilha } from "@/components/ImportarPlanilha";
 import { SearchInput } from "./_components/search-input";
+import { PageHeader } from "@/components/dashboard/page-header";
 import { cn } from "@/lib/utils";
 
 interface ChefDashboardPageProps {
@@ -45,7 +45,24 @@ export default async function ChefDashboardPage({ searchParams }: ChefDashboardP
   const offset = (currentPage - 1) * pageSize;
   const searchTerm = params.search || "";
 
-  // ... (verifyChef remains same)
+  // Verify Chef role
+  const chefMembership = await db.query.member.findFirst({
+      where: (m, { and, eq }) => and(
+          eq(m.userId, session.user.id),
+          eq(m.role, "chefe")
+      )
+  });
+
+  if (!chefMembership) {
+      return (
+          <div className="flex items-center justify-center h-[60vh]">
+              <div className="text-center space-y-2">
+                  <h1 className="text-xl font-bold text-slate-900">Acesso Negado</h1>
+                  <p className="text-slate-500 text-sm">Apenas o Chefe de Departamento pode acessar esta página.</p>
+              </div>
+          </div>
+      );
+  }
 
   // Fetch all organizations
   const allOrgs = await db.query.organization.findMany({
@@ -92,7 +109,7 @@ export default async function ChefDashboardPage({ searchParams }: ChefDashboardP
               sql`unaccent(${studyPlans.courseName}) ilike unaccent(${`%${searchTerm}%`})`
           ))
           .groupBy(studyPlans.id);
-      
+
       matchingIds = searchResults.map(r => r.id);
   }
 
@@ -100,8 +117,8 @@ export default async function ChefDashboardPage({ searchParams }: ChefDashboardP
       filterOrgId ? eq(studyPlans.organizationId, filterOrgId) : undefined,
       params.status ? eq(studyPlans.status, params.status) : undefined,
       searchTerm ? (
-          matchingIds && matchingIds.length > 0 
-            ? inArray(studyPlans.id, matchingIds) 
+          matchingIds && matchingIds.length > 0
+            ? inArray(studyPlans.id, matchingIds)
             : sql`FALSE`
       ) : undefined
   );
@@ -139,127 +156,125 @@ export default async function ChefDashboardPage({ searchParams }: ChefDashboardP
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between items-end">
-        <div>
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-            Painel do Chefe de Departamento
-            </h1>
-            <p className="text-slate-500">
-            Monitoramento global e gerenciamento de atribuições.
-            </p>
-        </div>
-      </div>
+      <PageHeader
+        title="Painel do Chefe de Departamento"
+        description="Monitoramento global e gerenciamento de atribuições."
+      />
 
       <Tabs defaultValue={activeTab} className="w-full flex flex-col">
-        <TabsList className="bg-white border p-1 h-12 shadow-sm rounded-lg mb-8 flex justify-start w-fit">
-            <TabsTrigger 
-                value="overview" 
-                className="gap-2 px-6 data-[state=active]:bg-slate-100 data-[state=active]:text-slate-900 data-[state=active]:shadow-none transition-all"
+        <TabsList className="bg-slate-100/80 border border-slate-200/80 p-1 h-auto shadow-2xs rounded-xl mb-6 flex flex-wrap justify-start gap-1">
+            <TabsTrigger
+                value="overview"
+                className="gap-2 px-4 py-2 text-xs font-bold text-slate-600 rounded-lg data-[state=active]:bg-white data-[state=active]:text-[#023E8A] data-[state=active]:shadow-xs transition-all"
             >
                 <School className="w-4 h-4" />
                 Visão Geral
             </TabsTrigger>
-            <TabsTrigger 
-                value="management" 
-                className="gap-2 px-6 data-[state=active]:bg-slate-100 data-[state=active]:text-slate-900 data-[state=active]:shadow-none transition-all"
+            <TabsTrigger
+                value="management"
+                className="gap-2 px-4 py-2 text-xs font-bold text-slate-600 rounded-lg data-[state=active]:bg-white data-[state=active]:text-[#023E8A] data-[state=active]:shadow-xs transition-all"
             >
                 <Database className="w-4 h-4" />
                 Gerenciamento de Disciplinas
             </TabsTrigger>
-            <TabsTrigger 
-                value="semesters" 
-                className="gap-2 px-6 data-[state=active]:bg-slate-100 data-[state=active]:text-slate-900 data-[state=active]:shadow-none transition-all"
+            <TabsTrigger
+                value="semesters"
+                className="gap-2 px-4 py-2 text-xs font-bold text-slate-600 rounded-lg data-[state=active]:bg-white data-[state=active]:text-[#023E8A] data-[state=active]:shadow-xs transition-all"
             >
                 <Calendar className="w-4 h-4" />
                 Configuração de Semestres
             </TabsTrigger>
-            <TabsTrigger 
-                value="evaluation-settings" 
-                className="gap-2 px-6 data-[state=active]:bg-slate-100 data-[state=active]:text-slate-900 data-[state=active]:shadow-none transition-all"
+            <TabsTrigger
+                value="evaluation-settings"
+                className="gap-2 px-4 py-2 text-xs font-bold text-slate-600 rounded-lg data-[state=active]:bg-white data-[state=active]:text-[#023E8A] data-[state=active]:shadow-xs transition-all"
             >
                 <Settings className="w-4 h-4" />
                 Configuração de Avaliação
             </TabsTrigger>
-            <TabsTrigger 
-                value="users" 
-                className="gap-2 px-6 data-[state=active]:bg-slate-100 data-[state=active]:text-slate-900 data-[state=active]:shadow-none transition-all"
+            <TabsTrigger
+                value="users"
+                className="gap-2 px-4 py-2 text-xs font-bold text-slate-600 rounded-lg data-[state=active]:bg-white data-[state=active]:text-[#023E8A] data-[state=active]:shadow-xs transition-all"
             >
                 <Users className="w-4 h-4" />
                 Usuários
             </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-8 animate-in fade-in slide-in-from-left-4 duration-300">
+        <TabsContent value="overview" className="space-y-6 animate-in fade-in slide-in-from-left-4 duration-300">
             {/* Search and Filters Bar */}
-            <div className="bg-white p-6 border rounded-xl shadow-sm space-y-6">
+            <div className="bg-white p-5 border border-slate-200/80 rounded-xl shadow-xs space-y-4">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <SearchInput placeholder="Buscar por professor ou disciplina..." />
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-3 pt-1 border-t border-slate-100">
                     {/* Row 1: Course Filter */}
-                    <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-400 font-medium w-10 flex-shrink-0">Curso</span>
-                        <div className="flex gap-2 flex-wrap items-center">
+                    <div className="flex items-center gap-3">
+                        <span className="text-xs text-slate-500 font-bold w-12 flex-shrink-0">Curso:</span>
+                        <div className="flex gap-1.5 flex-wrap items-center">
                             <Link href={`/dashboard/chef?tab=overview${params.search ? `&search=${params.search}` : ''}${params.limit ? `&limit=${params.limit}` : ''}`}>
-                                <Badge 
-                                    variant="outline" 
+                                <span
                                     className={cn(
-                                        "cursor-pointer border-none transition-all",
-                                        !params.course ? "bg-gray-800 text-white hover:bg-gray-900" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                                        "inline-flex items-center text-xs px-3 py-1 rounded-full border transition-all duration-150 cursor-pointer font-bold",
+                                        !params.course
+                                            ? "bg-[#023E8A] text-white border-[#023E8A]"
+                                            : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
                                     )}
                                 >
                                     Todos os Cursos
-                                </Badge>
+                                </span>
                             </Link>
                             {allOrgs.map(org => (
                                 <Link key={org.id} href={`/dashboard/chef?tab=overview&course=${org.slug}${params.status ? `&status=${params.status}` : ''}${params.search ? `&search=${params.search}` : ''}${params.limit ? `&limit=${params.limit}` : ''}`}>
-                                    <Badge 
-                                        variant="outline" 
+                                    <span
                                         className={cn(
-                                            "cursor-pointer border-none transition-all",
-                                            params.course === org.slug ? "bg-gray-800 text-white hover:bg-gray-900" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                                            "inline-flex items-center text-xs px-3 py-1 rounded-full border transition-all duration-150 cursor-pointer font-bold",
+                                            params.course === org.slug
+                                                ? "bg-[#023E8A] text-white border-[#023E8A]"
+                                                : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
                                         )}
                                     >
                                         {org.name}
-                                    </Badge>
+                                    </span>
                                 </Link>
                             ))}
                         </div>
                     </div>
 
                     {/* Row 2: Status Filter */}
-                    <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-400 font-medium w-10 flex-shrink-0">Status</span>
-                        <div className="flex gap-2 flex-wrap items-center">
+                    <div className="flex items-center gap-3">
+                        <span className="text-xs text-slate-500 font-bold w-12 flex-shrink-0">Status:</span>
+                        <div className="flex gap-1.5 flex-wrap items-center">
                             <Link href={`/dashboard/chef?tab=overview${params.course ? `&course=${params.course}` : ''}${params.search ? `&search=${params.search}` : ''}${params.limit ? `&limit=${params.limit}` : ''}`}>
-                                <Badge 
-                                    variant="outline" 
+                                <span
                                     className={cn(
-                                        "cursor-pointer border-none transition-all",
-                                        !params.status ? "bg-gray-800 text-white hover:bg-gray-900" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                                        "inline-flex items-center text-xs px-3 py-1 rounded-full border transition-all duration-150 cursor-pointer font-bold",
+                                        !params.status
+                                            ? "bg-[#023E8A] text-white border-[#023E8A]"
+                                            : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
                                     )}
                                 >
                                     Todos os Status
-                                </Badge>
+                                </span>
                             </Link>
-                            {Object.entries({
-                                draft: { label: "Rascunho", active: "bg-gray-600 text-white", inactive: "bg-gray-100 text-gray-600" },
-                                submitted: { label: "Nova Submissão", active: "bg-yellow-500 text-white", inactive: "bg-yellow-100 text-yellow-700" },
-                                pending_review: { label: "Em Revisão", active: "bg-blue-600 text-white", inactive: "bg-blue-100 text-blue-700" },
-                                approved: { label: "Aprovado", active: "bg-green-600 text-white", inactive: "bg-green-100 text-green-700" },
-                                rejected: { label: "Rejeitado", active: "bg-red-600 text-white", inactive: "bg-red-100 text-red-700" },
-                            }).map(([key, config]) => (
-                                <Link key={key} href={`/dashboard/chef?tab=overview&status=${key}${params.course ? `&course=${params.course}` : ''}${params.search ? `&search=${params.search}` : ''}${params.limit ? `&limit=${params.limit}` : ''}`}>
-                                    <Badge 
-                                        variant="outline" 
+                            {[
+                                { key: "draft", label: "Rascunho" },
+                                { key: "submitted", label: "Nova Submissão" },
+                                { key: "pending_review", label: "Em Revisão" },
+                                { key: "approved", label: "Aprovado" },
+                                { key: "rejected", label: "Rejeitado" },
+                            ].map(opt => (
+                                <Link key={opt.key} href={`/dashboard/chef?tab=overview&status=${opt.key}${params.course ? `&course=${params.course}` : ''}${params.search ? `&search=${params.search}` : ''}${params.limit ? `&limit=${params.limit}` : ''}`}>
+                                    <span
                                         className={cn(
-                                            "cursor-pointer border-none transition-all",
-                                            params.status === key ? config.active : config.inactive
+                                            "inline-flex items-center text-xs px-3 py-1 rounded-full border transition-all duration-150 cursor-pointer font-bold",
+                                            params.status === opt.key
+                                                ? "bg-[#023E8A] text-white border-[#023E8A]"
+                                                : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
                                         )}
                                     >
-                                        {config.label}
-                                    </Badge>
+                                        {opt.label}
+                                    </span>
                                 </Link>
                             ))}
                         </div>
@@ -268,18 +283,18 @@ export default async function ChefDashboardPage({ searchParams }: ChefDashboardP
             </div>
 
             {/* Global Table */}
-            <PlansTable 
-                initialPlans={plans} 
-                total={totalPlans} 
-                pageSize={pageSize} 
-                currentPage={currentPage} 
+            <PlansTable
+                initialPlans={plans}
+                total={totalPlans}
+                pageSize={pageSize}
+                currentPage={currentPage}
             />
         </TabsContent>
 
         <TabsContent value="management" className="animate-in fade-in slide-in-from-right-4 duration-300">
-            <MasterCourseList 
-                courses={masterCourses} 
-                teachers={teachers} 
+            <MasterCourseList
+                courses={masterCourses}
+                teachers={teachers}
                 organizations={allOrgs}
             />
         </TabsContent>
@@ -290,7 +305,7 @@ export default async function ChefDashboardPage({ searchParams }: ChefDashboardP
         </TabsContent>
 
         <TabsContent value="evaluation-settings" className="animate-in fade-in slide-in-from-bottom-4 duration-300">
-            <EvaluationSettings 
+            <EvaluationSettings
                 initialValue={defaultEvaluationSetting || "O(a) aluno(a) com frequência suficiente e média das notas entre três (3,0) e cinco vírgula cinco (5,5) terá direito a uma nova avaliação no final do semestre que versará sobre todo o conteúdo da disciplina, conforme o que dispõe o § 2º do Art. 70 e § 3º do Art. 71 da Resolução nº 17/Cun/97. Neste caso, a média final será calculada através da média aritmética simples entre a média das notas das avaliações feitas durante o semestre e a nota obtida na nova avaliação. A nota mínima de aprovação é seis (6,0).\n\nCaso o(a) aluno(a) não compareça a 75% da carga horária da disciplina estará automaticamente reprovado com nota 0,0(zero), independentemente da sua média nas avaliações individuais, conforme dispõem no Art. 69 § 2º da Resolução 017/CUn/97.\n\nOs(as) alunos(as) que eventualmente faltarem em alguma avaliação que foram perdidas por motivos extremos, mediante justificativa; dentro do prazo de 3 (três) dias úteis após a avaliação conforme o que dispõe o Art. 74, da Resolução 017/CUn/97, poderão solicitar na secretaria acadêmica do Centro de Engenharias da Mobilidade o pedido de segunda chamada. Após a análise do pedido e seu deferimento, os(as) alunos(as) poderão realizar a avaliação de segunda chamada na data, no local e horário definido no cronograma."}
                 initialProgramaValue={settings.find(s => s.key === "DEFAULT_CRITERIOS_AVALIACAO_PROGRAMA")?.value || ""}
             />

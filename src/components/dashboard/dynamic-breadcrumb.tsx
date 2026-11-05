@@ -15,10 +15,13 @@ import React from "react";
 const routeMap: Record<string, string> = {
     "dashboard": "Dashboard",
     "study-plans": "Planos de ensino",
+    "programas-ensino": "Programas de ensino",
     "coordinator": "Revisão de planos",
-    "chef": "Visão Geral (Chefe)",
+    "revisao-programas": "Revisão de programas",
+    "chef": "Visão geral",
     "secretary": "Arquivo Central",
     "preview": "Visualizar",
+    "visualizar": "Visualizar",
     "edit": "Editar",
 };
 
@@ -53,7 +56,7 @@ export function DynamicBreadcrumb() {
                         <React.Fragment key={href}>
                             <BreadcrumbItem>
                                 {isLast ? (
-                                    <BreadcrumbPage className="font-semibold text-slate-900">
+                                    <BreadcrumbPage className="font-bold text-slate-900">
                                         {label}
                                     </BreadcrumbPage>
                                 ) : (

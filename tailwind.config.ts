@@ -15,7 +15,11 @@ export default {
 			},
 			colors: {
 				'brand-blue': '#023E8A',
-				'brand-light': '#99BFF2',
+				'brand-navy': '#102E52',
+				'brand-light': '#EAF2FE',
+				'brand-accent': '#99BFF2',
+				'app-bg': '#F7F9FC',
+				'border-subtle': '#E5EAF1',
 				background: 'var(--background)',
 				foreground: 'var(--foreground)',
 				card: {

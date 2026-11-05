@@ -309,48 +309,68 @@ export function UserManagement({ members: initialMembers, organizations }: UserM
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center bg-slate-900 text-white p-6 rounded-xl shadow-lg">
-                <div className="flex items-center gap-4">
-                    <div className="p-3 bg-brand-blue/20 rounded-lg">
-                        <UserCog className="w-6 h-6 text-indigo-400" />
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white border border-slate-200/80 p-5 rounded-xl shadow-xs">
+                <div className="flex items-start sm:items-center gap-3.5 min-w-0 flex-1">
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#023E8A] flex items-center justify-center shrink-0">
+                        <UserCog className="w-5 h-5 text-[#023E8A]" />
                     </div>
-                    <div>
-                        <h2 className="text-xl font-bold">Gestão de Usuários</h2>
-                        <p className="text-indigo-300 text-sm">
-                            Gerencie acessos, papéis e permissões do sistema.
+                    <div className="min-w-0 flex-1 space-y-0.5">
+                        <h2 className="text-base sm:text-lg font-bold text-[#102E52] leading-snug">Gestão de Usuários</h2>
+                        <p className="text-slate-500 text-xs leading-normal">
+                            {isLoading ? (
+                                <span className="inline-flex items-center gap-1.5">
+                                    <span className="h-3 w-8 bg-slate-200 animate-pulse rounded inline-block" /> usuários cadastrados no sistema.
+                                </span>
+                            ) : (
+                                `${total} usuários cadastrados no sistema.`
+                            )}
                         </p>
                     </div>
                 </div>
                 
-                <div className="flex gap-2">
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-end shrink-0">
                     <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                         <DialogTrigger asChild>
-                            <Button className="bg-brand-blue hover:bg-brand-blue/90 h-10">
-                                <UserPlus className="w-4 h-4 mr-2" />
+                            <Button className="bg-[#023E8A] hover:bg-[#023E8A]/90 text-white font-bold h-9 px-3.5 gap-2 shadow-xs">
+                                <UserPlus className="w-4 h-4" />
                                 Novo Usuário
                             </Button>
                         </DialogTrigger>
-                        <DialogContent>
+                        <DialogContent className="sm:max-w-[480px] p-6 rounded-xl border border-slate-200/80 shadow-xl">
                             <DialogHeader>
-                                <DialogTitle>Adicionar Novo Usuário</DialogTitle>
-                                <DialogDescription>
-                                    O usuário será criado se ainda não existir no sistema.
+                                <DialogTitle className="text-lg font-bold text-[#102E52] flex items-center gap-2">
+                                    <UserPlus className="w-5 h-5 text-[#023E8A]" />
+                                    Adicionar Novo Usuário
+                                </DialogTitle>
+                                <DialogDescription className="text-xs text-slate-500 mt-1">
+                                    O usuário será criado no sistema com as permissões atribuídas abaixo.
                                 </DialogDescription>
                             </DialogHeader>
                             <div className="grid gap-4 py-4">
-                                <div className="space-y-2">
-                                    <Label>Nome Completo</Label>
-                                    <Input value={newName} onChange={e => setNewName(e.target.value)} placeholder="Ex: João Silva" />
+                                <div className="space-y-1.5">
+                                    <Label className="text-xs font-semibold text-slate-700">Nome Completo</Label>
+                                    <Input
+                                        value={newName}
+                                        onChange={e => setNewName(e.target.value)}
+                                        placeholder="Ex: João Silva"
+                                        className="h-9 rounded-lg border-slate-200 text-sm focus-visible:ring-[#023E8A]"
+                                    />
                                 </div>
-                                <div className="space-y-2">
-                                    <Label>E-mail</Label>
-                                    <Input type="email" value={newEmail} onChange={e => setNewEmail(e.target.value)} placeholder="usuario@ufsc.br" />
+                                <div className="space-y-1.5">
+                                    <Label className="text-xs font-semibold text-slate-700">E-mail</Label>
+                                    <Input
+                                        type="email"
+                                        value={newEmail}
+                                        onChange={e => setNewEmail(e.target.value)}
+                                        placeholder="usuario@ufsc.br"
+                                        className="h-9 rounded-lg border-slate-200 text-sm focus-visible:ring-[#023E8A]"
+                                    />
                                 </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label>Papel</Label>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div className="space-y-1.5">
+                                        <Label className="text-xs font-semibold text-slate-700">Papel</Label>
                                         <Select value={newRole} onValueChange={onRoleChange}>
-                                            <SelectTrigger className="w-full truncate">
+                                            <SelectTrigger className="w-full h-9 rounded-lg border-slate-200 text-sm focus:ring-[#023E8A] truncate">
                                                 <SelectValue />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -362,22 +382,22 @@ export function UserManagement({ members: initialMembers, organizations }: UserM
                                             </SelectContent>
                                         </Select>
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label>Curso/Depto {newRole === "professor" && "(Opcional)"}</Label>
+                                    <div className="space-y-1.5">
+                                        <Label className="text-xs font-semibold text-slate-700">Curso/Depto {newRole === "professor" && "(Opcional)"}</Label>
                                         <Select 
                                             value={newOrgId} 
                                             onValueChange={setNewOrgId}
                                             disabled={isDeptoRole}
                                         >
-                                            <SelectTrigger className="w-full truncate">
+                                            <SelectTrigger className="w-full h-9 rounded-lg border-slate-200 text-sm focus:ring-[#023E8A] truncate">
                                                 <SelectValue placeholder={isDeptoRole ? "Departamento" : "Selecione..."} />
                                             </SelectTrigger>
-                                            <SelectContent>
+                                            <SelectContent className="max-h-56">
                                                 {isDeptoRole && !deptoOrg ? (
                                                     <SelectItem value="temp-depto">Departamento</SelectItem>
                                                 ) : (
                                                     organizations.map(org => (
-                                                        <SelectItem key={org.id} value={org.id}>{org.name}</SelectItem>
+                                                        <SelectItem key={org.id} value={org.id} className="text-xs">{org.name}</SelectItem>
                                                     ))
                                                 )}
                                             </SelectContent>
@@ -385,9 +405,19 @@ export function UserManagement({ members: initialMembers, organizations }: UserM
                                     </div>
                                 </div>
                             </div>
-                            <DialogFooter>
-                                <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>Cancelar</Button>
-                                <Button onClick={handleAddUser} disabled={isPending}>
+                            <DialogFooter className="gap-2 sm:gap-2">
+                                <Button
+                                    variant="outline"
+                                    onClick={() => setIsAddDialogOpen(false)}
+                                    className="h-9 px-4 text-xs font-semibold text-slate-600 border-slate-200 hover:bg-slate-50"
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    onClick={handleAddUser}
+                                    disabled={isPending}
+                                    className="h-9 bg-[#023E8A] hover:bg-[#023E8A]/90 text-white font-bold px-4 text-xs"
+                                >
                                     {isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <UserPlus className="w-4 h-4 mr-2" />}
                                     Adicionar
                                 </Button>
@@ -401,6 +431,7 @@ export function UserManagement({ members: initialMembers, organizations }: UserM
                 <TableToolbar 
                     title="Usuários"
                     count={total}
+                    isLoading={isLoading}
                     searchValue={search}
                     onSearchChange={setSearch}
                     onClearSearch={() => setSearch("")}

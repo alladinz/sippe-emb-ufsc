@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { studyPlans } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { CoordinatorPlansTable } from "./_components/coordinator-plans-table";
+import { PageHeader } from "@/components/dashboard/page-header";
 
 export default async function CoordinatorDashboardPage() {
   const session = await auth.api.getSession();
@@ -95,15 +96,11 @@ if (!activeMember || (userRole !== "coordenador" && userRole !== "chefe")) {
   const finished = allPlans.filter(p => p.status === 'approved' || p.status === 'rejected');
 
   return (
-    <div className="space-y-12 pb-10">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-          Revisão de Planos de Ensino
-        </h1>
-        <p className="text-slate-500 max-w-2xl">
-          Gerencie e revise as submissões dos professores do curso. Acompanhe o fluxo de aprovação e mantenha o arquivo atualizado.
-        </p>
-      </div>
+    <div className="space-y-8 pb-10">
+      <PageHeader
+        title="Revisão de Planos de Ensino"
+        description="Gerencie e revise as submissões dos professores do curso. Acompanhe o fluxo de aprovação e mantenha o arquivo atualizado."
+      />
 
       <div className="space-y-6">
         <div className="flex items-center justify-between border-b pb-4">

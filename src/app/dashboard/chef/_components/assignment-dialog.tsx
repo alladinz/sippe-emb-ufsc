@@ -70,79 +70,94 @@ export function AssignmentDialog({ course, teachers, organizations }: Assignment
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button size="sm" variant="ghost" className="gap-2 text-brand-blue hover:text-brand-blue hover:bg-brand-light/10">
-                    <UserPlus className="w-4 h-4" />
+                <Button size="sm" variant="ghost" className="gap-2 text-[#023E8A] hover:text-[#023E8A] hover:bg-blue-50/80 rounded-lg h-8 px-2.5 text-xs font-semibold">
+                    <UserPlus className="w-3.5 h-3.5" />
                     Atribuir Professor
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[460px] p-6 rounded-xl border border-slate-200/80 shadow-xl">
                 {success ? (
-                    <div className="py-10 text-center space-y-4">
-                        <div className="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto">
-                            <CheckCircle2 className="w-8 h-8" />
+                    <div className="py-8 text-center space-y-3">
+                        <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center mx-auto border border-emerald-100">
+                            <CheckCircle2 className="w-6 h-6" />
                         </div>
                         <div>
-                            <h3 className="text-lg font-bold text-slate-900">Atribuição Concluída!</h3>
-                            <p className="text-sm text-slate-500">O rascunho foi criado para o professor.</p>
+                            <h3 className="text-base font-bold text-[#102E52]">Atribuição Concluída!</h3>
+                            <p className="text-xs text-slate-500 mt-1">O rascunho de plano de ensino foi criado com sucesso.</p>
                         </div>
                     </div>
                 ) : (
                     <>
                         <DialogHeader>
-                            <DialogTitle>Atribuir Professor</DialogTitle>
-                            <DialogDescription>
-                                Crie um rascunho de plano de ensino para <strong>{course.code} - {course.name}</strong>.
+                            <DialogTitle className="text-lg font-bold text-[#102E52] flex items-center gap-2">
+                                <UserPlus className="w-5 h-5 text-[#023E8A]" />
+                                Atribuir Professor
+                            </DialogTitle>
+                            <DialogDescription className="text-xs text-slate-500 mt-1">
+                                Crie um rascunho de plano para <strong className="font-mono text-slate-700">{course.code}</strong> — {course.name}.
                             </DialogDescription>
                         </DialogHeader>
-                        <div className="grid gap-4 py-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="teacher">Professor(a)</Label>
+                        <div className="grid gap-3.5 py-3">
+                            <div className="space-y-1.5">
+                                <Label htmlFor="teacher" className="text-xs font-semibold text-slate-700">Professor(a) <span className="text-red-500">*</span></Label>
                                 <Select value={teacherId} onValueChange={setTeacherId}>
-                                    <SelectTrigger>
+                                    <SelectTrigger className="h-9 rounded-lg border-slate-200 text-xs focus:ring-[#023E8A]">
                                         <SelectValue placeholder="Selecione um professor..." />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {teachers.map(t => (
-                                            <SelectItem key={t.id} value={t.id}>{t.name || "Sem nome"}</SelectItem>
+                                            <SelectItem key={t.id} value={t.id} className="text-xs">{t.name || "Sem nome"}</SelectItem>
                                         ))}
                                     </SelectContent>
                                 </Select>
                             </div>
-                            <div className="space-y-3">
-                                <Label className="text-sm font-bold text-slate-700">Cursos / Graduações</Label>
-                                <div className="grid grid-cols-1 gap-2 max-h-[200px] overflow-y-auto p-3 border rounded-md bg-slate-50/50">
+                            <div className="space-y-1.5">
+                                <Label className="text-xs font-semibold text-slate-700">Cursos / Graduações <span className="text-red-500">*</span></Label>
+                                <div className="grid grid-cols-1 gap-1 max-h-[160px] overflow-y-auto p-2 border border-slate-200/80 rounded-lg bg-slate-50/50">
                                     {organizations.map(o => (
-                                        <div key={o.id} className="flex items-center gap-2">
+                                        <div key={o.id} className="flex items-center gap-2 px-2 py-1 rounded hover:bg-slate-100/60 transition-colors">
                                             <Checkbox 
                                                 id={`org-${o.id}`} 
                                                 checked={organizationIds.includes(o.id)}
                                                 onCheckedChange={() => toggleOrganization(o.id)}
+                                                className="data-[state=checked]:bg-[#023E8A] data-[state=checked]:border-[#023E8A]"
                                             />
                                             <Label 
                                                 htmlFor={`org-${o.id}`}
-                                                className="text-xs font-normal cursor-pointer leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                className="text-xs font-medium cursor-pointer leading-none text-slate-700"
                                             >
                                                 {o.name}
                                             </Label>
                                         </div>
                                     ))}
                                 </div>
-                                <p className="text-[10px] text-slate-500 italic">* Os campos TURMA e CURSO serão automatizados com base nesta seleção.</p>
+                                <p className="text-[10px] text-slate-400 italic">Os campos TURMA e CURSO serão configurados com base nesta seleção.</p>
                             </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="semester">Semestre</Label>
+                            <div className="space-y-1.5">
+                                <Label htmlFor="semester" className="text-xs font-semibold text-slate-700">Semestre Letivo <span className="text-red-500">*</span></Label>
                                 <Input 
                                     id="semester" 
                                     value={semester} 
                                     onChange={(e) => setSemester(e.target.value)} 
                                     placeholder="Ex: 2026.1"
+                                    className="h-9 rounded-lg border-slate-200 text-xs focus-visible:ring-[#023E8A]"
                                 />
                             </div>
                         </div>
-                        <DialogFooter>
-                            <Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
-                            <Button onClick={handleAssign} disabled={isAssigning || !teacherId || organizationIds.length === 0}>
-                                {isAssigning ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <UserPlus className="w-4 h-4 mr-2" />}
+                        <DialogFooter className="gap-2 sm:gap-2">
+                            <Button
+                                variant="outline"
+                                onClick={() => setOpen(false)}
+                                className="h-9 px-4 text-xs font-semibold text-slate-600 border-slate-200 hover:bg-slate-50 rounded-lg"
+                            >
+                                Cancelar
+                            </Button>
+                            <Button
+                                onClick={handleAssign}
+                                disabled={isAssigning || !teacherId || organizationIds.length === 0}
+                                className="h-9 bg-[#023E8A] hover:bg-[#023E8A]/90 text-white font-bold px-4 text-xs rounded-lg"
+                            >
+                                {isAssigning ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" /> : <UserPlus className="w-3.5 h-3.5 mr-1.5" />}
                                 Criar Rascunho
                             </Button>
                         </DialogFooter>

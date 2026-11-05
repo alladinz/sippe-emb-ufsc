@@ -81,7 +81,7 @@ export const studyPlanSchema = z.object({
   finalConsiderations: z.string().optional().nullable(),
 
   // Schedule
-  schedule: z.array(scheduleDaySchema).optional(),
+  schedule: z.union([z.string(), z.array(scheduleDaySchema)]).optional().nullable(),
   weeklySchedule: z.array(weeklyScheduleItemSchema).optional().nullable(),
 
   // Relations (to be handled in sub-forms)

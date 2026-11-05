@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { toastSuccess, toastError, toastInfo } from "@/lib/swal";
 import { updateSystemSettingAction } from "../actions";
 import { parseBoldMarkers } from "@/utils/bibliografiaUtils";
+import { Sliders, Bold, Sparkles } from "lucide-react";
 
 interface EvaluationSettingsProps {
     initialValue: string;
@@ -15,8 +16,9 @@ interface EvaluationSettingsProps {
 export function EvaluationSettings({ initialValue, initialProgramaValue }: EvaluationSettingsProps) {
     const [value, setValue] = useState(initialValue);
     const [programaValue, setProgramaValue] = useState(initialProgramaValue);
-    const [isSaving, setIsSaving] = useState(false);
-    
+    const [isSavingPlanos, setIsSavingPlanos] = useState(false);
+    const [isSavingProgramas, setIsSavingProgramas] = useState(false);
+
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const textareaProgramaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -48,110 +50,155 @@ export function EvaluationSettings({ initialValue, initialProgramaValue }: Evalu
         }
     };
 
-    const handleSave = async (key: string, val: string) => {
+    const handleSave = async (key: string, val: string, type: 'planos' | 'programas') => {
         try {
-            setIsSaving(true);
+            if (type === 'planos') setIsSavingPlanos(true);
+            else setIsSavingProgramas(true);
+
             await updateSystemSettingAction(key, val);
             toastSuccess("Configuração salva com sucesso!");
         } catch (error: unknown) {
             toastError((error as Error).message || "Erro ao salvar a configuração.");
         } finally {
-            setIsSaving(false);
+            if (type === 'planos') setIsSavingPlanos(false);
+            else setIsSavingProgramas(false);
         }
     };
 
     return (
-        <Card className="border-slate-200 shadow-sm rounded-md">
-            <CardHeader className="border-b bg-slate-50/50">
-                <CardTitle className="text-xl">Configuração de Avaliação Final (Recuperação)</CardTitle>
-                <CardDescription>
-                    Este texto será utilizado como padrão para o campo de &quot;Avaliação Final&quot; na criação de novos Planos de Ensino.
-                </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-6 space-y-4">
-                <div className="flex items-center gap-1 mb-2">
-                    <button
-                        type="button"
-                        onClick={() => handleBoldToggle(textareaRef, value, setValue)}
-                        title="Negrito — selecione o texto e clique para aplicar negrito"
-                        className="inline-flex items-center justify-center w-8 h-8 text-sm font-black text-gray-700 border border-gray-300 rounded hover:bg-gray-100 hover:border-gray-400 transition-colors select-none"
-                    >
-                        B
-                    </button>
-                    <span className="text-xs text-gray-500 ml-2">
-                        Selecione o texto e clique B para adicionar negrito.
-                    </span>
-                </div>
-                
-                <textarea
-                    ref={textareaRef}
-                    value={value}
-                    onChange={(e) => setValue(e.target.value)}
-                    rows={12}
-                    className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-transparent font-mono"
-                    placeholder="Digite o texto padrão de avaliação final..."
-                />
-
-                {value.includes('**') && (
-                    <div className="mt-4 p-4 border border-slate-200 rounded-md bg-slate-50">
-                        <p className="text-xs text-gray-500 mb-2 font-semibold uppercase tracking-wider">Pré-visualização:</p>
-                        <div className="text-sm text-slate-800 leading-relaxed whitespace-pre-wrap">
-                            {parseBoldMarkers(value).map((seg, i) =>
-                                seg.isBold ? <strong key={i}>{seg.text}</strong> : <span key={i}>{seg.text}</span>
-                            )}
-                        </div>
+        <Card className="border border-slate-200/80 shadow-xs rounded-xl overflow-hidden bg-white">
+            <CardHeader className="p-5 sm:p-6 border-b border-slate-100 bg-slate-50/50">
+                <div className="flex items-start sm:items-center gap-3.5">
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#023E8A] flex items-center justify-center shrink-0">
+                        <Sliders className="w-5 h-5 text-[#023E8A]" />
                     </div>
-                )}
-
-                <div className="flex justify-end mt-6 pb-6 border-b border-slate-200">
-                    <Button onClick={() => handleSave("DEFAULT_FINAL_EVALUATION", value)} disabled={isSaving}>
-                        {isSaving ? "Salvando..." : "Salvar Configuração (Planos)"}
-                    </Button>
+                    <div className="min-w-0 flex-1 space-y-0.5">
+                        <CardTitle className="text-base sm:text-lg font-bold text-[#102E52] leading-snug">
+                            Configuração de Avaliação Padrão
+                        </CardTitle>
+                        <CardDescription className="text-xs text-slate-500 leading-normal">
+                            Textos institucionais pré-definidos para preenchimento automático de novos planos e programas.
+                        </CardDescription>
+                    </div>
                 </div>
+            </CardHeader>
+            <CardContent className="p-6 space-y-8">
+                {/* Seção 1: Planos de Ensino */}
+                <div className="space-y-4">
+                    <div>
+                        <h3 className="text-sm font-bold text-slate-900">
+                            Avaliação Final (Recuperação) — Planos de Ensino
+                        </h3>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                            Este texto será utilizado como padrão para o campo de &quot;Avaliação Final&quot; na criação de novos Planos de Ensino.
+                        </p>
+                    </div>
 
-                <div className="pt-6">
-                    <h3 className="text-lg font-semibold mb-2">Critérios Institucionais de Avaliação (Programas de Ensino)</h3>
-                    <p className="text-sm text-slate-500 mb-4">
-                        Este texto será pré-preenchido no campo de &quot;Critérios Avaliação&quot; na criação ou edição de Programas de Ensino.
-                    </p>
-                    
-                    <div className="flex items-center gap-1 mb-2">
+                    <div className="flex items-center gap-2">
                         <button
                             type="button"
-                            onClick={() => handleBoldToggle(textareaProgramaRef, programaValue, setProgramaValue)}
+                            onClick={() => handleBoldToggle(textareaRef, value, setValue)}
                             title="Negrito — selecione o texto e clique para aplicar negrito"
-                            className="inline-flex items-center justify-center w-8 h-8 text-sm font-black text-gray-700 border border-gray-300 rounded hover:bg-gray-100 hover:border-gray-400 transition-colors select-none"
+                            className="inline-flex items-center justify-center w-8 h-8 text-xs font-bold text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-[#023E8A] hover:border-slate-300 transition-colors select-none"
                         >
-                            B
+                            <Bold className="w-3.5 h-3.5" />
                         </button>
-                        <span className="text-xs text-gray-500 ml-2">
-                            Selecione o texto e clique B para adicionar negrito.
+                        <span className="text-xs text-slate-400">
+                            Selecione o texto e clique no botão para aplicar formatação em negrito.
                         </span>
                     </div>
-                    
+
                     <textarea
-                        ref={textareaProgramaRef}
-                        value={programaValue}
-                        onChange={(e) => setProgramaValue(e.target.value)}
-                        rows={12}
-                        className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-transparent font-mono"
-                        placeholder="Digite os critérios institucionais padrão..."
+                        ref={textareaRef}
+                        value={value}
+                        onChange={(e) => setValue(e.target.value)}
+                        rows={8}
+                        className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-sans leading-relaxed text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#023E8A] focus:border-transparent transition-all"
+                        placeholder="Digite o texto padrão de avaliação final..."
                     />
 
-                    {programaValue.includes('**') && (
-                        <div className="mt-4 p-4 border border-slate-200 rounded-md bg-slate-50">
-                            <p className="text-xs text-gray-500 mb-2 font-semibold uppercase tracking-wider">Pré-visualização:</p>
+                    {value.includes('**') && (
+                        <div className="p-4 border border-slate-200/80 rounded-xl bg-slate-50/70">
+                            <div className="flex items-center gap-1.5 mb-2">
+                                <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+                                <p className="text-xs text-slate-600 font-bold uppercase tracking-wider">Pré-visualização formatada:</p>
+                            </div>
                             <div className="text-sm text-slate-800 leading-relaxed whitespace-pre-wrap">
-                                {parseBoldMarkers(programaValue).map((seg, i) =>
-                                    seg.isBold ? <strong key={i}>{seg.text}</strong> : <span key={i}>{seg.text}</span>
+                                {parseBoldMarkers(value).map((seg, i) =>
+                                    seg.isBold ? <strong key={i} className="font-bold text-slate-900">{seg.text}</strong> : <span key={i}>{seg.text}</span>
                                 )}
                             </div>
                         </div>
                     )}
 
-                    <div className="flex justify-end mt-6">
-                        <Button onClick={() => handleSave("DEFAULT_CRITERIOS_AVALIACAO_PROGRAMA", programaValue)} disabled={isSaving}>
-                            {isSaving ? "Salvando..." : "Salvar Configuração (Programas)"}
+                    <div className="flex justify-end pt-2">
+                        <Button
+                            className="bg-[#023E8A] hover:bg-[#023E8A]/90 text-white font-bold h-9 px-4 rounded-lg shadow-xs"
+                            onClick={() => handleSave("DEFAULT_FINAL_EVALUATION", value, 'planos')}
+                            disabled={isSavingPlanos}
+                        >
+                            {isSavingPlanos ? "Salvando..." : "Salvar Configuração (Planos)"}
+                        </Button>
+                    </div>
+                </div>
+
+                <div className="h-px bg-slate-100" />
+
+                {/* Seção 2: Programas de Ensino */}
+                <div className="space-y-4">
+                    <div>
+                        <h3 className="text-sm font-bold text-slate-900">
+                            Critérios Institucionais de Avaliação — Programas de Ensino
+                        </h3>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                            Este texto será pré-preenchido no campo de &quot;Critérios de Avaliação&quot; na criação ou edição de Programas de Ensino.
+                        </p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        <button
+                            type="button"
+                            onClick={() => handleBoldToggle(textareaProgramaRef, programaValue, setProgramaValue)}
+                            title="Negrito — selecione o texto e clique para aplicar negrito"
+                            className="inline-flex items-center justify-center w-8 h-8 text-xs font-bold text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-[#023E8A] hover:border-slate-300 transition-colors select-none"
+                        >
+                            <Bold className="w-3.5 h-3.5" />
+                        </button>
+                        <span className="text-xs text-slate-400">
+                            Selecione o texto e clique no botão para aplicar formatação em negrito.
+                        </span>
+                    </div>
+
+                    <textarea
+                        ref={textareaProgramaRef}
+                        value={programaValue}
+                        onChange={(e) => setProgramaValue(e.target.value)}
+                        rows={8}
+                        className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-sans leading-relaxed text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#023E8A] focus:border-transparent transition-all"
+                        placeholder="Digite os critérios institucionais padrão..."
+                    />
+
+                    {programaValue.includes('**') && (
+                        <div className="p-4 border border-slate-200/80 rounded-xl bg-slate-50/70">
+                            <div className="flex items-center gap-1.5 mb-2">
+                                <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+                                <p className="text-xs text-slate-600 font-bold uppercase tracking-wider">Pré-visualização formatada:</p>
+                            </div>
+                            <div className="text-sm text-slate-800 leading-relaxed whitespace-pre-wrap">
+                                {parseBoldMarkers(programaValue).map((seg, i) =>
+                                    seg.isBold ? <strong key={i} className="font-bold text-slate-900">{seg.text}</strong> : <span key={i}>{seg.text}</span>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="flex justify-end pt-2">
+                        <Button
+                            className="bg-[#023E8A] hover:bg-[#023E8A]/90 text-white font-bold h-9 px-4 rounded-lg shadow-xs"
+                            onClick={() => handleSave("DEFAULT_CRITERIOS_AVALIACAO_PROGRAMA", programaValue, 'programas')}
+                            disabled={isSavingProgramas}
+                        >
+                            {isSavingProgramas ? "Salvando..." : "Salvar Configuração (Programas)"}
                         </Button>
                     </div>
                 </div>

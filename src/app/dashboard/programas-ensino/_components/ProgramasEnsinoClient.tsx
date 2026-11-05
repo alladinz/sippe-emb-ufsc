@@ -8,6 +8,9 @@ import { StatsBar } from "@/components/programas/StatsBar";
 import { ProgramasTable } from "@/components/programas/ProgramasTable";
 import { CreateProgramaModal } from "@/components/programas/CreateProgramaModal";
 import { TablePagination } from "@/components/table";
+import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/dashboard/page-header";
+import { cn } from "@/lib/utils";
 import type { ProgramaListItem } from "@/types/programaEnsino";
 
 export function ProgramasEnsinoClient({ isChef, isComissao = false }: { isChef: boolean; isComissao?: boolean }) {
@@ -54,68 +57,68 @@ export function ProgramasEnsinoClient({ isChef, isComissao = false }: { isChef: 
     useEffect(() => { setPage(1); }, [search, statusFilter]);
 
     return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-                        Programas de Ensino
-                    </h1>
-                    <p className="text-slate-500 mt-1">
-                        Gerencie os programas de ensino das disciplinas do departamento.
-                    </p>
-                </div>
-                { (isChef || isComissao) && (
-                    <button
-                        onClick={() => setShowCreateModal(true)}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
-                    >
-                        <PlusIcon className="w-4 h-4" />
-                        Novo Programa
-                    </button>
-                )}
-            </div>
+        <div className="space-y-6 pb-8">
+            <PageHeader
+                title="Programas de Ensino"
+                description="Gerencie os programas de ensino das disciplinas do departamento."
+                action={
+                    (isChef || isComissao) && (
+                        <Button
+                            onClick={() => setShowCreateModal(true)}
+                            className="gap-2 bg-[#023E8A] hover:bg-[#023E8A]/90 text-white font-bold rounded-lg h-9"
+                        >
+                            <PlusIcon className="w-4 h-4" />
+                            Novo Programa
+                        </Button>
+                    )
+                }
+            />
 
-            <StatsBar programas={programas} total={total} />
+            <StatsBar programas={programas} total={total} isLoading={isLoading} />
 
-            <div className="bg-white border border-gray-200 rounded-xl p-4 mb-4">
-                <div className="flex flex-col gap-3">
-                    <div className="relative">
-                        <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <div className="bg-white border border-slate-200/80 rounded-xl p-4 shadow-xs">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                    <div className="relative flex-1 max-w-md">
+                        <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                         <input
                             type="text"
                             value={search}
                             onChange={e => setSearch(e.target.value)}
                             placeholder="Buscar por disciplina ou código..."
-                            className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            className="w-full pl-9 pr-8 py-2 text-sm bg-slate-50/50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#023E8A] focus:border-transparent transition-all"
                         />
                         {search && (
                             <button
                                 onClick={() => setSearch('')}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                                title="Limpar busca"
                             >
                                 <XMarkIcon className="w-4 h-4" />
                             </button>
                         )}
                     </div>
 
-                    <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-xs text-gray-500 font-medium mr-1">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-xs text-slate-500 font-bold mr-1">
                             Status:
                         </span>
                         {[
-                            { value: 'all',       label: 'Todos'              },
-                            { value: 'draft',     label: 'Rascunho'           },
-                            { value: 'submitted', label: 'Aguardando'         },
-                            { value: 'approved',  label: 'Aprovado'           },
-                            { value: 'rejected',  label: 'Devolvido'          },
-                            { value: 'archived',  label: 'Arquivado'          },
+                            { value: 'all',       label: 'Todos'      },
+                            { value: 'draft',     label: 'Rascunho'   },
+                            { value: 'submitted', label: 'Aguardando' },
+                            { value: 'approved',  label: 'Aprovado'   },
+                            { value: 'rejected',  label: 'Devolvido'  },
+                            { value: 'archived',  label: 'Arquivado'  },
                         ].map(opt => (
                             <button
                                 key={opt.value}
                                 onClick={() => setStatusFilter(opt.value)}
-                                className={`text-xs px-3 py-1 rounded-full border transition-colors font-medium ${statusFilter === opt.value
-                                    ? 'bg-gray-900 text-white border-gray-900'
-                                    : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'}`}
+                                className={cn(
+                                    "text-xs px-3 py-1 rounded-full border transition-all duration-150 font-bold",
+                                    statusFilter === opt.value
+                                        ? "bg-[#023E8A] text-white border-[#023E8A]"
+                                        : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+                                )}
                             >
                                 {opt.label}
                             </button>

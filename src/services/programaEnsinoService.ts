@@ -300,7 +300,7 @@ export async function updatePrograma(id: string, data: UpdateProgramaDto, userId
   if (!prog) throw new Error('Programa not found');
   
   // Use the central logic for editability
-  if (prog.status !== 'draft' && !(prog.status === 'pending_chefe' && userPapel === 'chefe')) {
+  if (prog.status !== 'draft' && prog.status !== 'rejected' && !(prog.status === 'pending_chefe' && userPapel === 'chefe')) {
     throw new Error('Cannot update this program in its current status');
   }
 
@@ -381,7 +381,7 @@ export async function submitPrograma(id: string, userId: string, papel?: string)
   const disciplineName = prog.nome_disciplina ?? 'Disciplina';
 
   if (papel === 'comissao') {
-    if (prog.status !== 'draft') throw new Error('Only draft can be submitted by comissao');
+    if (prog.status !== 'draft' && prog.status !== 'rejected') throw new Error('Only draft or rejected can be submitted by comissao');
 
     await db.update(programasEnsino)
       .set({
@@ -419,8 +419,8 @@ export async function submitPrograma(id: string, userId: string, papel?: string)
     }
   } else {
     // chefe flow
-    if (prog.status !== 'draft' && prog.status !== 'pending_chefe') {
-      throw new Error('Only draft or pending_chefe can be submitted to coordinations');
+    if (prog.status !== 'draft' && prog.status !== 'rejected' && prog.status !== 'pending_chefe') {
+      throw new Error('Only draft, rejected or pending_chefe can be submitted to coordinations');
     }
 
     await db.update(programasEnsino)
@@ -628,12 +628,11 @@ export async function reviewPrograma(id: string, action: 'approve' | 'reject', f
       );
       
     if (remaining.length === 0) {
-      // ALL approved, mark as archived!
+      // ALL approved, mark as approved!
       await db.update(programasEnsino)
         .set({
-          status: 'archived',
+          status: 'approved',
           aprovadoEm: new Date(),
-          arquivadoEm: new Date(),
           updatedAt: new Date()
         })
         .where(eq(programasEnsino.id, id));
@@ -642,7 +641,7 @@ export async function reviewPrograma(id: string, action: 'approve' | 'reject', f
         programaId: id,
         usuarioId: userId,
         tipoEvento: 'aprovado_todas_coordenacoes',
-        descricao: `Programa aprovado por todas as coordenações e arquivado`,
+        descricao: `Programa aprovado por todas as coordenações`,
       });
 
       // notify chefe and comissao

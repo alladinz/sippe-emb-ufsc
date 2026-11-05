@@ -19,7 +19,6 @@ import {
     TableBulkActions
 } from "@/components/table";
 import { useTable } from "@/hooks/table/useTable";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -33,7 +32,6 @@ import {
 import { 
     Eye, 
     Archive, 
-    CheckCircle, 
     Trash2, 
     FilterX
 } from "lucide-react";
@@ -43,6 +41,7 @@ import { ArchiveButton } from "./archive-button";
 import { bulkDeletePlansAction } from "../actions";
 import { useRouter, usePathname } from "next/navigation";
 import { confirmDialog, toastError, toastSuccess } from "@/lib/swal";
+import { StatusBadge } from "@/components/dashboard/status-badge";
 
 interface Plan {
     id: string;
@@ -82,10 +81,7 @@ export function CentralArchiveTable({ plans, initialQuery = "" }: CentralArchive
     const uniqueTeachers = useMemo(() => Array.from(new Set(plans.map(p => p.user.name))).sort(), [plans]);
     const uniqueSemesters = useMemo(() => Array.from(new Set(plans.map(p => p.semester).filter((s): s is string => !!s))).sort(), [plans]);
 
-    const statusLabels: Record<string, { label: string, color: string, icon: React.ElementType }> = {
-        approved: { label: "Aprovado", color: "bg-green-100 text-green-800", icon: CheckCircle },
-        archived: { label: "Arquivado", color: "bg-slate-100 text-slate-800", icon: Archive },
-    };
+
 
     const filteredPlans = useMemo(() => {
         const result = plans.filter(p => {
@@ -261,20 +257,20 @@ export function CentralArchiveTable({ plans, initialQuery = "" }: CentralArchive
             <TableContainer density={density}>
                 <Table>
                     <TableHeader>
-                        <TableRow className="bg-slate-50/50">
+                        <TableRow className="bg-slate-50/75 border-b border-slate-200">
                             <TableHead className="w-12">
                                 <Checkbox 
                                     checked={paginatedPlans.length > 0 && selectedIds.length === paginatedPlans.length}
                                     onCheckedChange={() => toggleSelectAll(paginatedPlans.map(p => p.id))}
                                 />
                             </TableHead>
-                            <TableHead>Disciplina</TableHead>
-                            <TableHead>Turma</TableHead>
-                            <TableHead>Professor</TableHead>
-                            <TableHead>Semestre</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Modificação</TableHead>
-                            <TableHead className="text-right">Ações</TableHead>
+                            <TableHead className="text-xs font-bold text-slate-600 uppercase tracking-wider py-3">Disciplina</TableHead>
+                            <TableHead className="text-xs font-bold text-slate-600 uppercase tracking-wider py-3">Turma</TableHead>
+                            <TableHead className="text-xs font-bold text-slate-600 uppercase tracking-wider py-3">Professor</TableHead>
+                            <TableHead className="text-xs font-bold text-slate-600 uppercase tracking-wider py-3">Semestre</TableHead>
+                            <TableHead className="text-xs font-bold text-slate-600 uppercase tracking-wider py-3">Status</TableHead>
+                            <TableHead className="text-xs font-bold text-slate-600 uppercase tracking-wider py-3">Modificação</TableHead>
+                            <TableHead className="text-xs font-bold text-slate-600 uppercase tracking-wider text-right py-3">Ações</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -317,13 +313,7 @@ export function CentralArchiveTable({ plans, initialQuery = "" }: CentralArchive
                                     <TableCell className="font-medium text-slate-700">{plan.user.name}</TableCell>
                                     <TableCell className="text-slate-600">{plan.semester}</TableCell>
                                     <TableCell>
-                                        <Badge className={cn("gap-1.5 border-none", statusLabels[plan.status]?.color)}>
-                                            {(() => {
-                                                const StatusIcon = statusLabels[plan.status]?.icon;
-                                                return StatusIcon ? <StatusIcon className="w-3 h-3" /> : null;
-                                            })()}
-                                            {statusLabels[plan.status]?.label || plan.status}
-                                        </Badge>
+                                        <StatusBadge status={plan.status} />
                                     </TableCell>
                                     <TableCell className="text-slate-500 text-xs">
                                         {new Date(plan.updatedAt).toLocaleDateString('pt-BR')}

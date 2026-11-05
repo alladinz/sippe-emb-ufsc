@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { studyPlans } from "@/db/schema";
 import { desc, inArray } from "drizzle-orm";
 import { ArquivoCentralClient } from "./_components/arquivo-central-client";
+import { PageHeader } from "@/components/dashboard/page-header";
 
 interface SecretaryDashboardPageProps {
     searchParams: Promise<{
@@ -51,15 +52,11 @@ export default async function SecretaryDashboardPage({ searchParams }: Secretary
   const query = params.q || "";
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-          Arquivo Central
-        </h1>
-        <p className="text-slate-500">
-          Consulte e gerencie todos os planos de ensino aprovados e arquivados.
-        </p>
-      </div>
+    <div className="space-y-6 pb-8">
+      <PageHeader
+        title="Arquivo Central"
+        description="Consulte e gerencie todos os planos de ensino aprovados e arquivados."
+      />
 
       <ArquivoCentralClient plans={plans} query={query} />
     </div>

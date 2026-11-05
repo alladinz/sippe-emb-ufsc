@@ -84,19 +84,19 @@ export default async function DashboardLayout({
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <header className="h-16 bg-white border-b flex items-center justify-between px-6 shrink-0 no-print">
+        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 shrink-0 no-print">
           <div className="flex items-center gap-3">
             <div className="flex flex-col leading-tight">
-              <span className="text-sm font-medium text-gray-800">
+              <span className="text-sm font-bold text-[#102E52]">
                 {departmentName}
               </span>
-              <span className="text-xs text-gray-400">
+              <span className="text-xs text-slate-500 font-normal">
                 Semestre {activeSemester}
               </span>
             </div>
             
-            <span className="hidden md:inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-full font-medium border border-blue-100 ml-4">
-              <Calendar className="w-3 h-3" />
+            <span className="hidden md:inline-flex items-center gap-1.5 text-xs bg-blue-50 text-[#023E8A] px-3 py-1 rounded-full font-bold border border-blue-100 ml-3">
+              <Calendar className="w-3.5 h-3.5" />
               {activeSemester}
             </span>
           </div>
@@ -107,7 +107,7 @@ export default async function DashboardLayout({
           </div>
         </header>
 
-        <main className="p-6 overflow-y-auto flex-1">
+        <main className="p-4 sm:p-6 lg:p-8 overflow-y-auto flex-1">
           <DynamicBreadcrumb />
           {children}
         </main>

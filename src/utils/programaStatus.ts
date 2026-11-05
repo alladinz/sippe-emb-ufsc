@@ -47,14 +47,14 @@ export function isProgramaEditable(
   status: ProgramaStatus,
   papel?: string
 ): boolean {
-  if (status === 'draft') return true;
+  if (status === 'draft' || status === 'rejected') return true;
   // Chefe can edit pending_chefe before forwarding
   if (status === 'pending_chefe' && papel === 'chefe') return true;
   return false;
 }
 
 export function canSubmitPrograma(status: ProgramaStatus): boolean {
-  return status === 'draft';
+  return status === 'draft' || status === 'rejected';
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

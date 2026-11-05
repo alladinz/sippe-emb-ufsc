@@ -178,53 +178,64 @@ export function MasterCourseList({ courses: initialCourses, teachers, organizati
         <div className="space-y-6">
             {/* Header / Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="md:col-span-2 flex justify-between items-center bg-slate-900 text-white p-6 rounded-xl shadow-lg">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-brand-blue/20 rounded-lg">
-                            <Database className="w-6 h-6 text-indigo-400" />
+                <div className="md:col-span-2 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white border border-slate-200/80 p-5 rounded-xl shadow-xs">
+                    <div className="flex items-start sm:items-center gap-3.5 min-w-0 flex-1">
+                        <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#023E8A] flex items-center justify-center shrink-0">
+                            <Database className="w-5 h-5 text-[#023E8A]" />
                         </div>
-                        <div>
-                            <h2 className="text-xl font-bold">Base de Dados Mestres</h2>
-                            <p className="text-indigo-300 text-sm">
-                                {total} disciplinas mapeadas em {graduations.length} cursos.
+                        <div className="min-w-0 flex-1 space-y-0.5">
+                            <h2 className="text-base sm:text-lg font-bold text-[#102E52] leading-snug">Base de Dados Mestre</h2>
+                            <p className="text-slate-500 text-xs leading-normal">
+                                {isLoading ? (
+                                    <span className="inline-flex items-center gap-1.5">
+                                        <span className="h-3 w-8 bg-slate-200 animate-pulse rounded inline-block" /> disciplinas mapeadas em{" "}
+                                        <span className="h-3 w-4 bg-slate-200 animate-pulse rounded inline-block" /> cursos.
+                                    </span>
+                                ) : (
+                                    `${total} disciplinas mapeadas em ${graduations.length} cursos.`
+                                )}
                             </p>
                         </div>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex items-center gap-2 w-full sm:w-auto justify-end shrink-0">
                         <Button 
                             variant="outline" 
-                            className="bg-transparent border-red-500/50 hover:bg-red-500/10 text-red-400 hover:text-red-500 h-10 w-10 p-0"
+                            size="sm"
+                            className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 h-9 px-3 gap-1.5 font-bold"
                             onClick={handleClear}
                             disabled={isSyncing}
+                            title="Limpar base de dados mestre"
                         >
                             {isSyncing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                            <span className="hidden sm:inline">Limpar</span>
                         </Button>
                         <Button 
-                            variant="outline" 
-                            className="bg-brand-blue border-none hover:bg-brand-blue text-white h-10"
+                            size="sm"
+                            className="bg-[#023E8A] hover:bg-[#023E8A]/90 text-white font-bold h-9 px-3.5 gap-2"
                             onClick={handleSync}
                             disabled={isSyncing}
                             title="Atualizar Base de Disciplinas"
                         >
-                            {isSyncing ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <RefreshCcw className="w-4 h-4 mr-2" />}
+                            {isSyncing ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCcw className="w-4 h-4" />}
                             Atualizar Base
                         </Button>
                     </div>
                 </div>
                 
-                <div className="bg-white border rounded-xl p-6 shadow-sm flex flex-col justify-center">
-                    <span className="text-xs font-bold uppercase text-slate-400 tracking-wider">Status da Base</span>
+                <div className="bg-white border border-slate-200/80 rounded-xl p-5 shadow-xs flex flex-col justify-center">
+                    <span className="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Status da Base</span>
                     <div className="flex items-center gap-2 mt-1">
-                        <div className="w-2 h-2 rounded-full bg-green-500" />
-                        <span className="text-lg font-semibold text-slate-900">Atualizada</span>
+                        <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                        <span className="text-base font-bold text-slate-800">Atualizada</span>
                     </div>
-                    <p className="text-xs text-slate-500 mt-2">Deduplicação por código e nome.</p>
+                    <p className="text-xs text-slate-400 mt-1">Deduplicação por código e nome.</p>
                 </div>
             </div>
 
             <TableShell>
                 <TableToolbar 
                     count={total}
+                    isLoading={isLoading}
                     searchValue={search}
                     onSearchChange={setSearch}
                     onClearSearch={() => setSearch("")}
@@ -309,8 +320,8 @@ export function MasterCourseList({ courses: initialCourses, teachers, organizati
                                 <TableHead className="w-24">Código</TableHead>
                                 <TableHead>Nome da Disciplina</TableHead>
                                 <TableHead>Currículo</TableHead>
-                                <TableHead>Fase</TableHead>
-                                <TableHead>C.H.</TableHead>
+                                <TableHead className="text-center">Fase</TableHead>
+                                <TableHead className="text-right">C.H.</TableHead>
                                 <TableHead>Graduações</TableHead>
                                 <TableHead className="text-right">Ações</TableHead>
                             </TableRow>
@@ -357,16 +368,16 @@ export function MasterCourseList({ courses: initialCourses, teachers, organizati
                                                 ))}
                                             </div>
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell className="text-center">
                                             <Badge variant="outline" className="text-[10px]">
                                                 {course.phase ? `${course.phase}ª` : "-"}
                                             </Badge>
                                         </TableCell>
-                                        <TableCell className="text-slate-600 text-xs">
-                                            {course.workloadHours}h
+                                        <TableCell className="text-right text-slate-600 text-xs font-mono font-medium">
+                                            {course.workloadHours ? `${course.workloadHours}h` : "-"}
                                         </TableCell>
                                         <TableCell>
-                                            <div className="flex flex-wrap gap-1">
+                                            <div className="flex flex-wrap gap-1 max-w-[280px]">
                                                 {course.graduation?.split(", ").map((g: string) => (
                                                     <Badge key={g} className="bg-blue-50 text-blue-700 border-blue-100 text-[9px] hover:bg-blue-50">
                                                         {g}

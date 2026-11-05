@@ -81,10 +81,10 @@ export function UserMenu({ user, roleLabel, roleId }: UserMenuProps) {
                         )}
                     </div>
                     <div className="flex flex-col items-start text-left hidden sm:flex">
-                        <span className="text-sm font-semibold text-slate-900 leading-none mb-1">
+                        <span className="text-sm font-bold text-slate-900 leading-none mb-1">
                             {user.name}
                         </span>
-                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${roleStyles}`}>
+                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${roleStyles}`}>
                             {roleLabel}
                         </span>
                     </div>

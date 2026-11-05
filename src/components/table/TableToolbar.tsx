@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 interface TableToolbarProps {
   title?: string;
   count?: number;
+  isLoading?: boolean;
   searchPlaceholder?: string;
   searchValue?: string;
   onSearchChange?: (value: string) => void;
@@ -22,6 +23,7 @@ interface TableToolbarProps {
 export function TableToolbar({
   title,
   count,
+  isLoading,
   searchPlaceholder = "Buscar...",
   searchValue,
   onSearchChange,
@@ -36,12 +38,14 @@ export function TableToolbar({
       <div className="flex items-center gap-4">
         {title && (
           <div className="flex items-center gap-2">
-            <h2 className="text-lg font-semibold tracking-tight text-slate-900">{title}</h2>
-            {count !== undefined && (
-              <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
+            <h2 className="text-base font-bold tracking-tight text-slate-900">{title}</h2>
+            {isLoading ? (
+              <span className="h-5 w-8 rounded-full bg-slate-200 animate-pulse inline-block" />
+            ) : count !== undefined ? (
+              <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-bold text-slate-600">
                 {count}
               </span>
-            )}
+            ) : null}
           </div>
         )}
       </div>
