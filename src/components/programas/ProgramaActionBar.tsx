@@ -15,6 +15,8 @@ interface ProgramaActionBarProps {
     onSubmit: () => void;
     onHistory: () => void;
     onVisualizar: () => void;
+    onRejectChefe?: () => void;
+    onReview?: () => void;
 }
 
 export function ProgramaActionBar({
@@ -23,7 +25,9 @@ export function ProgramaActionBar({
     onDelete,
     onSubmit,
     onHistory,
-    onVisualizar
+    onVisualizar,
+    onRejectChefe,
+    onReview
 }: ProgramaActionBarProps) {
     const { data: session } = useSession();
     const userPapel = session?.user?.papel as string | undefined;
@@ -39,8 +43,10 @@ export function ProgramaActionBar({
         : 'Encaminhar para Coordenações';
 
     return (
-        <div className="flex flex-col md:flex-row md:items-center justify-between bg-white p-4 border border-slate-200/80 rounded-xl shadow-xs gap-4">
-            <div className="flex flex-col gap-2">
+        <div className="bg-white p-4 border border-slate-200/80 rounded-xl shadow-xs space-y-3">
+            {/* Main Action Bar Row */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                {/* Left Group */}
                 <div className="flex items-center gap-3.5 flex-wrap">
                     <Link href="/dashboard/programas-ensino">
                         <Button variant="ghost" size="sm" className="gap-1.5 text-slate-600 font-bold text-xs h-8">
@@ -48,7 +54,7 @@ export function ProgramaActionBar({
                             Voltar
                         </Button>
                     </Link>
-                    <div className="h-5 w-px bg-slate-200 hidden md:block" />
+                    <div className="h-5 w-px bg-slate-200 hidden sm:block" />
 
                     <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full border ${statusInfo.colors.bg} ${statusInfo.colors.text} ${statusInfo.colors.border}`}>
                         <span className={`w-1.5 h-1.5 rounded-full ${statusInfo.colors.dot}`} />
@@ -77,83 +83,90 @@ export function ProgramaActionBar({
                     )}
                 </div>
 
-                {isRejected && programa.feedback_aprovacao && (
-                    <p className="text-xs text-red-600 mt-1 border border-red-100 bg-red-50 p-2 rounded-lg w-fit">
-                        Motivo: {programa.feedback_aprovacao}
-                    </p>
-                )}
-            </div>
-
-            <div className="flex items-center gap-2 flex-wrap">
-                <Button variant="outline" size="sm" onClick={onHistory} className="gap-1.5 text-slate-700 border-slate-200 hover:bg-slate-50 rounded-lg text-xs font-bold h-8">
-                    <Clock className="w-3.5 h-3.5" />
-                    Histórico
-                </Button>
-
-                {isDraft && userPapel !== 'comissao' && (
-                    <Button variant="outline" size="sm" onClick={onDelete} className="gap-1.5 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 rounded-lg text-xs font-bold h-8">
-                        <Trash2 className="w-3.5 h-3.5" />
-                        Excluir Rascunho
-                    </Button>
-                )}
-
-                <Button variant="outline" size="sm" onClick={onVisualizar} className="gap-1.5 text-slate-700 border-slate-200 hover:bg-slate-50 rounded-lg text-xs font-bold h-8">
-                    <Eye className="w-3.5 h-3.5" />
-                    Visualizar
-                </Button>
-
-                {isDraft && (
-                    <Button size="sm" onClick={onSubmit} className="gap-1.5 bg-[#023E8A] hover:bg-[#023E8A]/90 text-white font-bold rounded-lg text-xs h-8 px-3.5 shadow-xs">
-                        <Send className="w-3.5 h-3.5" />
-                        {submitLabel}
-                    </Button>
-                )}
-
-                {isPendingChefe && userPapel === 'comissao' && (
-                    <span className="text-xs text-slate-500 flex items-center gap-1.5 ml-1 border border-slate-200 px-3 py-1.5 rounded-lg bg-slate-50 font-medium">
+                {/* Right Group */}
+                <div className="flex items-center gap-2 flex-wrap sm:justify-end">
+                    <Button variant="outline" size="sm" onClick={onHistory} className="gap-1.5 text-slate-700 border-slate-200 hover:bg-slate-50 rounded-lg text-xs font-bold h-8">
                         <Clock className="w-3.5 h-3.5" />
-                        Aguardando revisão da chefia
-                    </span>
-                )}
+                        Histórico
+                    </Button>
 
-                {isPendingChefe && userPapel === 'chefe' && (
-                    <>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => (window as unknown as { rejectChefe?: () => void }).rejectChefe?.()}
-                            className="gap-1.5 border-red-200 text-red-600 hover:bg-red-50 rounded-lg text-xs font-bold h-8"
-                        >
-                            Devolver à Comissão
+                    {isDraft && userPapel !== 'comissao' && (
+                        <Button variant="outline" size="sm" onClick={onDelete} className="gap-1.5 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 rounded-lg text-xs font-bold h-8">
+                            <Trash2 className="w-3.5 h-3.5" />
+                            Excluir Rascunho
                         </Button>
+                    )}
+
+                    <Button variant="outline" size="sm" onClick={onVisualizar} className="gap-1.5 text-slate-700 border-slate-200 hover:bg-slate-50 rounded-lg text-xs font-bold h-8">
+                        <Eye className="w-3.5 h-3.5" />
+                        Visualizar
+                    </Button>
+
+                    {isDraft && (
                         <Button size="sm" onClick={onSubmit} className="gap-1.5 bg-[#023E8A] hover:bg-[#023E8A]/90 text-white font-bold rounded-lg text-xs h-8 px-3.5 shadow-xs">
                             <Send className="w-3.5 h-3.5" />
                             {submitLabel}
                         </Button>
-                    </>
-                )}
+                    )}
 
-                {isSubmitted && userPapel === 'coordenador' && (
-                    <Button
-                        size="sm"
-                        onClick={() => (window as unknown as { openReviewModal?: () => void }).openReviewModal?.()}
-                        className="gap-1.5 bg-[#023E8A] hover:bg-[#023E8A]/90 text-white font-bold rounded-lg text-xs h-8 px-3.5 shadow-xs"
-                    >
-                        Iniciar Revisão
-                    </Button>
-                )}
+                    {isPendingChefe && userPapel === 'comissao' && (
+                        <span className="text-xs text-slate-500 flex items-center gap-1.5 border border-slate-200 px-3 py-1.5 rounded-lg bg-slate-50 font-medium">
+                            <Clock className="w-3.5 h-3.5" />
+                            Aguardando revisão da chefia
+                        </span>
+                    )}
 
-                {isSubmitted && userPapel !== 'coordenador' && (
-                    <span className="text-xs text-slate-500 flex items-center gap-1.5 ml-1 border border-slate-200 px-3 py-1.5 rounded-lg bg-slate-50 font-medium">
-                        <Clock className="w-3.5 h-3.5" />
-                        Aguardando aprovação
-                    </span>
-                )}
+                    {isPendingChefe && userPapel === 'chefe' && (
+                        <>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={onRejectChefe ?? (() => (window as unknown as { rejectChefe?: () => void }).rejectChefe?.())}
+                                className="gap-1.5 border-red-200 text-red-600 hover:bg-red-50 rounded-lg text-xs font-bold h-8"
+                            >
+                                Devolver à Comissão
+                            </Button>
+                            <Button size="sm" onClick={onSubmit} className="gap-1.5 bg-[#023E8A] hover:bg-[#023E8A]/90 text-white font-bold rounded-lg text-xs h-8 px-3.5 shadow-xs">
+                                <Send className="w-3.5 h-3.5" />
+                                {submitLabel}
+                            </Button>
+                        </>
+                    )}
+
+                    {isSubmitted && userPapel === 'coordenador' && (
+                        <Button
+                            size="sm"
+                            onClick={onReview ?? (() => (window as unknown as { openReviewModal?: () => void }).openReviewModal?.())}
+                            className="gap-1.5 bg-[#023E8A] hover:bg-[#023E8A]/90 text-white font-bold rounded-lg text-xs h-8 px-3.5 shadow-xs"
+                        >
+                            Iniciar Revisão
+                        </Button>
+                    )}
+
+                    {isSubmitted && userPapel !== 'coordenador' && (
+                        <span className="text-xs text-slate-500 flex items-center gap-1.5 border border-slate-200 px-3 py-1.5 rounded-lg bg-slate-50 font-medium">
+                            <Clock className="w-3.5 h-3.5" />
+                            Aguardando aprovação
+                        </span>
+                    )}
+                </div>
             </div>
 
-            <div className="w-full">
-                <AprovacoesPanel programaId={programa.id} status={programa.status} />
-            </div>
+            {/* Rejection Feedback Alert */}
+            {isRejected && programa.feedback_aprovacao && (
+                <div className="pt-2 border-t border-slate-100">
+                    <p className="text-xs text-red-600 border border-red-100 bg-red-50 p-2.5 rounded-lg">
+                        <span className="font-bold">Motivo da Devolução:</span> {programa.feedback_aprovacao}
+                    </p>
+                </div>
+            )}
+
+            {/* Dedicated Approvals block below subtle divider */}
+            {['submitted', 'approved', 'rejected', 'archived'].includes(programa.status) && (
+                <div className="pt-2 border-t border-slate-100">
+                    <AprovacoesPanel programaId={programa.id} status={programa.status} />
+                </div>
+            )}
         </div>
     );
 }

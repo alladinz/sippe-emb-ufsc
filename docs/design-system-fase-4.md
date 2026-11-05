@@ -184,3 +184,54 @@ A inspeção via `git diff --stat origin/main` comprova:
 - **Next.js Production Build:** 33 rotas estáticas e dinâmicas geradas com sucesso (código 0).
 - **Branch:** `redesign-v1`.
 - **Diff vs `origin/main`:** 58 arquivos modificados (2773 inserções, 1597 deleções).
+
+---
+
+## 9. Fase 4.4 — Polimento Visual Pré-Merge
+
+Esta etapa consolidou os ajustes finais de consistência visual identificados durante a validação no ambiente de homologação/preview na Vercel antes da integração definitiva à branch `main`.
+
+### 9.1 Filtros do Arquivo Central (`central-archive-table.tsx`)
+- **Eliminação de Redundância:** Removido o seletor dropdown de Disciplina, visto que o campo de busca textual geral já pesquisa simultaneamente nome da disciplina, código, turma e professor.
+- **Chips / Pills Selecionáveis:** Conversão dos filtros de Semestre e Status em pills arredondadas (`rounded-full`), adotando a convenção visual aprovada em Fases anteriores:
+  - **Selecionado (Ativo):** Fundo `#023E8A`, texto `#FFFFFF`, borda `#023E8A`.
+  - **Não Selecionado (Inativo):** Fundo `#FFFFFF`, texto `slate-600`, borda `slate-200`, com hover sutil em `slate-50`.
+  - **Espaçamento:** `gap-2` (8px) em container `flex-wrap`.
+- **Ordenação Cronológica de Semestres:** Os semestres são classificados estritamente do mais recente ao mais antigo (`b.localeCompare(a, undefined, { numeric: true })`), com botão de seleção única "Todos".
+- **Filtro de Professor com Busca Integrada:** Para acomodar departamentos com dezenas de docentes sem inflar o layout:
+  - Quando a listagem ultrapassa 6 professores, é exibido um campo de busca textual compacto (`w-full sm:w-64`).
+  - O container de chips de professores possui rolagem vertical delimitada (`max-h-28 overflow-y-auto pr-1`), mantendo sempre visível a opção "Todos" e garantindo que o docente selecionado permaneça destacado mesmo durante a filtragem textual.
+- **Contador de Filtros Ativos e Limpeza:**
+  - O botão "Filtros" na barra de ferramentas exibe badge numérica (`bg-[#023E8A] text-white text-[10px]`) indicando a contagem de filtros ativados.
+  - Exibido botão discreto "Limpar Filtros" (`FilterX`) ao lado do painel quando houver qualquer filtro aplicado.
+
+### 9.2 Padronização da Aba Programas de Ensino no Arquivo Central (`arquivo-central-client.tsx`)
+- **Adoção da `TableToolbar` e `TableFilters`:** Substituída a barra de busca isolada pelo conjunto padrão compartilhado de componentes de tabela do SIPPE.
+- **Busca Abrangente:** O campo de busca agora cobre nome da disciplina, código e cursos vinculados.
+- **Filtro Contextual por Cursos Vinculados:** Adicionado painel de filtros com pills de cursos vinculados (`formatCursoVinculado`), permitindo seleção rápida entre "Todos os Cursos" e os cursos atendidos pelas disciplinas departamentais.
+- **Ausência de Filtros Redundantes:** Preservada a regra de negócio do Arquivo Central de não incluir filtros de semestre (programas não possuem vínculo semestral) ou status (a consulta já é restrita a documentos arquivados).
+- **Paginação e Estado Vazio:** Integrados o componente `TablePagination` (20 itens por página) e `TableEmptyState` para quando não houver registros correspondentes.
+
+### 9.3 Centralização das Abas Horizontais nos Editores (`study-plan-form/index.tsx` & `ProgramaEnsinoEditorClient.tsx`)
+- **Eliminação do Card Branco Redundante:** Eliminado o bloco retangular branco de largura total (`bg-white px-3 py-2 rounded-xl shadow-2xs border-b`) que deixava um grande vazio visual à direita em monitores desktop.
+- **Alinhamento Centralizado:** As listas de abas (6 abas em Planos e 7 abas em Programas) foram centralizadas horizontalmente no container de edição (`w-full flex sm:justify-center justify-start py-1 overflow-x-auto`).
+- **Container Segmentado Neutro:** As abas agora repousam em container sutil (`bg-slate-100/90 rounded-xl border border-slate-200/70 p-1 shadow-2xs min-w-max`).
+- **Responsividade e Rolagem:** Em telas pequenas (smartphones e tablets), o container permite rolagem horizontal suave sem cortar a primeira ou a última aba.
+- **Indicadores de Preenchimento:** Preservados os marcadores visuais circulares de completude (`bg-emerald-500` para completo, `bg-amber-400` para parcial, `bg-slate-300` para pendente) e os atributos de acessibilidade Radix/ARIA.
+
+### 9.4 Reestruturação da Barra de Ações de Programas de Ensino (`ProgramaActionBar.tsx`)
+- **Fim da Compressão de Controles:** A barra de ações foi redesenhada em estrutura hierárquica clara. O flexbox principal agora contém apenas dois grupos alinhados nas extremidades (`justify-between`):
+  - **Grupo Esquerdo:** Botão "Voltar", separador vertical, badge de status institucional do programa e indicador animado tri-state de salvamento automático (`CloudUpload` / `Check` / `AlertCircle`).
+  - **Grupo Direito:** Botões de ação contextual ("Histórico", "Excluir Rascunho", "Visualizar", "Encaminhar para Chefia / Coordenações", "Devolver à Comissão", "Iniciar Revisão", ou aviso de aguardo de parecer).
+- **Desacoplamento do Painel de Aprovações (`AprovacoesPanel`):** O painel de aprovações por curso vinculado e o alerta de feedback de devolução foram movidos para fora do flexbox horizontal de botões. Ambos agora ocupam blocos dedicados de largura total logo abaixo da barra, separados por linha divisória discreta (`border-t border-slate-100 pt-2`).
+- **Suporte aos Perfis e Ciclos de Vida:** A barra atende perfeitamente Comissão (`draft`, `rejected`), Chefia (`pending_chefe`), Coordenação (`submitted`) e Secretaria (`approved`, `archived`), com espaçamento harmonioso tanto em desktop (1280px+) quanto em mobile (390px).
+
+### 9.5 Correção do Ícone em Toasts de Sucesso (`swal.ts` & `globals.css`)
+- **Diagnóstico:** Ao reduzir o tamanho do `.swal2-icon` para 18px (`1.15rem`) via CSS na Fase 4 sem ajustar proporcionalmente o `font-size`, as coordenadas em `em` dos elementos animados internos do SweetAlert2 (`.swal2-success-line-tip`, `.swal2-success-line-long`, `.swal2-success-ring`) causavam cisalhamento e deformação do checkmark verde.
+- **Solução Definitiva:**
+  - Em `swal.ts`, a função `toastSuccess` agora fornece um ícone SVG geométrico limpo e centrado via propriedade `iconHtml`:
+    ```html
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:auto;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    ```
+  - Em `globals.css`, foram ajustados os estilos específicos de `.swal2-popup.swal2-toast .swal2-icon` para `width: 1.25rem`, `height: 1.25rem`, `font-size: 0.625rem`, borda verde `#10b981` e ocultação de pseudo-linhas legadas de animação em toasts.
+  - Modais centrais (`confirmDialog`, `promptDialog`, `swalLoading`) permanecem intactos com seus ícones originais completos.

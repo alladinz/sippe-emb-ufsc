@@ -21,14 +21,6 @@ import {
 import { useTable } from "@/hooks/table/useTable";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { 
-    Select, 
-    SelectContent, 
-    SelectItem, 
-    SelectTrigger, 
-    SelectValue 
-} from "@/components/ui/select";
 import { 
     Eye, 
     Archive, 
@@ -63,6 +55,7 @@ export function CentralArchiveTable({ plans, initialQuery = "" }: CentralArchive
     const router = useRouter();
     const pathname = usePathname();
     const [showFilters, setShowFilters] = useState(false);
+    const [teacherSearch, setTeacherSearch] = useState("");
 
     const {
         page, limit, search, filters, selectedIds, density,
@@ -77,26 +70,42 @@ export function CentralArchiveTable({ plans, initialQuery = "" }: CentralArchive
     }, [initialQuery, search, setSearch]);
 
     // Get unique values for filters
-    const uniqueDisciplines = useMemo(() => Array.from(new Set(plans.map(p => p.courses?.[0]?.name || "Sem Disciplina"))).sort(), [plans]);
-    const uniqueTeachers = useMemo(() => Array.from(new Set(plans.map(p => p.user.name))).sort(), [plans]);
-    const uniqueSemesters = useMemo(() => Array.from(new Set(plans.map(p => p.semester).filter((s): s is string => !!s))).sort(), [plans]);
+    const uniqueTeachers = useMemo(() => Array.from(new Set(plans.map(p => p.user?.name).filter(Boolean))).sort(), [plans]);
+    const uniqueSemesters = useMemo(() =>
+        Array.from(new Set(plans.map(p => p.semester).filter((s): s is string => !!s)))
+            .sort((a, b) => b.localeCompare(a, undefined, { numeric: true })),
+        [plans]
+    );
 
+    const filteredTeachers = useMemo(() => {
+        if (!teacherSearch.trim()) return uniqueTeachers;
+        const q = teacherSearch.toLowerCase();
+        return uniqueTeachers.filter(t => t.toLowerCase().includes(q));
+    }, [uniqueTeachers, teacherSearch]);
 
+    const activeFiltersCount = useMemo(() => {
+        let count = 0;
+        if (filters.semester && filters.semester !== "all") count++;
+        if (filters.status && filters.status !== "all") count++;
+        if (filters.teacher && filters.teacher !== "all") count++;
+        return count;
+    }, [filters]);
 
     const filteredPlans = useMemo(() => {
         const result = plans.filter(p => {
             const query = search.toLowerCase();
-            const matchesQuery = !query || 
-                p.user.name.toLowerCase().includes(query) || 
-                p.organization.name.toLowerCase().includes(query) ||
+            const matchesQuery = !query ||
+                p.user?.name?.toLowerCase().includes(query) ||
+                p.organization?.name?.toLowerCase().includes(query) ||
                 p.semester?.toLowerCase().includes(query) ||
-                p.courses?.[0]?.name.toLowerCase().includes(query);
+                p.courses?.some(c =>
+                    c.name?.toLowerCase().includes(query) ||
+                    c.classIdentifier?.toLowerCase().includes(query)
+                );
 
             if (!matchesQuery) return false;
 
-            const discName = p.courses?.[0]?.name || "Sem Disciplina";
-            if (filters.discipline && filters.discipline !== "all" && discName !== filters.discipline) return false;
-            if (filters.teacher && filters.teacher !== "all" && p.user.name !== filters.teacher) return false;
+            if (filters.teacher && filters.teacher !== "all" && p.user?.name !== filters.teacher) return false;
             if (filters.semester && filters.semester !== "all" && p.semester !== filters.semester) return false;
             if (filters.status && filters.status !== "all" && p.status !== filters.status) return false;
             
@@ -147,89 +156,162 @@ export function CentralArchiveTable({ plans, initialQuery = "" }: CentralArchive
                 onClearSearch={() => { setSearch(""); router.replace(pathname); }}
                 onToggleFilters={() => setShowFilters(!showFilters)}
                 showFilters={showFilters}
+                activeFiltersCount={activeFiltersCount}
             />
 
-            <TableFilters isOpen={showFilters}>
-                <div className="space-y-1">
-                    <Label className="text-[10px] uppercase text-slate-500 font-bold">Disciplina</Label>
-                    <Select 
-                        value={(filters.discipline as string) || "all"} 
-                        onValueChange={(val) => setFilters({ ...filters, discipline: val === "all" ? undefined : val })}
-                    >
-                        <SelectTrigger className="h-9">
-                            <SelectValue placeholder="Todas as disciplinas" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">Todas</SelectItem>
-                            {uniqueDisciplines.map(d => (
-                                <SelectItem key={d} value={d}>{d}</SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+            <TableFilters isOpen={showFilters} containerClassName="flex flex-col gap-3">
+                {/* Semestre Pills */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                    <span className="text-xs text-slate-500 font-bold w-20 shrink-0">Semestre:</span>
+                    <div className="flex gap-2 flex-wrap items-center">
+                        <button
+                            type="button"
+                            onClick={() => setFilters({ ...filters, semester: undefined })}
+                            className={cn(
+                                "inline-flex items-center text-xs px-3 py-1 rounded-full border transition-all duration-150 cursor-pointer font-bold",
+                                !filters.semester || filters.semester === "all"
+                                    ? "bg-[#023E8A] text-white border-[#023E8A]"
+                                    : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+                            )}
+                        >
+                            Todos
+                        </button>
+                        {uniqueSemesters.map(s => {
+                            const isSelected = filters.semester === s;
+                            return (
+                                <button
+                                    key={s}
+                                    type="button"
+                                    onClick={() => setFilters({ ...filters, semester: isSelected ? undefined : s })}
+                                    className={cn(
+                                        "inline-flex items-center text-xs px-3 py-1 rounded-full border transition-all duration-150 cursor-pointer font-bold",
+                                        isSelected
+                                            ? "bg-[#023E8A] text-white border-[#023E8A]"
+                                            : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+                                    )}
+                                >
+                                    {s}
+                                </button>
+                            );
+                        })}
+                    </div>
                 </div>
 
-                <div className="space-y-1">
-                    <Label className="text-[10px] uppercase text-slate-500 font-bold">Professor</Label>
-                    <Select 
-                        value={(filters.teacher as string) || "all"} 
-                        onValueChange={(val) => setFilters({ ...filters, teacher: val === "all" ? undefined : val })}
-                    >
-                        <SelectTrigger className="h-9">
-                            <SelectValue placeholder="Todos os professores" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">Todos</SelectItem>
-                            {uniqueTeachers.map(t => (
-                                <SelectItem key={t} value={t}>{t}</SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                {/* Status Pills */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                    <span className="text-xs text-slate-500 font-bold w-20 shrink-0">Status:</span>
+                    <div className="flex gap-2 flex-wrap items-center">
+                        <button
+                            type="button"
+                            onClick={() => setFilters({ ...filters, status: undefined })}
+                            className={cn(
+                                "inline-flex items-center text-xs px-3 py-1 rounded-full border transition-all duration-150 cursor-pointer font-bold",
+                                !filters.status || filters.status === "all"
+                                    ? "bg-[#023E8A] text-white border-[#023E8A]"
+                                    : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+                            )}
+                        >
+                            Todos
+                        </button>
+                        {[
+                            { key: "approved", label: "Aprovado" },
+                            { key: "archived", label: "Arquivado" },
+                        ].map(st => {
+                            const isSelected = filters.status === st.key;
+                            return (
+                                <button
+                                    key={st.key}
+                                    type="button"
+                                    onClick={() => setFilters({ ...filters, status: isSelected ? undefined : st.key })}
+                                    className={cn(
+                                        "inline-flex items-center text-xs px-3 py-1 rounded-full border transition-all duration-150 cursor-pointer font-bold",
+                                        isSelected
+                                            ? "bg-[#023E8A] text-white border-[#023E8A]"
+                                            : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+                                    )}
+                                >
+                                    {st.label}
+                                </button>
+                            );
+                        })}
+                    </div>
                 </div>
 
-                <div className="space-y-1">
-                    <Label className="text-[10px] uppercase text-slate-500 font-bold">Semestre</Label>
-                    <Select 
-                        value={(filters.semester as string) || "all"} 
-                        onValueChange={(val) => setFilters({ ...filters, semester: val === "all" ? undefined : val })}
-                    >
-                        <SelectTrigger className="h-9">
-                            <SelectValue placeholder="Todos os semestres" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">Todos</SelectItem>
-                            {uniqueSemesters.map(s => (
-                                <SelectItem key={s} value={s}>{s}</SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                {/* Professor Filter */}
+                <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-3 pt-1 border-t border-slate-100">
+                    <span className="text-xs text-slate-500 font-bold w-20 shrink-0 sm:pt-1.5">Professor:</span>
+                    <div className="flex flex-col gap-2 flex-1 min-w-0">
+                        {uniqueTeachers.length > 6 && (
+                            <div className="w-full sm:w-64">
+                                <input
+                                    type="text"
+                                    placeholder="Filtrar por nome do professor..."
+                                    value={teacherSearch}
+                                    onChange={(e) => setTeacherSearch(e.target.value)}
+                                    className="w-full px-2.5 py-1 text-xs bg-white border border-slate-200 rounded-md focus:outline-none focus:ring-1 focus:ring-[#023E8A] placeholder:text-slate-400"
+                                />
+                            </div>
+                        )}
+                        <div className="flex gap-2 flex-wrap items-center max-h-28 overflow-y-auto pr-1">
+                            <button
+                                type="button"
+                                onClick={() => setFilters({ ...filters, teacher: undefined })}
+                                className={cn(
+                                    "inline-flex items-center text-xs px-3 py-1 rounded-full border transition-all duration-150 cursor-pointer font-bold",
+                                    !filters.teacher || filters.teacher === "all"
+                                        ? "bg-[#023E8A] text-white border-[#023E8A]"
+                                        : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+                                )}
+                            >
+                                Todos
+                            </button>
+                            {typeof filters.teacher === "string" && filters.teacher !== "all" && !filteredTeachers.includes(filters.teacher) && (
+                                <button
+                                    type="button"
+                                    onClick={() => setFilters({ ...filters, teacher: undefined })}
+                                    className="inline-flex items-center text-xs px-3 py-1 rounded-full border transition-all duration-150 cursor-pointer font-bold bg-[#023E8A] text-white border-[#023E8A]"
+                                >
+                                    {filters.teacher}
+                                </button>
+                            )}
+                            {filteredTeachers.map(t => {
+                                const isSelected = filters.teacher === t;
+                                return (
+                                    <button
+                                        key={t}
+                                        type="button"
+                                        onClick={() => setFilters({ ...filters, teacher: isSelected ? undefined : t })}
+                                        className={cn(
+                                            "inline-flex items-center text-xs px-3 py-1 rounded-full border transition-all duration-150 cursor-pointer font-bold",
+                                            isSelected
+                                                ? "bg-[#023E8A] text-white border-[#023E8A]"
+                                                : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+                                        )}
+                                    >
+                                        {t}
+                                    </button>
+                                );
+                            })}
+                            {filteredTeachers.length === 0 && teacherSearch && (
+                                <span className="text-xs text-slate-400 italic py-1">Nenhum professor encontrado com esse nome.</span>
+                            )}
+                        </div>
+                    </div>
                 </div>
 
-                <div className="space-y-1">
-                    <Label className="text-[10px] uppercase text-slate-500 font-bold">Status</Label>
-                    <Select 
-                        value={(filters.status as string) || "all"} 
-                        onValueChange={(val) => setFilters({ ...filters, status: val === "all" ? undefined : val })}
-                    >
-                        <SelectTrigger className="h-9">
-                            <SelectValue placeholder="Todos os status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">Todos</SelectItem>
-                            <SelectItem value="approved">Aprovado</SelectItem>
-                            <SelectItem value="archived">Arquivado</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-
-                {Object.keys(filters).length > 0 && (
-                    <div className="flex items-end">
+                {/* Clear filters row */}
+                {(activeFiltersCount > 0 || search) && (
+                    <div className="flex justify-end pt-1 border-t border-slate-100">
                         <Button 
                             variant="ghost" 
                             size="sm" 
-                            onClick={() => setFilters({})}
-                            className="h-9 text-slate-500 hover:text-slate-900 gap-2"
+                            onClick={() => {
+                                setFilters({});
+                                setTeacherSearch("");
+                            }}
+                            className="h-8 text-xs font-bold text-slate-500 hover:text-slate-900 gap-1.5"
                         >
-                            <FilterX className="w-4 h-4" />
+                            <FilterX className="w-3.5 h-3.5" />
                             Limpar Filtros
                         </Button>
                     </div>

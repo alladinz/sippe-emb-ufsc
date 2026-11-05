@@ -44,6 +44,7 @@ export const toastSuccess = (message: string) =>
   MySwal.fire({
     ...swalToastConfig,
     icon: 'success',
+    iconHtml: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:auto;"><polyline points="20 6 9 17 4 12"></polyline></svg>',
     title: message,
     timer: 3000,
   });

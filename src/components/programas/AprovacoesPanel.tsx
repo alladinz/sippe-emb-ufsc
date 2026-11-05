@@ -29,8 +29,8 @@ export function AprovacoesPanel({ programaId, status }: AprovacoesPanelProps) {
   }
 
   return (
-    <div className="flex flex-wrap gap-2 mt-2">
-      <span className="text-xs text-gray-500 font-medium self-center">
+    <div className="flex flex-wrap gap-2 items-center">
+      <span className="text-xs text-slate-500 font-bold self-center">
         Aprovações:
       </span>
       

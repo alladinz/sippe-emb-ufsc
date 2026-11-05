@@ -610,8 +610,8 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
       )}
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full flex flex-col space-y-6">
-        <div className="flex justify-start border-b border-slate-200/80 bg-white px-3 py-2 rounded-xl shadow-2xs overflow-x-auto">
-            <TabsList className="inline-flex h-10 items-center justify-start rounded-lg bg-slate-100/80 p-1 text-slate-500 gap-1 flex-wrap min-w-max">
+        <div className="w-full overflow-x-auto py-1 flex sm:justify-center justify-start">
+            <TabsList className="inline-flex h-11 items-center justify-center rounded-xl bg-slate-100/90 p-1 text-slate-500 gap-1 border border-slate-200/70 shadow-2xs min-w-max">
                 {TABS.map(tab => {
                     const status = getTabStatus(tab.id);
                     const dotColor = status === 'complete' ? 'bg-emerald-500' :
@@ -620,7 +620,7 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
                         <TabsTrigger
                             key={tab.id}
                             value={tab.id}
-                            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold transition-all data-[state=active]:bg-white data-[state=active]:text-[#023E8A] data-[state=active]:shadow-xs rounded-md focus-visible:ring-2 focus-visible:ring-[#023E8A]"
+                            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold transition-all data-[state=active]:bg-white data-[state=active]:text-[#023E8A] data-[state=active]:shadow-xs rounded-lg focus-visible:ring-2 focus-visible:ring-[#023E8A]"
                         >
                             <span>{tab.label}</span>
                             <span className={cn("w-1.5 h-1.5 rounded-full shrink-0", dotColor)} />

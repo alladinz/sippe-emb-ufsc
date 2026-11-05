@@ -304,37 +304,39 @@ export function ProgramaEnsinoEditorClient({ id, defaultCriterios = "" }: Props)
     }
   };
 
+  const handleRejectChefe = useCallback(async () => {
+    if (!programa) return;
+    const feedback = await promptDialog(
+      "Devolver à Comissão",
+      "Informe o parecer e os apontamentos para os ajustes necessários:",
+      "Descreva detalhadamente o que precisa ser ajustado...",
+      "Confirmar Devolução",
+      "Cancelar",
+      true
+    );
+    if (feedback === null) return;
+    if (!feedback.trim()) {
+      toastError("O motivo da devolução é obrigatório.");
+      return;
+    }
+    try {
+      const updated = await programasEnsinoApi.reviewByChefe(programa.id, {
+        action: 'reject_back',
+        feedback
+      });
+      setPrograma(updated);
+      toastSuccess('Programa devolvido à Comissão.');
+    } catch {
+      toastError('Erro ao devolver programa.');
+    }
+  }, [programa]);
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (window as any).rejectChefe = async () => {
-        if (!programa) return;
-        const feedback = await promptDialog(
-          "Devolver à Comissão",
-          "Informe o parecer e os apontamentos para os ajustes necessários:",
-          "Descreva detalhadamente o que precisa ser ajustado...",
-          "Confirmar Devolução",
-          "Cancelar",
-          true
-        );
-        if (feedback === null) return;
-        if (!feedback.trim()) {
-          toastError("O motivo da devolução é obrigatório.");
-          return;
-        }
-        try {
-          const updated = await programasEnsinoApi.reviewByChefe(programa.id, {
-            action: 'reject_back',
-            feedback
-          });
-          setPrograma(updated);
-          toastSuccess('Programa devolvido à Comissão.');
-        } catch {
-          toastError('Erro ao devolver programa.');
-        }
-      };
+      (window as any).rejectChefe = handleRejectChefe;
     }
-  }, [programa]);
+  }, [handleRejectChefe]);
 
   function getTabStatus(tab: TabId): 'complete' | 'partial' | 'empty' {
     switch (tab) {
@@ -449,10 +451,15 @@ export function ProgramaEnsinoEditorClient({ id, defaultCriterios = "" }: Props)
         onSubmit={handlePreSubmit}
         onHistory={() => setShowHistorico(true)}
         onVisualizar={handleVisualizar}
+        onRejectChefe={handleRejectChefe}
       />
 
-      <div className="mt-6 flex justify-start border-b border-slate-200/80 bg-white px-3 py-2 rounded-xl shadow-2xs overflow-x-auto">
-        <div className="inline-flex h-10 items-center justify-start rounded-lg bg-slate-100/80 p-1 text-slate-500 gap-1 flex-wrap min-w-max">
+      <div className="mt-6 w-full overflow-x-auto py-1 flex sm:justify-center justify-start">
+        <div
+          className="inline-flex h-11 items-center justify-center rounded-xl bg-slate-100/90 p-1 text-slate-500 gap-1 border border-slate-200/70 shadow-2xs min-w-max"
+          role="tablist"
+          aria-label="Abas do Programa de Ensino"
+        >
           {TABS.map(tab => {
             const tabStatus = getTabStatus(tab.id);
             const dotColor = tabStatus === 'complete' ? 'bg-emerald-500' :
@@ -462,11 +469,13 @@ export function ProgramaEnsinoEditorClient({ id, defaultCriterios = "" }: Props)
             return (
               <button
                 key={tab.id}
+                role="tab"
+                aria-selected={isActive}
                 onClick={() => setActiveTab(tab.id)}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-md transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#023E8A] ${
+                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#023E8A] ${
                   isActive
                     ? 'bg-white text-[#023E8A] shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
                 }`}
               >
                 <span>{tab.label}</span>

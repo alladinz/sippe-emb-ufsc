@@ -7,12 +7,14 @@ interface TableFiltersProps {
   children: React.ReactNode;
   isOpen: boolean;
   className?: string;
+  containerClassName?: string;
 }
 
 export function TableFilters({
   children,
   isOpen,
   className,
+  containerClassName,
 }: TableFiltersProps) {
   if (!isOpen) return null;
 
@@ -23,7 +25,11 @@ export function TableFilters({
         className
       )}
     >
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <div
+        className={cn(
+          containerClassName ?? "grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+        )}
+      >
         {children}
       </div>
     </div>

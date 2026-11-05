@@ -17,6 +17,7 @@ interface TableToolbarProps {
   actions?: React.ReactNode;
   showFilters?: boolean;
   onToggleFilters?: () => void;
+  activeFiltersCount?: number;
   className?: string;
 }
 
@@ -31,6 +32,7 @@ export function TableToolbar({
   actions,
   showFilters,
   onToggleFilters,
+  activeFiltersCount,
   className,
 }: TableToolbarProps) {
   return (
@@ -78,6 +80,11 @@ export function TableToolbar({
           >
             <Filter className="h-4 w-4" />
             <span>Filtros</span>
+            {activeFiltersCount !== undefined && activeFiltersCount > 0 && (
+              <span className="flex items-center justify-center h-4 min-w-[1rem] px-1 rounded-full bg-[#023E8A] text-white text-[10px] font-bold">
+                {activeFiltersCount}
+              </span>
+            )}
           </Button>
         )}
 
