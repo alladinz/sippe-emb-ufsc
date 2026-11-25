@@ -3,6 +3,7 @@ import { notFound, redirect } from 'next/navigation';
 import { auth } from '@/lib/auth/auth';
 
 import { getProgramaById } from '@/services/programaEnsinoService';
+import { canAccessProgramaView, isValidUuid } from '@/lib/auth/roles';
 import { ArrowLeft, Download } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -92,9 +93,34 @@ export default async function ProgramaEnsinoVisualizarPage({
     redirect("/login");
   }
 
+  if (!isValidUuid(id)) {
+    notFound();
+  }
+
+  const memberships = await auth.api.listOrganizations();
   const programa = await getProgramaById(id);
   if (!programa) {
     notFound();
+  }
+
+  if (!canAccessProgramaView(memberships, programa.status)) {
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <div className="text-center space-y-3">
+          <h1 className="text-xl font-bold text-slate-900">Acesso Negado</h1>
+          <p className="text-slate-500 text-sm">
+            Você não possui permissão para visualizar este programa de ensino.
+          </p>
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center gap-2 text-xs font-bold text-[#023E8A] hover:underline pt-2"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            Voltar ao Início
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   const statusInfo = getProgramaStatusBadge(programa.status);

@@ -7,51 +7,27 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { isValidTransition, StudyPlanStatus } from "@/lib/schemas/study-plan";
 import { createNotification } from "@/lib/notifications";
+import {
+  findCoordinatorMembership,
+  hasAnyRole,
+  isValidUuid,
+  normalizeMembershipRole,
+} from "@/lib/auth/roles";
 
 async function verifyCoordinator(planId: string) {
+  if (!isValidUuid(planId)) {
+    throw new Error("ID de plano inválido");
+  }
+
   const session = await auth.api.getSession();
 
   if (!session) throw new Error("Não autenticado");
 
-  let activeMember = null;
-  try {
-      activeMember = await auth.api.getActiveMember();
-  } catch {
-      console.log("Action: getActiveMember failed");
-  }
+  const memberships = await auth.api.listOrganizations();
+  const isChef = hasAnyRole(memberships, ["chefe"]);
+  const hasCoordRole = isChef || hasAnyRole(memberships, ["coordenador"]);
 
-  if (!activeMember) {
-      const memberships = await auth.api.listOrganizations();
-      if (memberships && memberships.length > 0) {
-          const memberRecord = await db.query.member.findFirst({
-              where: (members, { and, eq }) => and(
-                  eq(members.userId, session.user.id),
-                  eq(members.organizationId, memberships[0].id)
-              )
-          });
-          if (memberRecord) {
-              activeMember = {
-                  ...memberships[0],
-                  organizationId: memberships[0].id,
-                  role: memberRecord.role
-              };
-          } else {
-              // Check for ANY coord role
-              const anyCoord = await db.query.member.findFirst({
-                  where: (m, { and, or, eq }) => and(
-                      eq(m.userId, session.user.id),
-                      or(eq(m.role, "coordenador"), eq(m.role, "chefe"))
-                  )
-              });
-              if (anyCoord) {
-                  activeMember = { organizationId: anyCoord.organizationId, role: anyCoord.role };
-              }
-          }
-      }
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (!activeMember || (((activeMember as any).role as string) !== "coordenador" && ((activeMember as any).role as string) !== "chefe")) {
+  if (!hasCoordRole) {
     throw new Error("Não autorizado: Apenas coordenadores podem realizar esta ação");
   }
 
@@ -61,12 +37,19 @@ async function verifyCoordinator(planId: string) {
 
   if (!plan) throw new Error("Plano não encontrado");
 
-  // Ensure coordinator is in the same organization as the plan
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (plan.organizationId !== activeMember.organizationId && ((activeMember as any).role as string) !== "chefe") {
+  const canManageOrg =
+    isChef ||
+    memberships.some(
+      (m) =>
+        normalizeMembershipRole(m) === "coordenador" &&
+        m.organizationId === plan.organizationId
+    );
+
+  if (!canManageOrg) {
     throw new Error("Não autorizado: Este plano pertence a outro curso");
   }
 
+  const activeMember = findCoordinatorMembership(memberships, plan.organizationId);
   return { session, activeMember, plan };
 }
 

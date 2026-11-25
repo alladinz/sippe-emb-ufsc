@@ -2,90 +2,49 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/db";
 import { studyPlans } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, inArray } from "drizzle-orm";
 import { CoordinatorPlansTable } from "./_components/coordinator-plans-table";
 import { PageHeader } from "@/components/dashboard/page-header";
+import {
+  SAFE_USER_COLUMNS,
+  hasAnyRole,
+  normalizeMembershipRole,
+} from "@/lib/auth/roles";
 
 export default async function CoordinatorDashboardPage() {
   const session = await auth.api.getSession();
 
   if (!session) redirect("/login");
 
-  // Safely fetch active member/organization
-  let activeMember = null;
-  try {
-      // getActiveMember might throw 400 if none active, or return null
-      activeMember = await auth.api.getActiveMember();
-      console.log("Active member from API:", activeMember?.id);
-  } catch (e) {
-      const error = e as { status?: number; message?: string };
-      console.log("getActiveMember threw error (expected if none active):", error.status || error.message);
-  }
+  const memberships = await auth.api.listOrganizations();
+  const isChef = hasAnyRole(memberships, ["chefe"]);
+  const coordinatorOrgIds = memberships
+    .filter((m) => normalizeMembershipRole(m) === "coordenador")
+    .map((m) => m.organizationId)
+    .filter(Boolean);
 
-  // Fallback if not active in session
-  if (!activeMember) {
-      try {
-          const memberships = await auth.api.listOrganizations();
-          console.log("Found memberships for user:", memberships?.length);
-          
-          if (memberships && memberships.length > 0 && session.user.id) {
-              // Try to find the member record in DB manually to get the role
-              const memberRecord = await db.query.member.findFirst({
-                  where: (members, { and, eq }) => and(
-                      eq(members.userId, session.user.id),
-                      eq(members.organizationId, memberships[0].id)
-                  )
-              });
-              
-              if (memberRecord) {
-                  activeMember = {
-                      ...memberships[0],
-                      organizationId: memberships[0].id,
-                      role: memberRecord.role
-                  };
-                  console.log("Manual fallback to first membership:", activeMember.organizationId, "Role:", activeMember.role);
-              } else {
-                  // Final check: look for ANY coordination role for this user
-                  const anyCoordRole = await db.query.member.findFirst({
-                      where: (members, { and, or, eq }) => and(
-                          eq(members.userId, session.user.id),
-                          or(eq(members.role, "coordenador"), eq(members.role, "chefe"))
-                      )
-                  });
-                  if (anyCoordRole) {
-                      activeMember = {
-                          organizationId: anyCoordRole.organizationId,
-                          role: anyCoordRole.role
-                      };
-                      console.log("Deep fallback to coordination role:", activeMember.organizationId, "Role:", activeMember.role);
-                  }
-              }
-          }
-      } catch (err) {
-          console.error("Error in membership fallback:", err);
-      }
-  }
-
-const userRole = (activeMember as { role?: string })?.role;
-
-if (!activeMember || (userRole !== "coordenador" && userRole !== "chefe")) {
-    console.log("Access denied for role:", userRole, "in org:", activeMember?.organizationId);
+  if (!isChef && coordinatorOrgIds.length === 0) {
     return (
-        <div className="flex items-center justify-center h-[60vh]">
-...
-              <div className="text-center space-y-2">
-                  <h1 className="text-xl font-bold">Acesso Negado</h1>
-                  <p className="text-slate-500">Apenas coordenadores podem acessar esta página.</p>
-              </div>
-          </div>
-      );
+      <div className="flex items-center justify-center h-[60vh]">
+        <div className="text-center space-y-2">
+          <h1 className="text-xl font-bold">Acesso Negado</h1>
+          <p className="text-slate-500">Apenas coordenadores podem acessar esta página.</p>
+        </div>
+      </div>
+    );
   }
 
-  // Fetch all plans for this organization
+  // Fetch plans for coordinator's course(s) (or all if chefe)
   const allPlans = await db.query.studyPlans.findMany({
-      where: eq(studyPlans.organizationId, activeMember.organizationId),
+      where: isChef
+        ? undefined
+        : coordinatorOrgIds.length === 1
+        ? eq(studyPlans.organizationId, coordinatorOrgIds[0])
+        : inArray(studyPlans.organizationId, coordinatorOrgIds),
       with: {
-          user: true,
+          user: {
+            columns: SAFE_USER_COLUMNS,
+          },
           courses: true
       },
       orderBy: [desc(studyPlans.updatedAt)]

@@ -8,8 +8,12 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { StudyPlanFormValues, isValidTransition, StudyPlanStatus } from "@/lib/schemas/study-plan";
 import { createNotification } from "@/lib/notifications";
+import { isValidUuid } from "@/lib/auth/roles";
 
 export async function saveStudyPlanAction(id: string, data: StudyPlanFormValues) {
+  if (!isValidUuid(id)) {
+    throw new Error("ID inválido");
+  }
   console.log("Saving Study Plan:", id, "Data semester:", data.semester);
   const session = await auth.api.getSession();
 
@@ -108,6 +112,10 @@ export async function submitStudyPlanAction(id: string) {
 
     if (!session) {
         redirect("/login");
+    }
+
+    if (!isValidUuid(id)) {
+        throw new Error("ID inválido");
     }
 
     const plan = await db.query.studyPlans.findFirst({

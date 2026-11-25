@@ -4,12 +4,19 @@ import { db } from '@/db';
 import { user as userTable, refreshTokens, member } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { verificarRefreshToken, gerarAccessToken } from '@/services/jwtService';
-
 import { withErrorHandler } from '@/lib/errorHandler';
+import { SAFE_USER_COLUMNS, resolvePrimaryRole } from '@/lib/auth/roles';
+import { clearRefreshTokenCookie } from '@/lib/auth/cookies';
 
 interface RefreshTokenPayload {
   id: string;
   type: string;
+}
+
+function unauthorizedWithClearedCookie(message: string) {
+  const res = NextResponse.json({ error: message }, { status: 401 });
+  clearRefreshTokenCookie(res);
+  return res;
 }
 
 export const POST = withErrorHandler(async (req: NextRequest) => {
@@ -19,57 +26,62 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
     return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
   }
 
-  const payload = verificarRefreshToken(refreshToken) as unknown as RefreshTokenPayload;
+  let payload: RefreshTokenPayload;
+  try {
+    payload = verificarRefreshToken(refreshToken) as unknown as RefreshTokenPayload;
+  } catch {
+    return unauthorizedWithClearedCookie('Sessão expirada ou token inválido');
+  }
 
-  // Check token exists and is not revoked in DB
+  if (!payload?.id || payload.type !== 'refresh') {
+    return unauthorizedWithClearedCookie('Token inválido');
+  }
+
   const tokenHash = crypto
     .createHash('sha256')
     .update(refreshToken)
     .digest('hex');
 
-  const stored = await db.select()
+  const stored = await db
+    .select()
     .from(refreshTokens)
-    .where(and(
-      eq(refreshTokens.tokenHash, tokenHash),
-      eq(refreshTokens.usuarioId, payload.id)
-    ))
+    .where(
+      and(
+        eq(refreshTokens.tokenHash, tokenHash),
+        eq(refreshTokens.usuarioId, payload.id)
+      )
+    )
     .limit(1);
 
   const storedToken = stored[0];
 
-  if (!storedToken || storedToken.revogado || (storedToken.expiry && new Date() > new Date(storedToken.expiry))) {
-    return NextResponse.json({ 
-      error: 'Token inválido ou revogado' 
-    }, { status: 401 });
+  if (
+    !storedToken ||
+    storedToken.revogado ||
+    (storedToken.expiry && new Date() > new Date(storedToken.expiry))
+  ) {
+    return unauthorizedWithClearedCookie('Token inválido ou revogado');
   }
 
-  // Get current user data
-  const userResult = await db.select()
-    .from(userTable)
-    .where(eq(userTable.id, payload.id))
-    .limit(1);
-
-  const user = userResult[0];
+  const user = await db.query.user.findFirst({
+    where: eq(userTable.id, payload.id),
+    columns: SAFE_USER_COLUMNS,
+  });
 
   if (!user || user.status !== 'active') {
-    return NextResponse.json({ 
-      error: 'Usuário inativo ou não encontrado' 
-    }, { status: 401 });
+    return unauthorizedWithClearedCookie('Usuário inativo ou não encontrado');
   }
 
-  // Get user role
-  const memberResult = await db.select()
-    .from(member)
-    .where(eq(member.userId, user.id))
-    .limit(1);
-  
-  const papel = memberResult[0]?.role || 'professor';
+  const memberships = await db.query.member.findMany({
+    where: eq(member.userId, user.id),
+    with: { organization: true },
+  });
+  const papel = resolvePrimaryRole(memberships);
 
-  // Issue new access token
   const novoAccessToken = gerarAccessToken({
     id: user.id,
-    papel: papel,
-    email: user.email!
+    papel,
+    email: user.email!,
   });
 
   return NextResponse.json({ accessToken: novoAccessToken });

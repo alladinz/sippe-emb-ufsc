@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { LogOut, Loader2 } from "lucide-react";
 import { useState } from "react";
-import { swalLoading, MySwal } from "@/lib/swal";
+import { swalLoading, MySwal, toastError } from "@/lib/swal";
 
 export function LogoutButton() {
     const router = useRouter();
@@ -28,6 +28,7 @@ export function LogoutButton() {
             console.error("Logout failed:", error);
             MySwal.close();
             setIsPending(false);
+            toastError("Não foi possível encerrar a sessão no servidor. Tente novamente.");
         }
     };
 

@@ -1,27 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
 import { db } from '@/db';
-import { user } from '@/db/schema';
+import { user, refreshTokens } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { validarToken } from '@/services/tokenService';
 import { z } from 'zod';
 import { validarBody } from '@/middleware/validarBody';
 import { logger } from '@/utils/logger';
-import { rateLimitMiddleware } from '@/lib/rateLimit';
+import { rateLimitMiddleware, getClientIpFromHeaders } from '@/lib/rateLimit';
+import { withErrorHandler } from '@/lib/errorHandler';
 
 const definirSenhaSchema = z.object({
   token: z.string().length(64, 'Token inválido'),
-  novaSenha: z.string()
+  novaSenha: z
+    .string()
     .min(8, 'Mínimo 8 caracteres')
     .max(128, 'Máximo 128 caracteres')
-    .regex(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      'Deve conter maiúsculas, minúsculas e números')
+    .regex(
+      /(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+      'Deve conter maiúsculas, minúsculas e números'
+    ),
 });
 
-import { withErrorHandler } from '@/lib/errorHandler';
-
 export const POST = withErrorHandler(async (req: NextRequest) => {
-  const rateLimitResponse = rateLimitMiddleware(req, 15 * 60 * 1000, 10, 'Muitas tentativas. Aguarde 15 minutos.');
+  const rateLimitResponse = rateLimitMiddleware(
+    req,
+    15 * 60 * 1000,
+    10,
+    'Muitas tentativas. Aguarde 15 minutos.'
+  );
   if (rateLimitResponse) return rateLimitResponse;
 
   const validation = await validarBody(req, definirSenhaSchema);
@@ -31,26 +38,38 @@ export const POST = withErrorHandler(async (req: NextRequest) => {
   const { valido, usuarioId, motivo } = await validarToken(token);
 
   if (!valido || !usuarioId) {
-    logger.warn('Tentativa com token inválido', { 
-      ip: req.headers.get('x-forwarded-for') || 'unknown', token: token.substring(0, 10) + '...', motivo 
+    logger.warn('Tentativa com token inválido', {
+      ip: getClientIpFromHeaders(req.headers),
+      token: token.substring(0, 10) + '...',
+      motivo,
     });
     return NextResponse.json({ error: motivo }, { status: 400 });
   }
 
   const senhaHash = await bcrypt.hash(novaSenha, 12);
-  // bcrypt cost factor 12 — strong but not slow for login
 
-  await db.update(user)
-    .set({
-      senhaHash: senhaHash,
-      status: 'active',
-      resetTokenUsado: true,
-      resetToken: null,
-      resetTokenExpiry: null
-    })
-    .where(eq(user.id, usuarioId));
+  await db.transaction(async (tx) => {
+    await tx
+      .update(user)
+      .set({
+        senhaHash,
+        status: 'active',
+        resetTokenUsado: true,
+        resetToken: null,
+        resetTokenExpiry: null,
+        tentativasLogin: 0,
+        bloqueadoAte: null,
+      })
+      .where(eq(user.id, usuarioId));
 
-  return NextResponse.json({ 
-    message: 'Senha definida com sucesso. Você já pode fazer login.' 
+    // Revoke any prior refresh tokens after password reset
+    await tx
+      .update(refreshTokens)
+      .set({ revogado: true })
+      .where(eq(refreshTokens.usuarioId, usuarioId));
+  });
+
+  return NextResponse.json({
+    message: 'Senha definida com sucesso. Você já pode fazer login.',
   });
 });

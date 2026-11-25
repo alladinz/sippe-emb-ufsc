@@ -18,6 +18,12 @@ import { StudyPlanStatus } from "@/lib/schemas/study-plan";
 
 import { cn } from "@/lib/utils";
 import { ScheduleItem } from "@/types/study-plan";
+import {
+  canViewStudyPlan,
+  hasAnyRole,
+  isValidUuid,
+  normalizeMembershipRole,
+} from "@/lib/auth/roles";
 
 interface PreviewStudyPlanPageProps {
   params: Promise<{ id: string }>;
@@ -34,46 +40,11 @@ export default async function PreviewStudyPlanPage({ params, searchParams }: Pre
     redirect("/login");
   }
 
-  let activeMember = null;
-  try {
-      activeMember = await auth.api.getActiveMember();
-  } catch {
-      console.log("Preview page: getActiveMember failed");
+  if (!isValidUuid(id)) {
+    notFound();
   }
 
-  if (!activeMember) {
-      try {
-          const memberships = await auth.api.listOrganizations();
-          if (memberships && memberships.length > 0 && session.user.id) {
-              const memberRecord = await db.query.member.findFirst({
-                  where: (members, { and, eq }) => and(
-                      eq(members.userId, session.user.id),
-                      eq(members.organizationId, memberships[0].id)
-                  )
-              });
-              if (memberRecord) {
-                  activeMember = {
-                      ...memberships[0],
-                      organizationId: memberships[0].id,
-                      role: memberRecord.role
-                  };
-              } else {
-                  // Check for ANY admin/coordination role
-                  const anyAdmin = await db.query.member.findFirst({
-                      where: (m, { and, or, eq }) => and(
-                          eq(m.userId, session.user.id),
-                          or(eq(m.role, "coordenador"), eq(m.role, "chefe"), eq(m.role, "secretario"))
-                      )
-                  });
-                  if (anyAdmin) {
-                      activeMember = { organizationId: anyAdmin.organizationId, role: anyAdmin.role };
-                  }
-              }
-          }
-      } catch (err) {
-          console.error("Preview page fallback error:", err);
-      }
-  }
+  const memberships = await auth.api.listOrganizations();
 
   const plan = await db.query.studyPlans.findFirst({
     where: eq(studyPlans.id, id),
@@ -102,21 +73,61 @@ export default async function PreviewStudyPlanPage({ params, searchParams }: Pre
     notFound();
   }
 
-  const userRole = (activeMember as { role?: string })?.role || "";
-  const isCoordinator = activeMember && (userRole === "coordenador" || userRole === "chefe");
-  const isChef = activeMember && userRole === "chefe";
-  const isSecretary = activeMember && userRole === "secretario";
-  const isPlanOrganization = activeMember && activeMember.organizationId === plan.organizationId;
-  
+  if (!canViewStudyPlan({ plan, userId: session.user.id, memberships })) {
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <div className="text-center space-y-3">
+          <h1 className="text-xl font-bold text-slate-900">Acesso Negado</h1>
+          <p className="text-slate-500 text-sm">
+            Você não possui permissão para visualizar este plano de ensino.
+          </p>
+          <Link
+            href="/dashboard/study-plans"
+            className="inline-flex items-center gap-2 text-xs font-bold text-[#023E8A] hover:underline pt-2"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            Voltar para Meus Planos
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const isOwner = plan.userId === session.user.id;
+  const isChef = hasAnyRole(memberships, ["chefe"]);
+  const isSecretary = hasAnyRole(memberships, ["secretario"]);
+  const isOrgCoordinator = memberships.some(
+    (m) =>
+      normalizeMembershipRole(m) === "coordenador" &&
+      m.organizationId === plan.organizationId
+  );
+
   const canArchive = (isChef || isSecretary) && plan.status === "approved";
-  
+
   const schedule = (plan.schedule as unknown as ScheduleItem[]) || [];
   const numSelectedDays = schedule.filter((s: ScheduleItem) => s.enabled).length;
   const hasMoreThanOneDay = numSelectedDays !== 1;
 
-  // Chef doesn't need to approve (per user request), so show review actions only for coordinator of that org
-  // If Chef IS the coordinator, they might need it, but the user explicitly said "chef doesn't need to approve"
-  const showReviewActions = isCoordinator && isPlanOrganization && !isChef && (plan.status === "submitted" || plan.status === "pending_review");
+  // Chef doesn't approve directly; only course coordinators for that org see review actions
+  const showReviewActions =
+    isOrgCoordinator &&
+    !isChef &&
+    (plan.status === "submitted" || plan.status === "pending_review");
+
+  const backHref = isOwner
+    ? `/dashboard/study-plans/${id}`
+    : isOrgCoordinator
+    ? "/dashboard/coordinator"
+    : isChef
+    ? "/dashboard/chef"
+    : "/dashboard/secretary";
+  const backLabel = isOwner
+    ? "Voltar para edição"
+    : isOrgCoordinator
+    ? "Voltar para Lista"
+    : isChef
+    ? "Voltar para Visão Geral"
+    : "Voltar para Arquivo";
 
   const statusLabels: Record<string, { label: string, variant: "default" | "secondary" | "destructive" | "outline" }> = {
     draft: { label: "Rascunho", variant: "secondary" },
@@ -131,10 +142,10 @@ export default async function PreviewStudyPlanPage({ params, searchParams }: Pre
     <div className={cn("max-w-4xl mx-auto space-y-8 pb-20 print-container", isForPdf && "pb-0 pt-0")}>
       {!isForPdf && (
         <div className="flex items-center justify-between no-print">
-          <Link href={isCoordinator ? "/dashboard/coordinator" : `/dashboard/study-plans/${id}`}>
+          <Link href={backHref}>
             <button className="px-4 py-2 text-sm font-medium border rounded-md hover:bg-slate-50 flex items-center gap-2">
               <ArrowLeft className="w-4 h-4" />
-              {isCoordinator ? "Voltar para Lista" : "Voltar para edição"}
+              {backLabel}
             </button>
           </Link>
           <div className="flex items-center gap-4">

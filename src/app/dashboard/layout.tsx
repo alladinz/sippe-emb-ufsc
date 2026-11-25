@@ -8,6 +8,10 @@ import { Sidebar } from "./_components/sidebar";
 import { UserMenu } from "./_components/user-menu";
 import { NotificationBell } from "./_components/notification-bell";
 import { DynamicBreadcrumb } from "@/components/dashboard/dynamic-breadcrumb";
+import {
+  normalizeMembershipRole,
+  resolvePrimaryRole,
+} from "@/lib/auth/roles";
 
 export default async function DashboardLayout({
   children,
@@ -37,7 +41,7 @@ export default async function DashboardLayout({
   const activeSemester = activeSemesterRow?.name || "Nenhum";
 
   // Determine roles based on ALL memberships
-  const roles = memberships.map(m => m.role);
+  const roles = memberships.map(normalizeMembershipRole);
   const isReviewer = roles.includes("coordenador") || roles.includes("chefe");
   const isChef = roles.includes("chefe");
   const isAdmin = roles.includes("secretario") || roles.includes("chefe");
@@ -66,10 +70,7 @@ export default async function DashboardLayout({
   };
 
   // Use the highest priority role for the label
-  const displayRole = roles.includes("chefe") ? "chefe" : 
-                     roles.includes("coordenador") ? "coordenador" : 
-                     roles.includes("secretario") ? "secretario" : 
-                     roles.includes("comissao") ? "comissao" : "professor";
+  const displayRole = resolvePrimaryRole(memberships);
 
   const roleLabel = roleLabels[displayRole] || "Usuário";
 

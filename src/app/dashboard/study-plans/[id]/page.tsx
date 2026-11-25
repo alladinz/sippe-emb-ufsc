@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import { StudyPlanForm } from "@/components/forms/study-plan-form";
 import { StudyPlanFormValues } from "@/lib/schemas/study-plan";
 import { saveStudyPlanAction, submitStudyPlanAction } from "./actions";
+import { isValidUuid } from "@/lib/auth/roles";
 
 interface EditStudyPlanPageProps {
   params: Promise<{ id: string }>;
@@ -17,6 +18,10 @@ export default async function EditStudyPlanPage({ params }: EditStudyPlanPagePro
 
   if (!session) {
     redirect("/login");
+  }
+
+  if (!isValidUuid(id)) {
+    notFound();
   }
 
   const plan = await db.query.studyPlans.findFirst({

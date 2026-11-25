@@ -5,6 +5,7 @@ import { studyPlans } from "@/db/schema";
 import { eq, inArray } from "drizzle-orm";
 import { auth } from "@/lib/auth/auth";
 import { revalidatePath } from "next/cache";
+import { isValidUuid } from "@/lib/auth/roles";
 
 async function verifyAdmin() {
     const session = await auth.api.getSession();
@@ -23,6 +24,7 @@ async function verifyAdmin() {
 }
 
 export async function archivePlanAction(id: string) {
+    if (!isValidUuid(id)) throw new Error("ID inválido");
     await verifyAdmin();
     await db.update(studyPlans)
         .set({ status: "archived", updatedAt: new Date() })
@@ -33,10 +35,11 @@ export async function archivePlanAction(id: string) {
 export async function bulkDeletePlansAction(ids: string[]) {
     const admin = await verifyAdmin();
     if (admin.role !== "chefe") throw new Error("Apenas o chefe de departamento pode excluir registros permanentemente.");
-    
-    if (!ids || ids.length === 0) return;
 
-    await db.delete(studyPlans).where(inArray(studyPlans.id, ids));
-    
+    const validIds = (ids || []).filter((id) => isValidUuid(id));
+    if (validIds.length === 0) return;
+
+    await db.delete(studyPlans).where(inArray(studyPlans.id, validIds));
+
     revalidatePath("/dashboard/secretary");
 }

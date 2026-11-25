@@ -357,6 +357,7 @@ export async function deleteSemesterAction(id: string) {
 
 export async function addUserAction(email: string, name: string, role: string, organizationId?: string) {
     await verifyChef();
+    const normalizedEmail = email.trim().toLowerCase();
 
     // Ensure Departamento exists if role is chefe or secretario
     let targetOrgId = organizationId;
@@ -383,7 +384,7 @@ export async function addUserAction(email: string, name: string, role: string, o
 
     // Check if user exists
     let existingUser = await db.query.user.findFirst({
-        where: eq(user.email, email)
+        where: (u, { sql }) => sql`lower(trim(${u.email})) = ${normalizedEmail}`
     });
 
     if (!existingUser) {
@@ -391,8 +392,8 @@ export async function addUserAction(email: string, name: string, role: string, o
         const newId = uuidv4();
         [existingUser] = await db.insert(user).values({
             id: newId,
-            email,
-            name,
+            email: normalizedEmail,
+            name: name.trim(),
             emailVerified: false,
             createdAt: new Date(),
             updatedAt: new Date(),
