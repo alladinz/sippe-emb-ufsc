@@ -43,4 +43,33 @@ describe("Study Plan Zod Schema", () => {
     const result = studyPlanSchema.safeParse(invalidPlan);
     expect(result.success).toBe(false);
   });
+
+  it("should validate study plan with contact, officeHours and UFSC schedule slots", () => {
+    const plan = {
+      semester: "2026.1",
+      status: "draft",
+      contact: "prof@ufsc.br | Ramal 1234",
+      officeHours: "Terças-feiras, 14:00 às 16:00",
+      schedule: [
+        {
+          day: "Segunda-feira",
+          enabled: true,
+          slots: ["08:40 - 09:30", "09:30 - 10:20"],
+          startTime: "08:40",
+          endTime: "10:20",
+        },
+      ],
+    };
+
+    const result = studyPlanSchema.safeParse(plan);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.contact).toBe("prof@ufsc.br | Ramal 1234");
+      expect(result.data.officeHours).toBe("Terças-feiras, 14:00 às 16:00");
+      expect(Array.isArray(result.data.schedule)).toBe(true);
+      if (Array.isArray(result.data.schedule)) {
+        expect(result.data.schedule[0].slots).toEqual(["08:40 - 09:30", "09:30 - 10:20"]);
+      }
+    }
+  });
 });

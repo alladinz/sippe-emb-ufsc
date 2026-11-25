@@ -7,7 +7,14 @@ import {
   StyleSheet,
   Image,
 } from '@react-pdf/renderer';
-import { resolveContent } from './pdfHelpers';
+import { PdfRichContent } from './PdfRichContent';
+import { formatPlanScheduleSummary } from '@/lib/schedule/ufsc-schedule';
+import {
+  stripLatexDelimiters,
+  hasLatexSyntax,
+  getLatexCacheKey,
+} from '@/lib/latex/mathjax';
+import type { LatexPdfImage } from '@/lib/latex/pdfLatexRenderer';
 const styles = StyleSheet.create({
   page: {
     padding: 40,
@@ -66,11 +73,13 @@ const styles = StyleSheet.create({
   },
   gridRow: {
     flexDirection: 'row',
+    alignItems: 'flex-start',
     marginBottom: 3,
   },
   gridCell: {
     flex: 1,
     flexDirection: 'row',
+    paddingRight: 6,
   },
   label: {
     fontFamily: 'Times-Bold',
@@ -78,6 +87,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 10,
+    flex: 1,
   },
   paragraph: {
     fontSize: 10,
@@ -164,6 +174,12 @@ const styles = StyleSheet.create({
     fontSize: 10,
     textAlign: 'justify',
   },
+  bibliographySubtitle: {
+    fontSize: 10,
+    fontFamily: 'Times-Bold',
+    marginTop: 6,
+    marginBottom: 4,
+  },
   footer: {
     marginTop: 30,
     paddingTop: 8,
@@ -203,8 +219,12 @@ interface PlanoData {
   courseName: string | null;
   semester: string | null;
   universityAcronym: string | null;
+  contact?: string | null;
+  officeHours?: string | null;
+  schedule?: unknown;
   organization?: { name: string };
-  user?: { name: string };
+  user?: { name: string; email?: string | null };
+  turma?: { id?: string; turma: string; indicacaoHorario?: string | null } | null;
   prerequisites: string | null;
   syllabus: string | null;
   objectives: string | null;
@@ -224,9 +244,10 @@ interface PlanoData {
 interface PlanoPDFProps {
   plano: PlanoData;
   logoBlob: Blob | null;
+  latexImages?: Record<string, LatexPdfImage>;
 }
 
-export const PlanoPDF = ({ plano, logoBlob }: PlanoPDFProps) => {
+export const PlanoPDF = ({ plano, logoBlob, latexImages = {} }: PlanoPDFProps) => {
   if (!plano) {
     return (
       <Document title="Plano de Ensino">
@@ -262,20 +283,6 @@ export const PlanoPDF = ({ plano, logoBlob }: PlanoPDFProps) => {
     }
   };
 
-  const renderTextWithBold = (text: string) => {
-    if (!text) return null;
-    const parts = String(text).split('**');
-    return (
-      <Text>
-        {parts.map((part, i) => (
-          <Text key={i} style={{ fontFamily: i % 2 === 1 ? 'Times-Bold' : 'Times-Roman' }}>
-            {part}
-          </Text>
-        ))}
-      </Text>
-    );
-  };
-
   return (
     <Document title={`Plano de Ensino - ${plano.semester || ''}`}>
       <Page size="A4" style={styles.page}>
@@ -308,7 +315,7 @@ export const PlanoPDF = ({ plano, logoBlob }: PlanoPDFProps) => {
               <View key={course.id || index} style={{ marginBottom: 3 }}>
                 <View style={styles.gridRow}>
                   <View style={styles.gridCell}>
-                    <Text style={styles.label}>Nome:</Text>
+                    <Text style={styles.label}>Disciplina:</Text>
                     <Text style={styles.text}>{String(course.name || '-')}</Text>
                   </View>
                   <View style={[styles.gridCell, { flex: 0.6 }]}>
@@ -328,89 +335,161 @@ export const PlanoPDF = ({ plano, logoBlob }: PlanoPDFProps) => {
                 </View>
                 <View style={styles.gridRow}>
                   <View style={styles.gridCell}>
-                    <Text style={styles.label}>Turma(s):</Text>
-                    <Text style={styles.text}>{String(course.classIdentifier || '-')}</Text>
+                    <Text style={styles.label}>Pré-requisito:</Text>
+                    <Text style={styles.text}>
+                      {String(plano.prerequisites?.trim() || 'Não há pré-requisitos cadastrados.')}
+                    </Text>
+                  </View>
+                </View>
+                <View style={styles.gridRow}>
+                  <View style={styles.gridCell}>
+                    <Text style={styles.label}>Turma:</Text>
+                    <Text style={styles.text}>
+                      {String(course.classIdentifier || plano.turma?.turma || '-')}
+                    </Text>
                   </View>
                 </View>
               </View>
             ))}
+            {(!plano.courses || plano.courses.length === 0) && (
+              <>
+                <View style={styles.gridRow}>
+                  <View style={styles.gridCell}>
+                    <Text style={styles.label}>Pré-requisito:</Text>
+                    <Text style={styles.text}>
+                      {String(plano.prerequisites?.trim() || 'Não há pré-requisitos cadastrados.')}
+                    </Text>
+                  </View>
+                </View>
+                <View style={styles.gridRow}>
+                  <View style={styles.gridCell}>
+                    <Text style={styles.label}>Turma:</Text>
+                    <Text style={styles.text}>{String(plano.turma?.turma || '-')}</Text>
+                  </View>
+                </View>
+              </>
+            )}
             <View style={styles.gridRow}>
               <View style={styles.gridCell}>
-                <Text style={styles.label}>Professor(es):</Text>
-                <Text style={styles.text}>{String(plano.user?.name || '')}</Text>
+                <Text style={styles.label}>Horário da aula:</Text>
+                <Text style={styles.text}>
+                  {formatPlanScheduleSummary(plano.schedule, plano.turma?.indicacaoHorario)}
+                </Text>
+              </View>
+            </View>
+            <View style={styles.gridRow}>
+              <View style={styles.gridCell}>
+                <Text style={styles.label}>Professor(a):</Text>
+                <Text style={styles.text}>{String(plano.user?.name || '-')}</Text>
+              </View>
+              <View style={styles.gridCell}>
+                <Text style={styles.label}>Contato:</Text>
+                <Text style={styles.text}>
+                  {String(plano.contact?.trim() || plano.user?.email || '-')}
+                </Text>
+              </View>
+            </View>
+            <View style={[styles.gridRow, { marginBottom: 0 }]}>
+              <View style={styles.gridCell}>
+                <Text style={styles.label}>Horário de atendimento:</Text>
+                <Text style={styles.text}>
+                  {String(plano.officeHours?.trim() || 'A combinar / não informado.')}
+                </Text>
               </View>
             </View>
           </View>
         </View>
 
-        {/* II. PRÉ-REQUISITOS */}
+        {/* II. EMENTA */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>II. PRÉ-REQUISITOS</Text>
-          <Text style={styles.paragraph}>
-            {String(plano.prerequisites || 'Não há pré-requisitos cadastrados.')}
-          </Text>
+          <Text style={styles.sectionTitle}>II. EMENTA</Text>
+          <PdfRichContent
+            content={plano.syllabus}
+            fallbackText="Não informada."
+            latexImages={latexImages}
+          />
         </View>
 
-        {/* III. EMENTA */}
+        {/* III. OBJETIVOS */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>III. EMENTA</Text>
-          <Text style={styles.paragraph}>
-            {String(resolveContent(plano.syllabus) || 'Não informada.')}
-          </Text>
+          <Text style={styles.sectionTitle}>III. OBJETIVOS</Text>
+          <PdfRichContent
+            content={plano.objectives}
+            fallbackText="Não informados."
+            latexImages={latexImages}
+          />
         </View>
 
-        {/* IV. OBJETIVOS */}
+        {/* IV. CONTEÚDO PROGRAMÁTICO */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>IV. OBJETIVOS</Text>
-          <Text style={styles.paragraph}>
-            {String(resolveContent(plano.objectives) || 'Não informados.')}
-          </Text>
+          <Text style={styles.sectionTitle}>IV. CONTEÚDO PROGRAMÁTICO</Text>
+          <PdfRichContent
+            content={plano.programContent}
+            fallbackText="Não informado."
+            latexImages={latexImages}
+          />
         </View>
 
-        {/* V. CONTEÚDO PROGRAMÁTICO */}
+        {/* V. METODOLOGIA DE ENSINO */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>V. CONTEÚDO PROGRAMÁTICO</Text>
-          <Text style={styles.paragraph}>
-            {String(resolveContent(plano.programContent) || 'Não informado.')}
-          </Text>
+          <Text style={styles.sectionTitle}>V. METODOLOGIA DE ENSINO</Text>
+          <PdfRichContent
+            content={plano.methodology}
+            fallbackText="Não informada."
+            latexImages={latexImages}
+          />
         </View>
 
-        {/* VI. METODOLOGIA DE ENSINO */}
+        {/* VI. METODOLOGIA DE AVALIAÇÃO */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>VI. METODOLOGIA DE ENSINO / DESENVOLVIMENTO DO PROGRAMA</Text>
-          <Text style={styles.paragraph}>
-            {String(resolveContent(plano.methodology) || 'Não informada.')}
-          </Text>
+          <Text style={styles.sectionTitle}>VI. METODOLOGIA DE AVALIAÇÃO</Text>
+          <PdfRichContent
+            content={plano.evaluation}
+            fallbackText="Não informada."
+            latexImages={latexImages}
+          />
+          {plano.evaluationFormula && (() => {
+            const rawFormula = String(plano.evaluationFormula).trim();
+            if (!rawFormula) return null;
+            const formulaImg = hasLatexSyntax(rawFormula)
+              ? latexImages[getLatexCacheKey(stripLatexDelimiters(rawFormula).latex, true)]
+              : undefined;
+
+            return (
+              <View style={styles.formulaBox} wrap={false}>
+                <Text style={styles.formulaTitle}>Fórmula de Cálculo da Média</Text>
+                {formulaImg ? (
+                  /* eslint-disable-next-line jsx-a11y/alt-text */
+                  <Image
+                    src={formulaImg.dataUrl}
+                    style={{ width: formulaImg.width, height: formulaImg.height }}
+                  />
+                ) : (
+                  <Text style={styles.formulaText}>{rawFormula}</Text>
+                )}
+              </View>
+            );
+          })()}
         </View>
 
-        {/* VII. METODOLOGIA DE AVALIAÇÃO */}
+        {/* VII. AVALIAÇÃO FINAL */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>VII. METODOLOGIA DE AVALIAÇÃO</Text>
-          <Text style={styles.paragraph}>{String(plano.evaluation || 'Não informada.')}</Text>
-          {plano.evaluationFormula && (
-            <View style={styles.formulaBox}>
-              <Text style={styles.formulaTitle}>Fórmula de Cálculo da Média</Text>
-              <Text style={styles.formulaText}>{String(plano.evaluationFormula)}</Text>
-            </View>
-          )}
-        </View>
-
-        {/* VIII. AVALIAÇÃO FINAL */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>VIII. AVALIAÇÃO FINAL</Text>
-          <View style={styles.paragraph}>
-            {renderTextWithBold(plano.finalEvaluationRules || 'Conforme resoluções vigentes da Universidade.')}
-          </View>
+          <Text style={styles.sectionTitle}>VII. AVALIAÇÃO FINAL</Text>
+          <PdfRichContent
+            content={plano.finalEvaluationRules || 'Conforme resoluções vigentes da Universidade.'}
+            latexImages={latexImages}
+          />
           {plano.finalConsiderations && (
-            <Text style={styles.paragraph}>
-              {String(resolveContent(plano.finalConsiderations))}
-            </Text>
+            <PdfRichContent
+              content={plano.finalConsiderations}
+              latexImages={latexImages}
+            />
           )}
         </View>
 
-        {/* IX. CRONOGRAMA */}
+        {/* VIII. CRONOGRAMA */}
         <View style={styles.section} break>
-          <Text style={styles.sectionTitle}>IX. CRONOGRAMA DE AULAS</Text>
+          <Text style={styles.sectionTitle}>VIII. CRONOGRAMA DE AULA</Text>
           <View style={styles.table}>
             <View style={styles.tableRow}>
               <View style={[styles.tableColHeader, { width: '10%' }]}>
@@ -471,9 +550,11 @@ export const PlanoPDF = ({ plano, logoBlob }: PlanoPDFProps) => {
           </Text>
         </View>
 
-        {/* X. BIBLIOGRAFIA BÁSICA */}
+        {/* IX. BIBLIOGRAFIA */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>X. BIBLIOGRAFIA BÁSICA</Text>
+          <Text style={styles.sectionTitle}>IX. BIBLIOGRAFIA</Text>
+
+          <Text style={styles.bibliographySubtitle}>Bibliografia Básica</Text>
           {plano.bibliography?.filter(b => b.type === 'basic').length > 0 ? (
             plano.bibliography.filter(b => b.type === 'basic').map((b, i) => (
               <View key={b.id || i} style={styles.listItem}>
@@ -484,11 +565,8 @@ export const PlanoPDF = ({ plano, logoBlob }: PlanoPDFProps) => {
           ) : (
             <Text style={[styles.paragraph, { fontFamily: 'Times-Italic' }]}>Nenhuma informada.</Text>
           )}
-        </View>
 
-        {/* XI. BIBLIOGRAFIA COMPLEMENTAR */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>XI. BIBLIOGRAFIA COMPLEMENTAR</Text>
+          <Text style={styles.bibliographySubtitle}>Bibliografia Complementar</Text>
           {plano.bibliography?.filter(b => b.type === 'complementary').length > 0 ? (
             plano.bibliography.filter(b => b.type === 'complementary').map((b, i) => (
               <View key={b.id || i} style={styles.listItem}>

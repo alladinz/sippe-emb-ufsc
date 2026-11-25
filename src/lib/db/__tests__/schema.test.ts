@@ -10,8 +10,10 @@ describe('Database Schema', () => {
     expect(schema.member).toBeDefined();
   });
 
-  it('should have study plan tables defined', () => {
+  it('should have study plan tables and identification fields defined', () => {
     expect(schema.studyPlans).toBeDefined();
+    expect(schema.studyPlans.contact).toBeDefined();
+    expect(schema.studyPlans.officeHours).toBeDefined();
     expect(schema.courses).toBeDefined();
     expect(schema.bibliography).toBeDefined();
   });

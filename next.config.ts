@@ -2,6 +2,14 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
+  webpack: (config, { webpack }) => {
+    config.plugins.push(
+      new webpack.DefinePlugin({
+        PACKAGE_VERSION: JSON.stringify("3.2.1"),
+      })
+    );
+    return config;
+  },
   async headers() {
     return [
       {

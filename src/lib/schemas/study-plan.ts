@@ -23,6 +23,7 @@ export const bibliographyItemSchema = z.object({
 export const scheduleDaySchema = z.object({
   day: z.string(),
   enabled: z.boolean().default(false),
+  slots: z.array(z.string()).optional(),
   startTime: z.string().optional(),
   endTime: z.string().optional(),
 });
@@ -60,6 +61,8 @@ export const studyPlanSchema = z.object({
   semester: z.string().min(1, "O semestre é obrigatório"),
   status: studyPlanStatusEnum,
   feedback: z.string().optional().nullable(),
+  contact: z.string().optional().nullable(),
+  officeHours: z.string().optional().nullable(),
 
   // Institutional Hierarchy
   universityAcronym: z.string().default("UFSC"),

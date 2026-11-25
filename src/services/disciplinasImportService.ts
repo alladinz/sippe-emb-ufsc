@@ -3,6 +3,7 @@ import { disciplinas, turmas, semesters } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { DisciplinaRow } from "./sheetsParser";
 import { namesMatch } from "../utils/nameUtils";
+import { expandAndDeduplicateTurmas } from "../utils/turmaExpansion";
 
 export interface ImportSummary {
   total: number;
@@ -12,12 +13,13 @@ export interface ImportSummary {
   errors: { row: number; message: string }[];
 }
 
-export async function importDisciplinasFromRows(rows: DisciplinaRow[]): Promise<ImportSummary> {
+export async function importDisciplinasFromRows(rawRows: DisciplinaRow[]): Promise<ImportSummary> {
+  const { expanded: rows, skippedDuplicates } = expandAndDeduplicateTurmas(rawRows);
   const summary: ImportSummary = {
     total: rows.length,
     inserted: 0,
     updated: 0,
-    skipped: 0,
+    skipped: skippedDuplicates,
     errors: [],
   };
 

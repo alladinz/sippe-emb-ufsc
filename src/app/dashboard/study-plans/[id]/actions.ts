@@ -41,6 +41,8 @@ export async function saveStudyPlanAction(id: string, data: StudyPlanFormValues)
         center: data.center,
         courseName: data.courseName,
         universityAcronym: data.universityAcronym,
+        contact: data.contact,
+        officeHours: data.officeHours,
         prerequisites: data.prerequisites,
         syllabus: data.syllabus,
         objectives: data.objectives,

@@ -53,9 +53,13 @@ export function AssignmentDialog({ course, teachers, organizations }: Assignment
 
         startTransition(async () => {
             try {
-                await assignTeacherToCourseAction(teacherId, course.id, semester, organizationIds);
+                const res = await assignTeacherToCourseAction(teacherId, course.id, semester, organizationIds);
                 setSuccess(true);
-                toastSuccess("Plano atribuído com sucesso");
+                toastSuccess(
+                    res && res.count > 1
+                        ? `${res.count} planos atribuídos individualmente com sucesso`
+                        : "Plano atribuído com sucesso"
+                );
                 setTimeout(() => {
                     setOpen(false);
                     setSuccess(false);

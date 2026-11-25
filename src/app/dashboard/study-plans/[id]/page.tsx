@@ -24,6 +24,12 @@ export default async function EditStudyPlanPage({ params }: EditStudyPlanPagePro
     with: {
       courses: true,
       bibliography: true,
+      user: {
+        columns: { id: true, name: true, email: true },
+      },
+      turma: {
+        columns: { id: true, turma: true, indicacaoHorario: true },
+      },
     }
   });
 
@@ -56,12 +62,17 @@ export default async function EditStudyPlanPage({ params }: EditStudyPlanPagePro
         </p>
       </div>
 
-      <StudyPlanForm 
-        studyPlanId={id} 
-        initialData={plan as unknown as StudyPlanFormValues} 
-        onSave={saveStudyPlanAction.bind(null, id)} 
+      <StudyPlanForm
+        studyPlanId={id}
+        initialData={plan as unknown as StudyPlanFormValues}
+        onSave={saveStudyPlanAction.bind(null, id)}
         onSubmit={submitStudyPlanAction.bind(null, id)}
         globalEvaluationRules={globalEvaluationRules}
+        teacherInfo={{
+          name: plan.user?.name || session.user.name,
+          email: plan.user?.email || session.user.email || null,
+        }}
+        turmaIndicacaoHorario={plan.turma?.indicacaoHorario || null}
         semesterDates={semesterData ? {
             startDate: semesterData.startDate,
             endDate: semesterData.endDate
