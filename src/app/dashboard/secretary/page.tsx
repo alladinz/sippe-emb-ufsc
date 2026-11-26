@@ -5,6 +5,7 @@ import { studyPlans } from "@/db/schema";
 import { desc, inArray } from "drizzle-orm";
 import { ArquivoCentralClient } from "./_components/arquivo-central-client";
 import { PageHeader } from "@/components/dashboard/page-header";
+import { SAFE_USER_COLUMNS } from "@/lib/auth/roles";
 
 interface SecretaryDashboardPageProps {
     searchParams: Promise<{
@@ -42,7 +43,9 @@ export default async function SecretaryDashboardPage({ searchParams }: Secretary
   const plans = await db.query.studyPlans.findMany({
       where: inArray(studyPlans.status, ["approved", "archived"]),
       with: {
-          user: true,
+          user: {
+            columns: SAFE_USER_COLUMNS,
+          },
           organization: true,
           courses: true
       },

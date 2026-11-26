@@ -2,6 +2,7 @@ import { db } from "@/db";
 import { user, member, disciplinas, turmas, studyPlans, organization, semesters, universityCourses, courses, bibliography } from "@/db/schema";
 import { eq, and, inArray } from "drizzle-orm";
 import { namesMatch } from "../utils/nameUtils";
+import { expandAndDeduplicateTurmas } from "../utils/turmaExpansion";
 import { DisciplinaRow } from "./sheetsParser";
 import { v4 as uuidv4 } from "uuid";
 
@@ -71,14 +72,15 @@ export interface ImportResult {
 }
 
 export async function importProfessoresEPlanos(
-  rows: DisciplinaRow[],
+  rawRows: DisciplinaRow[],
   semestreId: string
 ): Promise<ImportResult> {
+  const { expanded: rows, skippedDuplicates } = expandAndDeduplicateTurmas(rawRows);
 
   const result: ImportResult = {
-    totalLinhasLidas: rows.length, // Already filtered in parser? No, rows is usually only valid ones.
+    totalLinhasLidas: rawRows.length,
     totalLinhasValidas: rows.length,
-    totalLinhasIgnoradas: 0, 
+    totalLinhasIgnoradas: skippedDuplicates,
     professoresNovos: 0,
     professoresExistentes: 0,
     disciplinasCriadas: 0,
@@ -119,6 +121,7 @@ export async function importProfessoresEPlanos(
     const semesterName = activeSem?.name || "2026.1";
 
     const allUsers = await tx.query.user.findMany();
+    const processedTurmaIds = new Set<string>();
 
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
@@ -147,6 +150,7 @@ export async function importProfessoresEPlanos(
 
         const existingProf = allUsers.find(u => namesMatch(u.name, rawName));
         let professorId: string;
+        const professorEmail = existingProf?.email ?? null;
 
         if (existingProf) {
           professorId = existingProf.id;
@@ -286,9 +290,14 @@ export async function importProfessoresEPlanos(
         if (wasUpdated) result.turmasAtualizadas++; else result.turmasCriadas++;
 
         // --- STEP D: Create draft plan if none exists ---
+        if (processedTurmaIds.has(turmaId)) {
+          result.totalLinhasIgnoradas++;
+          continue;
+        }
+        processedTurmaIds.add(turmaId);
+
         const existingPlan = await tx.query.studyPlans.findFirst({
           where: and(
-            eq(studyPlans.userId, professorId),
             eq(studyPlans.turmaId, turmaId),
             eq(studyPlans.semestreId, semestreId)
           )
@@ -332,6 +341,7 @@ export async function importProfessoresEPlanos(
                   status: 'draft',
                   semester: semesterName,
                   courseName: fullCourseName,
+                  contact: professorEmail,
                   syllabus: metadata.syllabus,
                   prerequisites: formattedPrerequisites,
                   campus: "Campus de Joinville",
@@ -341,7 +351,7 @@ export async function importProfessoresEPlanos(
 
 Caso o(a) aluno(a) **não compareça a 75% da carga horária** da disciplina estará **automaticamente reprovado com nota 0,0(zero)**, independentemente da sua média nas avaliações individuais, conforme dispõem no **Art. 69 § 2º da Resolução 017/CUn/97**.
 
-Os(as) alunos(as) que eventualmente faltarem em alguma avaliação que foram perdidas por motivos extremos, mediante justificativa; dentro do prazo de **3 (três) dias úteis** após a avaliação conforme o que dispõe o **Art. 74, da Resolução 017/CUn/97**, poderão solicitar na secretaria acadêmica do Centro de Engenharias da Mobilidade o pedido de **segunda chamada**. Após a análise do pedido e seu deferimento, los(as) alunos(as) poderão realizar a avaliação de segunda chamada na data, no local e horário definido no cronograma.`,
+Os(as) alunos(as) que eventualmente faltarem em alguma avaliação que foram perdidas por motivos extremos, mediante justificativa; dentro do prazo de **3 (três) dias úteis** após a avaliação conforme o que dispõe o **Art. 74, da Resolução 017/CUn/97**, poderão solicitar na secretaria acadêmica do Centro de Engenharias da Mobilidade o pedido de **segunda chamada**. Após a análise do pedido e seu deferimento, os(as) alunos(as) poderão realizar a avaliação de segunda chamada na data, no local e horário definido no cronograma.`,
                   createdAt: new Date(),
                   updatedAt: new Date(),
               });
@@ -385,14 +395,15 @@ Os(as) alunos(as) que eventualmente faltarem em alguma avaliação que foram per
               await tx.insert(studyPlans).values({
                 id: planId,
                 userId: professorId,
-                organizationId: targetOrgId,
+                organizationId: planOrgId,
                 turmaId: turmaId,
                 disciplinaId: disciplinaId,
                 semestreId: semestreId,
                 semester: semesterName,
                 status: 'draft',
                 courseName: fullCourseName,
-                syllabus: row.disciplinaNome, 
+                contact: professorEmail,
+                syllabus: row.disciplinaNome,
                 createdAt: new Date(),
                 updatedAt: new Date(),
               });

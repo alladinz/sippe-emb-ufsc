@@ -21,6 +21,7 @@ import { ImportarPlanilha } from "@/components/ImportarPlanilha";
 import { SearchInput } from "./_components/search-input";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { cn } from "@/lib/utils";
+import { SAFE_USER_COLUMNS } from "@/lib/auth/roles";
 
 interface ChefDashboardPageProps {
     searchParams: Promise<{
@@ -71,13 +72,16 @@ export default async function ChefDashboardPage({ searchParams }: ChefDashboardP
 
   // Fetch all teachers (users who are members of these orgs)
   const teachers = await db.query.user.findMany({
+      columns: SAFE_USER_COLUMNS,
       orderBy: [user.name]
   });
 
   // Fetch all members for user management
   const allMembers = await db.query.member.findMany({
       with: {
-          user: true,
+          user: {
+            columns: SAFE_USER_COLUMNS,
+          },
           organization: true
       },
       orderBy: [desc(member.createdAt)]
@@ -134,7 +138,9 @@ export default async function ChefDashboardPage({ searchParams }: ChefDashboardP
   const plans = await db.query.studyPlans.findMany({
       where: whereClause,
       with: {
-          user: true,
+          user: {
+            columns: SAFE_USER_COLUMNS,
+          },
           organization: true,
           courses: true,
           turma: true

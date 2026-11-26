@@ -141,6 +141,8 @@ export const studyPlans = pgTable("study_plans", {
   semester: text("semester"), // e.g., "2026.1"
   status: text("status").notNull().default("draft"), // draft, submitted, approved, rejected
   feedback: text("feedback"),
+  contact: text("contact"),
+  officeHours: text("office_hours"),
 
   // Institutional Hierarchy
   campus: text("campus"),

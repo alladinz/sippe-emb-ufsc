@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { pdf } from '@react-pdf/renderer';
 import { Download, Loader2 } from 'lucide-react';
 import { PlanoPDF } from './PlanoPDF';
+import { prepareLatexImagesForPdf } from '@/lib/latex/pdfLatexRenderer';
 import { toastError, toastSuccess } from '@/lib/swal';
 
 interface Course {
@@ -31,8 +32,12 @@ interface PlanoData {
   courseName: string | null;
   semester: string | null;
   universityAcronym: string | null;
+  contact?: string | null;
+  officeHours?: string | null;
+  schedule?: unknown;
   organization?: { name: string };
-  user?: { name: string };
+  user?: { name: string; email?: string | null };
+  turma?: { id?: string; turma: string; indicacaoHorario?: string | null } | null;
   prerequisites: string | null;
   syllabus: string | null;
   objectives: string | null;
@@ -81,9 +86,12 @@ export function DownloadPDFButton({
         console.warn('Não foi possível carregar o brasão binário:', e);
       }
 
-      // 2. Gera o PDF passando o Blob diretamente
+      // 2. Renderiza expressões LaTeX em PNGs em memória para embed no PDF
+      const latexImages = await prepareLatexImagesForPdf(plano);
+
+      // 3. Gera o PDF passando o Blob diretamente
       const blob = await pdf(
-        <PlanoPDF plano={plano} logoBlob={logoBlob} />
+        <PlanoPDF plano={plano} logoBlob={logoBlob} latexImages={latexImages} />
       ).toBlob();
 
       // Build filename

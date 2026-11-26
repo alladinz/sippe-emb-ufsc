@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth/auth";
 import { db } from "@/db";
 import { user, member } from "@/db/schema";
 import { and, eq, or, sql } from "drizzle-orm";
+import { SAFE_USER_COLUMNS } from "@/lib/auth/roles";
 
 export async function GET(request: Request) {
   const session = await auth.api.getSession();
@@ -55,6 +56,7 @@ export async function GET(request: Request) {
 
     const usuarios = await db.query.user.findMany({
       where: whereClause,
+      columns: SAFE_USER_COLUMNS,
       orderBy: [user.name],
       limit: limit,
       offset: offset,

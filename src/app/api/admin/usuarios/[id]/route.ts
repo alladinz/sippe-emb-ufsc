@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/db";
 import { user, member } from "@/db/schema";
-import { and, eq, or, ne } from "drizzle-orm";
+import { and, eq, or, ne, sql } from "drizzle-orm";
+import { normalizeEmailInput } from "@/lib/auth/roles";
 
 export async function PATCH(
   request: Request,
@@ -28,12 +29,18 @@ export async function PATCH(
 
   const { id } = await params;
   const { email, status } = await request.json();
+  const normalizedEmail = typeof email === "string" && email.trim()
+    ? normalizeEmailInput(email)
+    : undefined;
 
   try {
     // Check if email already exists
-    if (email) {
+    if (normalizedEmail) {
         const existing = await db.query.user.findFirst({
-            where: and(eq(user.email, email), ne(user.id, id))
+            where: and(
+              sql`lower(trim(${user.email})) = ${normalizedEmail}`,
+              ne(user.id, id)
+            )
         });
         if (existing) {
             return new NextResponse("Este e-mail já está cadastrado no sistema.", { status: 400 });
@@ -42,7 +49,7 @@ export async function PATCH(
 
     await db.update(user)
       .set({ 
-        email, 
+        ...(normalizedEmail !== undefined ? { email: normalizedEmail } : {}),
         status: status || 'active',
         updatedAt: new Date()
       })

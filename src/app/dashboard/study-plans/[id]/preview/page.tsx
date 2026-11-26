@@ -11,10 +11,19 @@ import { ArchiveButton } from "@/app/dashboard/secretary/_components/archive-but
 import { Badge } from "@/components/ui/badge";
 
 import { DownloadPDFButton } from "@/components/pdf/DownloadPDFButton";
+import { RichTextViewer } from "@/components/latex/RichTextViewer";
+import { LatexFormula } from "@/components/latex/LatexFormula";
+import { formatPlanScheduleSummary } from "@/lib/schedule/ufsc-schedule";
 import { StudyPlanStatus } from "@/lib/schemas/study-plan";
 
 import { cn } from "@/lib/utils";
 import { ScheduleItem } from "@/types/study-plan";
+import {
+  canViewStudyPlan,
+  hasAnyRole,
+  isValidUuid,
+  normalizeMembershipRole,
+} from "@/lib/auth/roles";
 
 interface PreviewStudyPlanPageProps {
   params: Promise<{ id: string }>;
@@ -31,46 +40,11 @@ export default async function PreviewStudyPlanPage({ params, searchParams }: Pre
     redirect("/login");
   }
 
-  let activeMember = null;
-  try {
-      activeMember = await auth.api.getActiveMember();
-  } catch {
-      console.log("Preview page: getActiveMember failed");
+  if (!isValidUuid(id)) {
+    notFound();
   }
 
-  if (!activeMember) {
-      try {
-          const memberships = await auth.api.listOrganizations();
-          if (memberships && memberships.length > 0 && session.user.id) {
-              const memberRecord = await db.query.member.findFirst({
-                  where: (members, { and, eq }) => and(
-                      eq(members.userId, session.user.id),
-                      eq(members.organizationId, memberships[0].id)
-                  )
-              });
-              if (memberRecord) {
-                  activeMember = {
-                      ...memberships[0],
-                      organizationId: memberships[0].id,
-                      role: memberRecord.role
-                  };
-              } else {
-                  // Check for ANY admin/coordination role
-                  const anyAdmin = await db.query.member.findFirst({
-                      where: (m, { and, or, eq }) => and(
-                          eq(m.userId, session.user.id),
-                          or(eq(m.role, "coordenador"), eq(m.role, "chefe"), eq(m.role, "secretario"))
-                      )
-                  });
-                  if (anyAdmin) {
-                      activeMember = { organizationId: anyAdmin.organizationId, role: anyAdmin.role };
-                  }
-              }
-          }
-      } catch (err) {
-          console.error("Preview page fallback error:", err);
-      }
-  }
+  const memberships = await auth.api.listOrganizations();
 
   const plan = await db.query.studyPlans.findFirst({
     where: eq(studyPlans.id, id),
@@ -78,7 +52,20 @@ export default async function PreviewStudyPlanPage({ params, searchParams }: Pre
       courses: true,
       bibliography: true,
       organization: true,
-      user: true,
+      user: {
+        columns: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+      turma: {
+        columns: {
+          id: true,
+          turma: true,
+          indicacaoHorario: true,
+        },
+      },
     }
   });
 
@@ -86,21 +73,61 @@ export default async function PreviewStudyPlanPage({ params, searchParams }: Pre
     notFound();
   }
 
-  const userRole = (activeMember as { role?: string })?.role || "";
-  const isCoordinator = activeMember && (userRole === "coordenador" || userRole === "chefe");
-  const isChef = activeMember && userRole === "chefe";
-  const isSecretary = activeMember && userRole === "secretario";
-  const isPlanOrganization = activeMember && activeMember.organizationId === plan.organizationId;
-  
+  if (!canViewStudyPlan({ plan, userId: session.user.id, memberships })) {
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <div className="text-center space-y-3">
+          <h1 className="text-xl font-bold text-slate-900">Acesso Negado</h1>
+          <p className="text-slate-500 text-sm">
+            Você não possui permissão para visualizar este plano de ensino.
+          </p>
+          <Link
+            href="/dashboard/study-plans"
+            className="inline-flex items-center gap-2 text-xs font-bold text-[#023E8A] hover:underline pt-2"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            Voltar para Meus Planos
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const isOwner = plan.userId === session.user.id;
+  const isChef = hasAnyRole(memberships, ["chefe"]);
+  const isSecretary = hasAnyRole(memberships, ["secretario"]);
+  const isOrgCoordinator = memberships.some(
+    (m) =>
+      normalizeMembershipRole(m) === "coordenador" &&
+      m.organizationId === plan.organizationId
+  );
+
   const canArchive = (isChef || isSecretary) && plan.status === "approved";
-  
+
   const schedule = (plan.schedule as unknown as ScheduleItem[]) || [];
   const numSelectedDays = schedule.filter((s: ScheduleItem) => s.enabled).length;
   const hasMoreThanOneDay = numSelectedDays !== 1;
 
-  // Chef doesn't need to approve (per user request), so show review actions only for coordinator of that org
-  // If Chef IS the coordinator, they might need it, but the user explicitly said "chef doesn't need to approve"
-  const showReviewActions = isCoordinator && isPlanOrganization && !isChef && (plan.status === "submitted" || plan.status === "pending_review");
+  // Chef doesn't approve directly; only course coordinators for that org see review actions
+  const showReviewActions =
+    isOrgCoordinator &&
+    !isChef &&
+    (plan.status === "submitted" || plan.status === "pending_review");
+
+  const backHref = isOwner
+    ? `/dashboard/study-plans/${id}`
+    : isOrgCoordinator
+    ? "/dashboard/coordinator"
+    : isChef
+    ? "/dashboard/chef"
+    : "/dashboard/secretary";
+  const backLabel = isOwner
+    ? "Voltar para edição"
+    : isOrgCoordinator
+    ? "Voltar para Lista"
+    : isChef
+    ? "Voltar para Visão Geral"
+    : "Voltar para Arquivo";
 
   const statusLabels: Record<string, { label: string, variant: "default" | "secondary" | "destructive" | "outline" }> = {
     draft: { label: "Rascunho", variant: "secondary" },
@@ -115,10 +142,10 @@ export default async function PreviewStudyPlanPage({ params, searchParams }: Pre
     <div className={cn("max-w-4xl mx-auto space-y-8 pb-20 print-container", isForPdf && "pb-0 pt-0")}>
       {!isForPdf && (
         <div className="flex items-center justify-between no-print">
-          <Link href={isCoordinator ? "/dashboard/coordinator" : `/dashboard/study-plans/${id}`}>
+          <Link href={backHref}>
             <button className="px-4 py-2 text-sm font-medium border rounded-md hover:bg-slate-50 flex items-center gap-2">
               <ArrowLeft className="w-4 h-4" />
-              {isCoordinator ? "Voltar para Lista" : "Voltar para edição"}
+              {backLabel}
             </button>
           </Link>
           <div className="flex items-center gap-4">
@@ -192,91 +219,126 @@ export default async function PreviewStudyPlanPage({ params, searchParams }: Pre
             <div className="grid grid-cols-2 gap-x-12 gap-y-2 text-xs border p-4 rounded-sm bg-slate-50/30">
               {plan.courses.map((course) => (
                 <div key={course.id} className="contents">
-                  <p><span className="font-bold">Nome:</span> {course.name}</p>
+                  <p><span className="font-bold">Disciplina:</span> {course.name}</p>
                   <p><span className="font-bold">Código:</span> {course.code}</p>
                   <p><span className="font-bold">Carga horária:</span> {course.workload ? `${course.workload} horas` : "-"}</p>
                   <p><span className="font-bold">Créditos:</span> {course.credits || "-"}</p>
-                  <p><span className="font-bold">Turma(s):</span> {course.classIdentifier || "-"}</p>
-                  <div className="invisible" /> {/* Spacer */}
+                  <p className="col-span-2">
+                    <span className="font-bold">Pré-requisito:</span>{" "}
+                    {plan.prerequisites?.trim() || "Não há pré-requisitos cadastrados."}
+                  </p>
+                  <p className="col-span-2">
+                    <span className="font-bold">Turma:</span>{" "}
+                    {course.classIdentifier || plan.turma?.turma || "-"}
+                  </p>
                 </div>
               ))}
-              <p className="col-span-2 mt-2"><span className="font-bold">Professor(es):</span> {plan.user.name}</p>
+              {plan.courses.length === 0 && (
+                <>
+                  <p className="col-span-2">
+                    <span className="font-bold">Pré-requisito:</span>{" "}
+                    {plan.prerequisites?.trim() || "Não há pré-requisitos cadastrados."}
+                  </p>
+                  <p className="col-span-2">
+                    <span className="font-bold">Turma:</span>{" "}
+                    {plan.turma?.turma || "-"}
+                  </p>
+                </>
+              )}
+              <p className="col-span-2">
+                <span className="font-bold">Horário da aula:</span>{" "}
+                {formatPlanScheduleSummary(plan.schedule, plan.turma?.indicacaoHorario)}
+              </p>
+              <p><span className="font-bold">Professor(a):</span> {plan.user.name}</p>
+              <p>
+                <span className="font-bold">Contato:</span>{" "}
+                {plan.contact?.trim() || plan.user.email || "-"}
+              </p>
+              <p className="col-span-2">
+                <span className="font-bold">Horário de atendimento:</span>{" "}
+                {plan.officeHours?.trim() || "A combinar / não informado."}
+              </p>
             </div>
           </div>
 
-          {/* II. PRÉ-REQUISITOS */}
+          {/* II. EMENTA */}
           <div>
-            <h4 className="font-bold mb-3">II. PRÉ-REQUISITOS</h4>
-            <p className="text-xs leading-relaxed pl-4 border-l-2 border-slate-100">
-              {plan.prerequisites || "Não há pré-requisitos cadastrados."}
-            </p>
-          </div>
-
-          {/* III. EMENTA */}
-          <div>
-            <h4 className="font-bold mb-3">III. EMENTA</h4>
-            <div 
-              className="text-xs leading-relaxed text-justify prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: plan.syllabus || "Não informada." }}
+            <h4 className="font-bold mb-3">II. EMENTA</h4>
+            <RichTextViewer
+              content={plan.syllabus}
+              emptyText="Não informada."
+              className="text-xs leading-relaxed text-justify"
             />
           </div>
 
-          {/* IV. OBJETIVOS */}
+          {/* III. OBJETIVOS */}
           <div>
-            <h4 className="font-bold mb-3">IV. OBJETIVOS</h4>
-            <div 
-              className="text-xs leading-relaxed text-justify prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: plan.objectives || "Não informados." }}
+            <h4 className="font-bold mb-3">III. OBJETIVOS</h4>
+            <RichTextViewer
+              content={plan.objectives}
+              emptyText="Não informados."
+              className="text-xs leading-relaxed text-justify"
             />
           </div>
 
-          {/* V. CONTEÚDO PROGRAMÁTICO */}
+          {/* IV. CONTEÚDO PROGRAMÁTICO */}
           <div>
-            <h4 className="font-bold mb-3">V. CONTEÚDO PROGRAMÁTICO</h4>
-            <div 
-              className="text-xs whitespace-pre-wrap leading-relaxed pl-4 border-l-2 border-slate-100 prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: plan.programContent || "Não informado." }}
+            <h4 className="font-bold mb-3">IV. CONTEÚDO PROGRAMÁTICO</h4>
+            <RichTextViewer
+              content={plan.programContent}
+              emptyText="Não informado."
+              className="text-xs leading-relaxed pl-4 border-l-2 border-slate-100"
             />
           </div>
 
-          {/* VI. METODOLOGIA DE ENSINO */}
+          {/* V. METODOLOGIA DE ENSINO */}
           <div>
-            <h4 className="font-bold mb-3 uppercase">VI. METODOLOGIA DE ENSINO / DESENVOLVIMENTO DO PROGRAMA</h4>
-            <div 
-              className="text-xs leading-relaxed text-justify prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: plan.methodology || "Não informada." }}
+            <h4 className="font-bold mb-3 uppercase">V. METODOLOGIA DE ENSINO</h4>
+            <RichTextViewer
+              content={plan.methodology}
+              emptyText="Não informada."
+              className="text-xs leading-relaxed text-justify"
             />
           </div>
 
-          {/* VII. METODOLOGIA DE AVALIAÇÃO */}
+          {/* VI. METODOLOGIA DE AVALIAÇÃO */}
           <div className="break-inside-avoid">
-            <h4 className="font-bold mb-3">VII. METODOLOGIA DE AVALIAÇÃO</h4>
+            <h4 className="font-bold mb-3">VI. METODOLOGIA DE AVALIAÇÃO</h4>
             <div className="text-xs space-y-4">
-              <p className="leading-relaxed text-justify">{plan.evaluation || "Não informada."}</p>
+              <RichTextViewer
+                content={plan.evaluation}
+                emptyText="Não informada."
+                className="text-xs leading-relaxed text-justify"
+              />
               {plan.evaluationFormula && (
                 <div className="bg-slate-50 p-4 border border-dashed rounded-md text-center">
-                  <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-2">Fórmula de Cálculo</p>
-                  <p className="text-sm font-mono font-bold tracking-wider">{plan.evaluationFormula}</p>
+                  <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-2">Fórmula de Cálculo da Média</p>
+                  <div className="flex justify-center overflow-x-auto">
+                    <LatexFormula formula={plan.evaluationFormula} display />
+                  </div>
                 </div>
               )}
             </div>
           </div>
 
-          {/* VIII. AVALIAÇÃO FINAL */}
+          {/* VII. AVALIAÇÃO FINAL */}
           <div>
-            <h4 className="font-bold mb-3">VIII. AVALIAÇÃO FINAL</h4>
-            <div className="text-xs leading-relaxed text-justify whitespace-pre-wrap">
-              {plan.finalEvaluationRules ? (
-                plan.finalEvaluationRules.split('**').map((part, i) => (
-                  i % 2 === 1 ? <strong key={i}>{part}</strong> : part
-                ))
-              ) : "Conforme resoluções vigentes da Universidade."}
-            </div>
+            <h4 className="font-bold mb-3">VII. AVALIAÇÃO FINAL</h4>
+            <RichTextViewer
+              content={plan.finalEvaluationRules || "Conforme resoluções vigentes da Universidade."}
+              className="text-xs leading-relaxed text-justify"
+            />
+            {plan.finalConsiderations?.trim() && (
+              <RichTextViewer
+                content={plan.finalConsiderations}
+                className="text-xs leading-relaxed text-justify mt-3"
+              />
+            )}
           </div>
 
-          {/* IX. CRONOGRAMA */}
+          {/* VIII. CRONOGRAMA DE AULA */}
           <div className="break-before-page pt-8">
-            <h4 className="font-bold mb-4 uppercase text-center">IX. CRONOGRAMA DE AULAS</h4>
+            <h4 className="font-bold mb-4 uppercase text-center">VIII. CRONOGRAMA DE AULA</h4>
             <div className="border rounded-sm overflow-hidden">
               <table className="w-full text-[10px] border-collapse">
                 <thead>
@@ -320,29 +382,32 @@ export default async function PreviewStudyPlanPage({ params, searchParams }: Pre
             <p className="text-[9px] text-slate-500 italic mt-2">* O cronograma está sujeito a alterações conforme o andamento da disciplina.</p>
           </div>
 
-          {/* X & XI. BIBLIOGRAFIA */}
-          <div className="space-y-8">
-            <div>
-              <h4 className="font-bold mb-3 uppercase">X. BIBLIOGRAFIA BÁSICA</h4>
-              <ul className="space-y-2 pl-4">
-                {plan.bibliography.filter(b => b.type === 'basic').map((b) => (
-                  <li key={b.id} className="text-xs list-decimal pl-2">
-                    {b.title}
-                  </li>
-                ))}
-                {plan.bibliography.filter(b => b.type === 'basic').length === 0 && <li className="text-xs italic text-slate-400">Nenhuma informada.</li>}
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-3 uppercase">XI. BIBLIOGRAFIA COMPLEMENTAR</h4>
-              <ul className="space-y-2 pl-4">
-                {plan.bibliography.filter(b => b.type === 'complementary').map((b) => (
-                  <li key={b.id} className="text-xs list-decimal pl-2">
-                    {b.title}
-                  </li>
-                ))}
-                {plan.bibliography.filter(b => b.type === 'complementary').length === 0 && <li className="text-xs italic text-slate-400">Nenhuma informada.</li>}
-              </ul>
+          {/* IX. BIBLIOGRAFIA */}
+          <div>
+            <h4 className="font-bold mb-4 uppercase">IX. BIBLIOGRAFIA</h4>
+            <div className="space-y-6 pl-2">
+              <div>
+                <h5 className="font-bold text-xs mb-2.5 text-slate-800">Bibliografia Básica</h5>
+                <ul className="space-y-2 pl-4">
+                  {plan.bibliography.filter(b => b.type === 'basic').map((b) => (
+                    <li key={b.id} className="text-xs list-decimal pl-2">
+                      {b.title}
+                    </li>
+                  ))}
+                  {plan.bibliography.filter(b => b.type === 'basic').length === 0 && <li className="text-xs italic text-slate-400">Nenhuma informada.</li>}
+                </ul>
+              </div>
+              <div>
+                <h5 className="font-bold text-xs mb-2.5 text-slate-800">Bibliografia Complementar</h5>
+                <ul className="space-y-2 pl-4">
+                  {plan.bibliography.filter(b => b.type === 'complementary').map((b) => (
+                    <li key={b.id} className="text-xs list-decimal pl-2">
+                      {b.title}
+                    </li>
+                  ))}
+                  {plan.bibliography.filter(b => b.type === 'complementary').length === 0 && <li className="text-xs italic text-slate-400">Nenhuma informada.</li>}
+                </ul>
+              </div>
             </div>
           </div>
         </section>

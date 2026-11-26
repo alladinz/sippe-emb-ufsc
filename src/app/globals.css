@@ -155,16 +155,37 @@
   }
 }
 
-/* CSS Counters for nested ordered lists in Viewer */
+/* CSS Counters for nested ordered lists and rich formatting in Viewer */
+.viewer-rich-content p {
+  margin-bottom: 0.5rem;
+}
+
+.viewer-rich-content p:last-child {
+  margin-bottom: 0;
+}
+
+.viewer-rich-content strong,
+.viewer-rich-content b {
+  font-weight: 700;
+}
+
+.viewer-rich-content em,
+.viewer-rich-content i {
+  font-style: italic;
+}
+
 .viewer-rich-content ol {
   counter-reset: item;
   list-style-type: none !important;
   padding-left: 2rem !important; /* increased padding for nested numbers */
+  margin-top: 0.35rem;
+  margin-bottom: 0.5rem;
 }
 
 .viewer-rich-content ol > li {
   display: block;
   position: relative;
+  margin-bottom: 0.2rem;
 }
 
 .viewer-rich-content ol > li::before {
@@ -181,6 +202,21 @@
 .viewer-rich-content ul {
   list-style-type: disc !important;
   padding-left: 2rem !important;
+  margin-top: 0.35rem;
+  margin-bottom: 0.5rem;
+}
+
+.viewer-rich-content ul ul {
+  list-style-type: circle !important;
+}
+
+.viewer-rich-content li > p {
+  margin-bottom: 0.15rem;
+}
+
+.viewer-rich-content svg {
+  display: inline-block;
+  vertical-align: middle;
 }
 
 /* SweetAlert2 Custom Styling */

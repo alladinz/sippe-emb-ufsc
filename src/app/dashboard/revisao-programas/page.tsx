@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export default async function RevisaoProgramasPage() {
   const session = await auth.api.getSession();
   if (!session) {
-    redirect("/auth/sign-in");
+    redirect("/login");
   }
 
   // Only allow coordenador or chefe

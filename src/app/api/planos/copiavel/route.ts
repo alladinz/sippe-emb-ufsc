@@ -20,10 +20,11 @@ export async function GET(request: Request) {
       where: and(
         eq(studyPlans.userId, session.user.id),
         ne(studyPlans.id, planoAtualId || ""),
-        inArray(studyPlans.status, ["submitted", "pending_review", "approved"])
+        inArray(studyPlans.status, ["draft", "submitted", "pending_review", "approved"])
       ),
       with: {
         courses: true,
+        turma: { columns: { turma: true, indicacaoHorario: true } },
       },
       orderBy: [desc(studyPlans.updatedAt)],
     });
@@ -45,7 +46,12 @@ export async function GET(request: Request) {
       semester: p.semester,
       disciplina_nome: p.courses?.[0]?.name || "Sem Disciplina",
       disciplina_codigo: p.courses?.[0]?.code || "-",
-      // Copyable fields
+      turma: p.turma?.turma || p.courses?.[0]?.classIdentifier || null,
+      // Copyable identification/schedule fields
+      contact: p.contact,
+      officeHours: p.officeHours,
+      schedule: p.schedule,
+      // Copyable pedagogical fields
       objectives: p.objectives,
       programContent: p.programContent,
       methodology: p.methodology,

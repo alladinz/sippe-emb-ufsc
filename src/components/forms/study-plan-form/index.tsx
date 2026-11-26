@@ -28,7 +28,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { TiptapEditor } from "@/components/ui/tiptap-editor";
 import { StatusBadge } from "@/components/dashboard/status-badge";
 import { toastError, toastWarning, confirmDialog, toastSuccess } from "@/lib/swal";
-import { CopiarPlanoModal } from "@/components/planos/CopiarPlanoModal";
+import { CopiarPlanoModal, type CamposCopiaveis } from "@/components/planos/CopiarPlanoModal";
+import { ClassSchedulePicker } from "@/components/forms/study-plan-form/ClassSchedulePicker";
+import { LatexFormula } from "@/components/latex/LatexFormula";
+import { normalizePlainTextToHtml } from "@/components/pdf/pdfHelpers";
+import {
+  getDaysWithInsufficientCredits,
+  type ScheduleDayInput,
+} from "@/lib/schedule/ufsc-schedule";
 
 interface StudyPlanFormProps {
   initialData: StudyPlanFormValues;
@@ -41,6 +48,11 @@ interface StudyPlanFormProps {
   };
   holidays?: { date: string, description: string }[];
   globalEvaluationRules?: string;
+  teacherInfo?: {
+      name: string;
+      email: string | null;
+  };
+  turmaIndicacaoHorario?: string | null;
 }
 
 const DAYS_OF_WEEK = [
@@ -64,7 +76,7 @@ const TABS = [
   { id: "bibliografia", label: "Bibliografia" },
 ];
 
-export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, semesterDates, holidays, globalEvaluationRules }: StudyPlanFormProps) {
+export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, semesterDates, holidays, globalEvaluationRules, teacherInfo, turmaIndicacaoHorario }: StudyPlanFormProps) {
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
   const [saveError, setSaveError] = useState<string | null>(null);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
@@ -80,12 +92,21 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
     setMounted(true);
   }, []);
 
-  const initialSchedule = useMemo(() =>
-    Array.isArray(initialData.schedule) && initialData.schedule.length > 0
-    ? initialData.schedule
-    : DAYS_OF_WEEK.map(day => ({ day, enabled: false, startTime: "08:00", endTime: "10:00" })),
-    [initialData.schedule]
-  );
+  const initialSchedule = useMemo(() => {
+    const existing = Array.isArray(initialData.schedule) ? initialData.schedule : [];
+    return DAYS_OF_WEEK.map((day) => {
+      const match = existing.find((item) => item.day === day);
+      if (match) {
+        return {
+          ...match,
+          slots: Array.isArray(match.slots) ? match.slots : [],
+          startTime: match.startTime || "08:40",
+          endTime: match.endTime || "10:20",
+        };
+      }
+      return { day, enabled: false, slots: [], startTime: "08:40", endTime: "10:20" };
+    });
+  }, [initialData.schedule]);
 
   const initialWeeklySchedule = useMemo(() =>
     initialData.weeklySchedule || Array.from({ length: 18 }, (_, i) => ({
@@ -101,6 +122,9 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
     universityAcronym: initialData.universityAcronym || "UFSC",
     campus: initialData.campus || "Campus de Joinville",
     center: initialData.center || "Centro Tecnológico de Joinville",
+    contact: initialData.contact ?? teacherInfo?.email ?? "",
+    officeHours: initialData.officeHours ?? "",
+    evaluation: normalizePlainTextToHtml(initialData.evaluation),
     finalEvaluationRules: isDraftOrRejected
       ? (globalEvaluationRules || DEFAULT_FINAL_EVALUATION)
       : (initialData.finalEvaluationRules || globalEvaluationRules || DEFAULT_FINAL_EVALUATION),
@@ -108,7 +132,7 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
     bibliography: initialData.bibliography || [],
     schedule: initialSchedule,
     weeklySchedule: initialWeeklySchedule
-  }), [initialData, initialSchedule, initialWeeklySchedule, globalEvaluationRules, isDraftOrRejected]);
+  }), [initialData, initialSchedule, initialWeeklySchedule, globalEvaluationRules, isDraftOrRejected, teacherInfo?.email]);
 
   const lastSavedDataRef = useRef<StudyPlanFormValues>(fullDefaultValues);
 
@@ -292,8 +316,10 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
       case 'identificacao': {
         const hasCourses = (vals.courses || []).some(c => c.code?.trim() || c.name?.trim());
         const hasSemester = !!vals.semester?.trim();
-        if (hasCourses && hasSemester) return 'complete';
-        if (hasCourses || hasSemester) return 'partial';
+        const hasContact = !!vals.contact?.trim();
+        const hasClassSchedule = Array.isArray(vals.schedule) && vals.schedule.some(s => (s.slots?.length ?? 0) >= 2);
+        if (hasCourses && hasSemester && hasContact && hasClassSchedule) return 'complete';
+        if (hasCourses || hasSemester || hasContact || hasClassSchedule) return 'partial';
         return 'empty';
       }
       case 'conteudo': {
@@ -348,6 +374,14 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
           toastError(`Erro de validação: ${result.error.issues[0].message}`);
           return;
       }
+
+      const insufficientDays = getDaysWithInsufficientCredits((formData.schedule || []) as ScheduleDayInput[]);
+      if (insufficientDays.length > 0) {
+          toastWarning(`Selecione ao menos 2 horários (créditos) na grade de Horário da Aula para: ${insufficientDays.join(", ")}.`);
+          setActiveTab("identificacao");
+          return;
+      }
+
       setValue("courses", filteredCourses);
       setValue("bibliography", filteredBib);
 
@@ -469,17 +503,29 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
     toastSuccess("Cronograma gerado com sucesso.");
   };
 
-  const handleCopiarCampos = (campos: {
-    objectives?: string;
-    programContent?: string;
-    methodology?: string;
-    evaluation?: string;
-    evaluationFormula?: string;
-  }) => {
+  const handleCopiarCampos = (campos: CamposCopiaveis) => {
+    if (campos.contact !== undefined) setValue("contact", campos.contact, { shouldDirty: true });
+    if (campos.officeHours !== undefined) setValue("officeHours", campos.officeHours, { shouldDirty: true });
+    if (campos.schedule && Array.isArray(campos.schedule) && campos.schedule.length > 0) {
+      const normalizedSchedule = DAYS_OF_WEEK.map((day) => {
+        const match = campos.schedule?.find((d) => d.day === day);
+        if (match) {
+          return {
+            day,
+            enabled: !!match.enabled,
+            slots: Array.isArray(match.slots) ? match.slots : [],
+            startTime: match.startTime || "08:40",
+            endTime: match.endTime || "10:20",
+          };
+        }
+        return { day, enabled: false, slots: [], startTime: "08:40", endTime: "10:20" };
+      });
+      setValue("schedule", normalizedSchedule, { shouldDirty: true });
+    }
     if (campos.objectives) setValue("objectives", campos.objectives, { shouldDirty: true });
     if (campos.programContent) setValue("programContent", campos.programContent, { shouldDirty: true });
     if (campos.methodology) setValue("methodology", campos.methodology, { shouldDirty: true });
-    if (campos.evaluation) setValue("evaluation", campos.evaluation, { shouldDirty: true });
+    if (campos.evaluation) setValue("evaluation", normalizePlainTextToHtml(campos.evaluation), { shouldDirty: true });
     if (campos.evaluationFormula) setValue("evaluationFormula", campos.evaluationFormula, { shouldDirty: true });
 
     setModalCopiaAberto(false);
@@ -492,18 +538,32 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
       setActiveTab("pedagogia");
     } else if (campos.evaluation || campos.evaluationFormula) {
       setActiveTab("avaliacao");
+    } else if (campos.contact !== undefined || campos.officeHours !== undefined || campos.schedule) {
+      setActiveTab("identificacao");
     }
   };
 
   const isReadOnly = initialData.status !== 'draft' && initialData.status !== 'rejected';
 
-  const currentValuesForCopy = useMemo(() => ({
+  const currentValuesForCopy = useMemo<CamposCopiaveis>(() => ({
+    contact: formData.contact || undefined,
+    officeHours: formData.officeHours || undefined,
+    schedule: Array.isArray(formData.schedule) ? (formData.schedule as ScheduleDayInput[]) : undefined,
     objectives: formData.objectives || undefined,
     programContent: formData.programContent || undefined,
     methodology: formData.methodology || undefined,
     evaluation: formData.evaluation || undefined,
     evaluationFormula: formData.evaluationFormula || undefined,
-  }), [formData.objectives, formData.programContent, formData.methodology, formData.evaluation, formData.evaluationFormula]);
+  }), [
+    formData.contact,
+    formData.officeHours,
+    formData.schedule,
+    formData.objectives,
+    formData.programContent,
+    formData.methodology,
+    formData.evaluation,
+    formData.evaluationFormula,
+  ]);
 
   return (
     <div className="space-y-6 pb-20">
@@ -711,9 +771,72 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
                       <Label>Tipo</Label>
                       <Input {...register(`courses.0.classType`)} className="bg-slate-50/50 cursor-not-allowed opacity-80" readOnly />
                     </div>
+                    <div className="space-y-2 md:col-span-2 lg:col-span-3">
+                      <Label htmlFor="prerequisites">Pré-requisito(s)</Label>
+                      <Input
+                        id="prerequisites"
+                        {...register("prerequisites")}
+                        placeholder="Não há pré-requisitos cadastrados."
+                        className="bg-slate-50/50 cursor-not-allowed opacity-80"
+                        readOnly
+                      />
+                    </div>
                   </div>
                 </div>
               )}
+
+              {/* Docente, Contato e Horários Section */}
+              <div className="space-y-6 pt-6 border-t">
+                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                  <span className="w-1 h-4 bg-[#023E8A] rounded-full" />
+                  Docente, Contato e Horários
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="professorName">Professor(a)</Label>
+                    <Input
+                      id="professorName"
+                      value={teacherInfo?.name || ""}
+                      readOnly
+                      className="bg-slate-50/50 cursor-not-allowed opacity-80"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="contact">Contato (E-mail / Ramal / Outro)</Label>
+                    <Input
+                      id="contact"
+                      {...register("contact")}
+                      placeholder={teacherInfo?.email || "Ex: nome.docente@ufsc.br | Ramal 1234"}
+                    />
+                    <p className="text-[11px] text-slate-500">
+                      Pré-preenchido com o e-mail institucional; edite para informar ramal ou outro meio de contato.
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="officeHours">Horário de Atendimento Semanal</Label>
+                  <Input
+                    id="officeHours"
+                    {...register("officeHours")}
+                    placeholder="Ex: Terças e Quintas, das 14:00 às 16:00 (Sala U210 / Atendimento online)"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Horário das Aulas (Grade UFSC)</Label>
+                  <Controller
+                    name="schedule"
+                    control={control}
+                    render={({ field }) => (
+                      <ClassSchedulePicker
+                        value={Array.isArray(field.value) ? (field.value as ScheduleDayInput[]) : []}
+                        onChange={field.onChange}
+                        disabled={isReadOnly}
+                        fallbackIndicacaoHorario={turmaIndicacaoHorario}
+                      />
+                    )}
+                  />
+                </div>
+              </div>
             </CardContent>
           </Card>
           </fieldset>
@@ -737,16 +860,6 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
               </div>
             </CardHeader>
             <CardContent className="space-y-6 pt-6">
-              <div className="space-y-2">
-                <Label htmlFor="prerequisites">Pré-requisitos</Label>
-                <Input
-                  id="prerequisites"
-                  {...register("prerequisites")}
-                  placeholder="Não há pré-requisitos cadastrados."
-                  className="bg-slate-50/50 cursor-not-allowed opacity-80"
-                  readOnly
-                />
-              </div>
               <div className="space-y-2">
                 <Label htmlFor="syllabus">Ementa (Syllabus)</Label>
                 <Controller
@@ -892,7 +1005,11 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
                                           id={`day-select-${index}`}
                                           checked={isChecked}
                                           onCheckedChange={(checked) => {
-                                              setValue(`schedule.${index}.enabled`, !!checked, { shouldDirty: true });
+                                              const enabled = !!checked;
+                                              setValue(`schedule.${index}.enabled`, enabled, { shouldDirty: true });
+                                              if (!enabled) {
+                                                  setValue(`schedule.${index}.slots`, [], { shouldDirty: true });
+                                              }
                                           }}
                                           className="data-[state=checked]:bg-[#023E8A] data-[state=checked]:border-[#023E8A]"
                                       />
@@ -1023,18 +1140,43 @@ export function StudyPlanForm({ initialData, studyPlanId, onSave, onSubmit, seme
             </CardHeader>
             <CardContent className="space-y-6 pt-6">
               <div className="space-y-2">
-                <Label htmlFor="evaluation">Critérios de Avaliação</Label>
-                <Textarea
-                  id="evaluation"
-                  {...register("evaluation")}
-                  placeholder="Descreva como os alunos serão avaliados..."
-                  className="min-h-[100px]"
+                <Label htmlFor="evaluation">Critérios e Metodologia de Avaliação</Label>
+                <Controller
+                  name="evaluation"
+                  control={control}
+                  render={({ field }) => (
+                    <TiptapEditor
+                      value={field.value || ""}
+                      onChange={field.onChange}
+                      disabled={isReadOnly}
+                      placeholder="Descreva como os alunos serão avaliados (suporta negrito, itálico, listas e fórmulas LaTeX com $...$)..."
+                    />
+                  )}
                 />
+                <p className="text-[11px] text-slate-500 italic">
+                  Suporta negrito, itálico, listas numeradas/marcadores e expressões LaTeX entre <code className="bg-slate-100 px-1 rounded">$...$</code> ou <code className="bg-slate-100 px-1 rounded">$$...$$</code>.
+                </p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="evaluationFormula">Fórmula de Cálculo da Média</Label>
-                <Input id="evaluationFormula" {...register("evaluationFormula")} placeholder="Ex: MF = 0,5*P1 + 0,5*P2" />
-                <p className="text-[10px] text-slate-500 italic">Dica: Use notação matemática simples.</p>
+                <Input
+                  id="evaluationFormula"
+                  {...register("evaluationFormula")}
+                  placeholder="Ex: $$MF = 0{,}5 \cdot P_1 + 0{,}5 \cdot P_2$$ ou MF = 0,5*P1 + 0,5*P2"
+                />
+                <p className="text-[11px] text-slate-500 italic">
+                  Aceita texto simples ou LaTeX (ex: <code className="bg-slate-100 px-1 rounded">{"$$MF = \\frac{P_1 + P_2}{2}$$"}</code>).
+                </p>
+                {watch("evaluationFormula")?.trim() && (
+                  <div className="mt-2 p-4 rounded-xl border border-slate-200/80 bg-slate-50/70">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">
+                      Prévia da Fórmula no Documento e PDF
+                    </p>
+                    <div className="flex justify-center overflow-x-auto py-1">
+                      <LatexFormula formula={watch("evaluationFormula")} display />
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between mb-1">

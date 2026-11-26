@@ -357,6 +357,7 @@ export async function deleteSemesterAction(id: string) {
 
 export async function addUserAction(email: string, name: string, role: string, organizationId?: string) {
     await verifyChef();
+    const normalizedEmail = email.trim().toLowerCase();
 
     // Ensure Departamento exists if role is chefe or secretario
     let targetOrgId = organizationId;
@@ -383,7 +384,7 @@ export async function addUserAction(email: string, name: string, role: string, o
 
     // Check if user exists
     let existingUser = await db.query.user.findFirst({
-        where: eq(user.email, email)
+        where: (u, { sql }) => sql`lower(trim(${u.email})) = ${normalizedEmail}`
     });
 
     if (!existingUser) {
@@ -391,8 +392,8 @@ export async function addUserAction(email: string, name: string, role: string, o
         const newId = uuidv4();
         [existingUser] = await db.insert(user).values({
             id: newId,
-            email,
-            name,
+            email: normalizedEmail,
+            name: name.trim(),
             emailVerified: false,
             createdAt: new Date(),
             updatedAt: new Date(),
@@ -524,17 +525,35 @@ export async function assignTeacherToCourseAction(
 
     const { session } = await verifyChef();
 
-    // 1. Get metadata
+    // 1. Get metadata & teacher info
     const metadata = await db.query.universityCourses.findFirst({
         where: eq(universityCourses.id, courseId)
     });
 
     if (!metadata) throw new Error("Metadados da disciplina não encontrados");
 
+    const targetTeacher = await db.query.user.findFirst({
+        where: eq(user.id, teacherId),
+        columns: { id: true, name: true, email: true },
+    });
+
     // Fetch the selected organizations to get their names
     const selectedOrgs = await db.query.organization.findMany({
         where: inArray(organization.id, organizationIds)
     });
+
+    if (selectedOrgs.length === 0) {
+        throw new Error("Nenhum curso válido encontrado.");
+    }
+
+    const settings = await db.query.systemSettings.findMany();
+    const globalEvaluationRules =
+        settings.find((s) => s.key === "DEFAULT_FINAL_EVALUATION")?.value ||
+        `O(a) aluno(a) com **frequência suficiente** e **média das notas entre três (3,0) e cinco vírgula cinco (5,5)** terá direito a uma **nova avaliação** no final do semestre que versará sobre todo o conteúdo da disciplina, conforme o que dispõe o **§ 2º do Art. 70 e § 3º do Art. 71 da Resolução nº 17/Cun/97**. Neste caso, a **média final** será calculada através da **média aritmética simples** entre a média das notas das avaliações feitas durante o semestre e a nota obtida na nova avaliação. A **nota mínima de aprovação é seis (6,0)**.
+
+Caso o(a) aluno(a) **não compareça a 75% da carga horária** da disciplina estará **automaticamente reprovado com nota 0,0(zero)**, independentemente da sua média nas avaliações individuais, conforme dispõem no **Art. 69 § 2º da Resolução 017/CUn/97**.
+
+Os(as) alunos(as) que eventualmente faltarem em alguma avaliação que foram perdidas por motivos extremos, mediante justificativa; dentro do prazo de **3 (três) dias úteis** após a avaliação conforme o que dispõe o **Art. 74, da Resolução 017/CUn/97**, poderão solicitar na secretaria acadêmica do Centro de Engenharias da Mobilidade o pedido de **segunda chamada**. Após a análise do pedido e seu deferimento, os(as) alunos(as) poderão realizar a avaliação de segunda chamada na data, no local e horário definido no cronograma.`;
 
     // Graduation Mapping
     const GRADUATION_MAP: Record<string, string> = {
@@ -549,17 +568,9 @@ export async function assignTeacherToCourseAction(
         "Engenharia de Transporte e Logística": "608",
     };
 
-    // Calculate Class Identifier and Course Name from SELECTED organizations
-    const grads = selectedOrgs.map(o => o.name);
-    const codes = grads.map(g => GRADUATION_MAP[g]).filter(Boolean);
     const phaseStr = metadata.phase ? metadata.phase.toString().padStart(2, '0') : "00";
 
-    // Automation for TURMA (classIdentifier) and Curso (courseName)
-    const automatedClassIdentifier = codes.map(code => `${phaseStr}${code}`).join("/");
-    const automatedCourseName = grads.join("; ");
-
     // Process Prerequisites (Fetch names for codes)
-
     let formattedPrerequisites = "";
     if (metadata.prerequisites && Array.isArray(metadata.prerequisites) && (metadata.prerequisites as string[]).length > 0) {
         const prereqCodes = metadata.prerequisites as string[];
@@ -573,89 +584,104 @@ export async function assignTeacherToCourseAction(
         }).join("; ");
     }
 
-    // 2. Create Study Plan
-    const [newPlan] = await db.insert(studyPlans).values({
-        userId: teacherId,
-        organizationId: organizationIds[0],
-        status: "draft",
-        semester: semester,
-        courseName: automatedCourseName || metadata.graduation,
-        syllabus: metadata.syllabus,
-        prerequisites: formattedPrerequisites,
-        campus: "Campus de Joinville",
-        center: "Centro Tecnológico de Joinville",
-        universityAcronym: "UFSC",
-        finalEvaluationRules: `O(a) aluno(a) com **frequência suficiente** e **média das notas entre três (3,0) e cinco vírgula cinco (5,5)** terá direito a uma **nova avaliação** no final do semestre que versará sobre todo o conteúdo da disciplina, conforme o que dispõe o **§ 2º do Art. 70 e § 3º do Art. 71 da Resolução nº 17/Cun/97**. Neste caso, a **média final** será calculada através da **média aritmética simples** entre a média das notas das avaliações feitas durante o semestre e a nota obtida na nova avaliação. A **nota mínima de aprovação é seis (6,0)**.
-
-Caso o(a) aluno(a) **não compareça a 75% da carga horária** da disciplina estará **automaticamente reprovado com nota 0,0(zero)**, independentemente da sua média nas avaliações individuais, conforme dispõem no **Art. 69 § 2º da Resolução 017/CUn/97**.
-
-Os(as) alunos(as) que eventualmente faltarem em alguma avaliação que foram perdidas por motivos extremos, mediante justificativa; dentro do prazo de **3 (três) dias úteis** após a avaliação conforme o que dispõe o **Art. 74, da Resolução 017/CUn/97**, poderão solicitar na secretaria acadêmica do Centro de Engenharias da Mobilidade o pedido de **segunda chamada**. Após a análise do pedido e seu deferimento, os(as) alunos(as) poderão realizar a avaliação de segunda chamada na data, no local e horário definido no cronograma.`,
-    }).returning();
-
-    // 3. Add Course Junction
     const creditsValue = metadata.workloadHours ? Math.floor(metadata.workloadHours / 18) : null;
+    const bib = metadata.bibliography as { basic?: (string | RawBibliographyItem)[], complementary?: (string | RawBibliographyItem)[] } | null;
 
-    await db.insert(courses).values({
-        studyPlanId: newPlan.id,
-        code: metadata.code,
-        name: metadata.name,
-        workload: metadata.workloadHours,
-        classType: "Teórica", // Default
-        credits: creditsValue,
-        classIdentifier: automatedClassIdentifier,
-    });
+    const createdPlanIds: string[] = [];
 
-    // 4. Add Bibliography
-    const bib = metadata.bibliography as { basic: RawBibliographyItem[], complementary: RawBibliographyItem[] };
-    
-    const insertBibItems = async (items: (string | RawBibliographyItem)[], type: "basic" | "complementary") => {
-        if (!items || !Array.isArray(items)) return;
-        
-        for (const item of items) {
-            let fullReference = "";
+    await db.transaction(async (tx) => {
+        for (const org of selectedOrgs) {
+            const gradCode = GRADUATION_MAP[org.name] || "000";
+            const automatedClassIdentifier = `${phaseStr}${gradCode}`;
 
-            if (typeof item === 'object' && item !== null) {
-                // Combine authors and details into a single string
-                const authors = (item.authors || "").trim();
-                const details = (item.details || item.full || "").trim();
-                
-                if (authors && details) {
-                    fullReference = `${authors}. ${details}`;
-                } else {
-                    fullReference = authors || details;
+            // Create 1 individual Study Plan per course/class
+            const [newPlan] = await tx.insert(studyPlans).values({
+                userId: teacherId,
+                organizationId: org.id,
+                status: "draft",
+                semester: semester,
+                courseName: org.name,
+                contact: targetTeacher?.email || null,
+                syllabus: metadata.syllabus,
+                prerequisites: formattedPrerequisites,
+                campus: "Campus de Joinville",
+                center: "Centro Tecnológico de Joinville",
+                universityAcronym: "UFSC",
+                finalEvaluationRules: globalEvaluationRules,
+            }).returning();
+
+            await tx.insert(courses).values({
+                studyPlanId: newPlan.id,
+                code: metadata.code,
+                name: metadata.name,
+                workload: metadata.workloadHours,
+                classType: "Teórica",
+                credits: creditsValue,
+                classIdentifier: automatedClassIdentifier,
+            });
+
+            const buildBibItems = (items: (string | RawBibliographyItem)[] | undefined, type: "basic" | "complementary") => {
+                if (!items || !Array.isArray(items)) return [];
+                const rowsToInsert: {
+                    studyPlanId: string;
+                    type: "basic" | "complementary";
+                    author: string;
+                    title: string;
+                    year: number | null;
+                    publisher: string | null;
+                    isbn: string | null;
+                }[] = [];
+
+                for (const item of items) {
+                    let fullReference = "";
+                    if (typeof item === 'object' && item !== null) {
+                        const authors = (item.authors || "").trim();
+                        const details = (item.details || item.full || "").trim();
+                        fullReference = (authors && details) ? `${authors}. ${details}` : (authors || details);
+                    } else if (typeof item === 'string') {
+                        fullReference = item;
+                    }
+                    if (!fullReference) continue;
+                    rowsToInsert.push({
+                        studyPlanId: newPlan.id,
+                        type,
+                        author: "Referência",
+                        title: fullReference,
+                        year: null,
+                        publisher: null,
+                        isbn: null,
+                    });
                 }
-            } else if (typeof item === 'string') {
-                fullReference = item;
+                return rowsToInsert;
+            };
+
+            const bibRows = [
+                ...buildBibItems(bib?.basic, "basic"),
+                ...buildBibItems(bib?.complementary, "complementary"),
+            ];
+            if (bibRows.length > 0) {
+                await tx.insert(bibliography).values(bibRows);
             }
 
-            if (!fullReference) continue;
-
-            await db.insert(bibliography).values({
-                studyPlanId: newPlan.id,
-                type,
-                author: "Referência", // Use a placeholder since field is required
-                title: fullReference, // Store the full string here
-                year: null,
-                publisher: null,
-                isbn: null
-            });
+            createdPlanIds.push(newPlan.id);
         }
-    };
-
-    await insertBibItems(bib.basic, "basic");
-    await insertBibItems(bib.complementary, "complementary");
-
-    // Create notification for the professor
-    await createNotification({
-        userId: teacherId,
-        type: 'novo_plano',
-        title: 'Novo plano de ensino para preencher',
-        message: `${session.user.name} criou o rascunho de plano para ${metadata.code} - ${metadata.name}`,
-        planId: newPlan.id
     });
+
+    // Create notification(s) for the professor
+    for (const planId of createdPlanIds) {
+        await createNotification({
+            userId: teacherId,
+            type: 'novo_plano',
+            title: 'Novo plano de ensino para preencher',
+            message: `${session.user.name} criou o rascunho de plano para ${metadata.code} - ${metadata.name}`,
+            planId,
+        });
+    }
 
     revalidatePath("/dashboard/chef");
     revalidatePath("/dashboard/study-plans");
+
+    return { count: createdPlanIds.length, ids: createdPlanIds };
 }
 
 export async function toggleActiveSemesterAction(id: string) {

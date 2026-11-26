@@ -7,6 +7,7 @@ import { studyPlans } from "@/db/schema";
 import { eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { courses, bibliography, universityCourses, organization as orgTable } from "@/db/schema";
+import { isValidUuid } from "@/lib/auth/roles";
 
 export async function createStudyPlanFromSelectionAction(
   courseId: string,
@@ -77,6 +78,7 @@ export async function createStudyPlanFromSelectionAction(
         status: "draft",
         semester: semester || "2026.1",
         courseName: org.name,
+        contact: session.user.email || null,
         syllabus: metadata.syllabus,
         prerequisites: formattedPrerequisites,
         campus: "Campus de Joinville",
@@ -173,6 +175,7 @@ export async function createStudyPlanAction() {
     organizationId: organizationId,
     status: "draft",
     semester: "2026.1",
+    contact: session.user.email || null,
     campus: "Campus de Joinville",
     center: "Centro Tecnológico de Joinville",
     finalEvaluationRules: globalEvaluationRules,
@@ -192,6 +195,7 @@ export async function deleteStudyPlanAction(id: string, shouldRedirect = false) 
     const session = await auth.api.getSession();
 
     if (!session) redirect("/login");
+    if (!isValidUuid(id)) throw new Error("ID inválido");
 
     const plan = await db.query.studyPlans.findFirst({
         where: eq(studyPlans.id, id),

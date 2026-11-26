@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { LogOut, ChevronDown, Loader2 } from "lucide-react";
 import { useState } from "react";
-import { swalLoading, MySwal } from "@/lib/swal";
+import { swalLoading, MySwal, toastError } from "@/lib/swal";
 
 interface UserMenuProps {
     user: {
@@ -46,6 +46,7 @@ export function UserMenu({ user, roleLabel, roleId }: UserMenuProps) {
             console.error("Logout failed:", error);
             MySwal.close();
             setIsPending(false);
+            toastError("Não foi possível encerrar a sessão no servidor. Tente novamente.");
         }
     };
 
